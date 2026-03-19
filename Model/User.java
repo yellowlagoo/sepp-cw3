@@ -4,7 +4,8 @@ public abstract class User {
 
     /**
      * Constructor for the user class
-     * @param email: the user's email
+     *
+     * @param email:    the user's email
      * @param password: the user's password
      */
     public User(String email, String password) {
@@ -12,4 +13,35 @@ public abstract class User {
         this.password = password;
     }
 
-    //@TODO: add getters & setters
+    /**
+     * Returns the user's email
+     * @return the user's email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets the user's email
+     * @param email: the user's new email
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Returns the user's email
+     * @return the user's email
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets the user's password
+     * @param password: the user's new password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
