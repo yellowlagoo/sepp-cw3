@@ -1,12 +1,17 @@
 public abstract class Controller{
-    private User currentUser;
+    private User currentUser; //TODO: make the packages work 
+
+
+    public Controller(User currentUser) {
+        this.currentUser = currentUser;
+    }
 
     /**
      * Checks whether or not the current user is a guest, meaning they are not logged in yet
      * @return - whether or not the current user is a guest
      */
     protected boolean checkCurrentUserIsGuest(){
-        return false;
+        return currentUser.isLoggedIn() == false;
     }
 
     /**
@@ -32,4 +37,6 @@ public abstract class Controller{
     protected boolean checkCurrentUserIsEntertainmentProvider(){
         return currentUser instanceof EntertainmentProvider;
     }
+
+    //TODO: add selectFromMenu
 }
