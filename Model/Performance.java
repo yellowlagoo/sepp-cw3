@@ -1,3 +1,3 @@
-public class Performance{
+public class Performance {
 
 }
