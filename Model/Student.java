@@ -8,6 +8,7 @@ public class Student extends User {
     private int phoneNumber;
     private Collection<Booking> bookings;
 
+   
     // Constructor
     public Student(String email, String password, String name, String phonenumber) {
 
