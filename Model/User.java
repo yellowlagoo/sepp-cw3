@@ -1,3 +1,6 @@
+package Model; 
+
+
 public abstract class User {
     private String email;
     private String password;

@@ -1,3 +1,5 @@
+package Model; 
+
 public class StudentPreferences {
     private boolean preferMusicEvents;
     private boolean preferTheaterEvents;
