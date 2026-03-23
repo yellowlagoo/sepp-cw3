@@ -7,15 +7,26 @@ public class Booking {
     private LocalDateTime bookingDateTime;
     private BookingStatus status;
 
+    /**
+     * 
+     * @param bookingNumber
+     * @param numTickets
+     * @param amountPaid
+     * @param bookingDateTime
+     * @param status
+     */
     public Booking(long bookingNumber, int numTickets, double amountPaid, LocalDateTime bookingDateTime,
             BookingStatus status) {
         this.bookingNumber = bookingNumber;
         this.numTickets = numTickets;
-        this.amountPaid = amountPaid;
+        this.amountPaid = amountPaid; 
         this.bookingDateTime = bookingDateTime;
         this.status = status;
     }
-
+    /**
+     * 
+     * @return
+     */
     public long getBookingNumber() {
         return bookingNumber;
     }
@@ -23,7 +34,10 @@ public class Booking {
     public void setBookingNumber(long bookingNumber) {
         this.bookingNumber = bookingNumber;
     }
-
+    /**
+     * 
+     * @return numTickets the number of tickets in the booking 
+     */
     public int getNumTickets() {
         return numTickets;
     }
@@ -31,11 +45,17 @@ public class Booking {
     public void setNumTickets(int numTickets) {
         this.numTickets = numTickets;
     }
-
+    /**
+     * 
+     * @return amountPaid total paid for the booking 
+     */
     public double getAmountPaid() {
         return amountPaid;
     }
-
+    /**
+     * 
+     * @return
+     */
     public void setAmountPaid(double amountPaid) {
         this.amountPaid = amountPaid;
     }
@@ -56,5 +76,4 @@ public class Booking {
         this.status = status;
     }
     
-
 }
