@@ -1,6 +1,7 @@
 public abstract class User {
     private String email;
     private String password;
+    private boolean loggedIn;
 
     /**
      * Constructor for the user class
@@ -11,6 +12,7 @@ public abstract class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        loggedIn = false;
     }
 
     /**

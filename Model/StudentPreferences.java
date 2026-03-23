@@ -1,11 +1,9 @@
-
-
 public class StudentPreferences {
-    public boolean preferMusicEvents;
-    public boolean preferTheaterEvents;
-    public boolean preferDanceEvents;
-    public boolean preferMovieEvents;
-    public boolean preferSportsEvents;
+    private boolean preferMusicEvents;
+    private boolean preferTheaterEvents;
+    private boolean preferDanceEvents;
+    private boolean preferMovieEvents;
+    private boolean preferSportsEvents;
 
     /**
      * Class constructor specifying a student's preferences for event type
@@ -33,7 +31,7 @@ public class StudentPreferences {
         studentRawStringPreferences = studentRawStringPreferences.toLowerCase();
         
         preferMusicEvents = studentRawStringPreferences.contains("music");
-        preferTheaterEvents = studentRawStringPreferences.contains("theater");
+        preferTheaterEvents = studentRawStringPreferences.contains("theater") || studentRawStringPreferences.contains("theatre");
         preferDanceEvents = studentRawStringPreferences.contains("dance");
         preferMovieEvents = studentRawStringPreferences.contains("movie");
         preferSportsEvents = studentRawStringPreferences.contains("sports");
