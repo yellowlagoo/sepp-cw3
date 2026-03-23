@@ -32,7 +32,7 @@ public class Student extends User {
         return phoneNumber;
     }
 
-    public void setPhoneNumber() {
+    public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
