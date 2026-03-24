@@ -1,3 +1,5 @@
+package Model;
+
 import java.io.ObjectInputFilter.Status;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
