@@ -14,4 +14,8 @@ public class RegistrationUtility {
     public void setFilepath(String filepath) {
         this.filepath = filepath;
     }
+
+    public FacultyMember registerFacultyMember(){
+        
+    }
 }
