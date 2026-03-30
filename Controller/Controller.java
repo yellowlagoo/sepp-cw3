@@ -1,3 +1,5 @@
+package Controller; 
+
 public abstract class Controller{
     private User currentUser; //TODO: make the packages work 
 

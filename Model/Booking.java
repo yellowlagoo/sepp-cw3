@@ -1,3 +1,5 @@
+package Model; 
+
 import java.time.LocalDateTime;
 
 public class Booking {
@@ -8,6 +10,7 @@ public class Booking {
     private BookingStatus status;
     private BookingController bookingController;
     private Student student;
+    private Performance performance;
     /**
      * 
      * @param bookingNumber
@@ -103,13 +106,6 @@ public class Booking {
 
     public String generateBookingRecord() {
         String record = "STUDENT DETAILS\n";
-        // record format 
-        // Student name: name 
-        // Student email: email 
-        // Student phone number: phone number 
-        // full event information: 
-        // full performance information:
-
         record += "Name: " + student.getName() + "\n";
         record += "Email: " + student.getEmail() + "\n";
         record += "Phone Number: " + student.getPhoneNumber() + "\n";
@@ -126,8 +122,8 @@ public class Booking {
         record += "Sponsored: " + performance.isSponsored() + "\n";
         record += "Sponsor amount: " + performance.getSponsoredAmount() + "\n";
         record += "Status: " + performance.getStatus() + "\n";
+
         return record;
     }
 
-    
 }
