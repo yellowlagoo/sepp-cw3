@@ -16,6 +16,8 @@ public class RegistrationUtility {
     }
 
     public FacultyMember registerFacultyMember(){
-        
+        //check if faculty member exists (I believe )
+        //if yes, don't need to register --> increment login attempts, return it
+        //if no, use constructor for faculty member class (includes email and password!) (login true?)
     }
 }
