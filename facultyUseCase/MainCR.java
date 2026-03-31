@@ -28,17 +28,6 @@ public class MainCR {
         faculty.increaseLoginAttempts();
         System.out.println("Welcome! Your faculty account has been created.");
 
-        // Offer password change on first login
-        System.out.print("Would you like to set a new password? (yes/no): ");
-        String choice = scanner.nextLine().trim();
-
-        if (choice.equalsIgnoreCase("yes") || choice.equalsIgnoreCase("y")) {
-            System.out.print("Enter new password: ");
-            String newPassword = scanner.nextLine().trim();
-            faculty.setPassword(newPassword);
-            System.out.println("Password updated successfully.");
-        }
-
         System.out.println("Logged in as: " + faculty.getEmail());
     }
 }
