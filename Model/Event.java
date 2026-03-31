@@ -48,7 +48,7 @@ public class Event{
         boolean venueAllowsSmoking, int numTickets, double ticketPrice){
         Performance p = new Performance(performanceID, startDateTime, endDateTime, performerNames, venueAddress,
             venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice, this
-        )
+        );
         addPerformance(p);
         return p;
     }
