@@ -1,8 +1,12 @@
 package Controller;
 
 import Model.Booking;
+import Model.BookingStatus;
 import Model.Performance;
 import Model.User;
+import Model.Student;
+import ExternalSystems.PaymentSystem;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import View.View;
 
@@ -11,15 +15,17 @@ public class BookingController extends Controller {
     private long nextBookingNumber;
     private View view;
     private Collection<Performance> performances;
+    private PaymentSystem paymentSystem;
 
-    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances) {
+    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem) {
         super(currentUser);
         this.nextBookingNumber = nextBookingNumber;
         this.performances = performances;
-
+        this.paymentSystem = paymentSystem; 
     }
 
-    // Use cases for task 1
+
+    // BookPerformance() use case (Michael)
     public void bookPerformance() {
 
         String performanceIDInput = view.getInput("Enter the ID of the performance you want to book:");
@@ -41,19 +47,37 @@ public class BookingController extends Controller {
 
             if (possible == true) {
 
-                User curentUser = getCurrentUser();
-                
+                Student student = (Student) getCurrentUser();
 
+                Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, LocalDateTime.now(), BookingStatus.ACTIVE, student, performance);
+                addBooking(b);
+                performance.addBooking(b);
 
+            nextBookingNumber++;
+
+            String eventTitle = performance.getEventTitle();
+            String studentEmail = student.getEmail();
+            Integer studentPhone = student.getPhoneNumber();
+            String epEmail = performance.getOrganiserEmail();
+            double transactionAmount = performance.getFinalTicketPrice() * numTickets;
+
+            boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, studentPhone, epEmail, transactionAmount); // This error is due to the processPayment not being defined as of yet in the PaymentSystem etc
+
+                if (paymentSuccessful == false) {
+                    view.displayError("There was an issue with payment.");
+                    b.cancelPaymentFailed();
+                }
+
+                else if (paymentSuccessful == true){
+
+                    int numTicketsSold = performance.getNumTicketsSold();
+                    performance.setNumTicketsSold(numTicketsSold + numTickets);
+                    view.displaySuccess("Booking successful");
+                    String bookingRecord = b.generateBookingRecord();
+                    view.displayBookingRecord(bookingRecord);
+                }
             }
-
-
-
-
         }
-
-
-
     }
 
     public void reviewPerformance() {
