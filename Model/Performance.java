@@ -1,6 +1,5 @@
 package Model;
 
-import java.io.ObjectInputFilter.Status;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,13 +27,13 @@ public class Performance {
     private Collection<Booking> bookings;
 
     // Constructor
-    public Performance(long performanceID, LocalDateTime startdateTime, LocalDateTime endDateTime,
-            Collection<String> pefromerNames,
+    public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime,
+            Collection<String> peformerNames,
             String venueAddress, int venueCapacity, boolean venueIsOutdoors, boolean allowSmoking, int numTicketsTotal,
             int numTicketsSold,
             double ticketPrice, boolean isSponsored, double sponsoredAmount, Collection<Integer> reviewRating,
             Collection<String> reviewComments,
-            Status performanceStatus) {
+            PerformanceStatus status) {
 
         this.performanceID = performanceID;
         this.startDateTime = startDateTime;
@@ -52,8 +51,6 @@ public class Performance {
         this.reviewRating = reviewRating;
         this.reviewComments = reviewComments;
         this.status = status;
-        this.status = status;
-
     }
 
     // Getters and setters
@@ -206,9 +203,9 @@ public class Performance {
         }
     }
 
-    public String getOrganiserEmail() { // Unsure about this part here as it is a method of both performance and event
-                                        // so unsure who implements it and how
-        return event.getOrganiserEmail;
+    public String getOrganiserEmail() {
+
+        return event.getOrganiserEmail();
     }
 
     public String getEventTitle() {
