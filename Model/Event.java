@@ -29,15 +29,28 @@ public class Event{
         performances = new ArrayList<>();
     }
 
-    //FINISH
+    /**
+     * Creates a particular performance for the event
+     * @param performanceID - the performance ID of the performance
+     * @param startDateTime - when the performance starts
+     * @param endDateTime - when the performance ends
+     * @param performerNames - the names of the performers 
+     * @param venueAddress - the address of the venue
+     * @param venueCapacity - the capacity of the venue
+     * @param venueIsOutdoors - whether or not the venue is outdoors
+     * @param venueAllowsSmoking - whether or not the value allows smoking
+     * @param numTickets - number of tickets available for the performance
+     * @param ticketPrice - the ticket price of the performance (if ticketed)
+     * @return the performance created
+     */
     public Performance createPerformance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, 
         Collection<String> performerNames, String venueAddress, int venueCapacity, boolean venueIsOutdoors,
         boolean venueAllowsSmoking, int numTickets, double ticketPrice){
         Performance p = new Performance(performanceID, startDateTime, endDateTime, performerNames, venueAddress,
-            venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice
+            venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice, this
         )
         addPerformance(p);
-        return p; //TO DO: constructor once Performance is finished
+        return p;
     }
 
     //FINISH

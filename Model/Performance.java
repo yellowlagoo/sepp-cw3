@@ -3,6 +3,7 @@ package Model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class Performance {
 
@@ -28,12 +29,9 @@ public class Performance {
 
     // Constructor
     public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime,
-            Collection<String> peformerNames,
+            Collection<String> performerNames,
             String venueAddress, int venueCapacity, boolean venueIsOutdoors, boolean allowSmoking, int numTicketsTotal,
-            int numTicketsSold,
-            double ticketPrice, boolean isSponsored, double sponsoredAmount, Collection<Integer> reviewRating,
-            Collection<String> reviewComments,
-            PerformanceStatus status) {
+            double ticketPrice, Event event) {
 
         this.performanceID = performanceID;
         this.startDateTime = startDateTime;
@@ -44,13 +42,14 @@ public class Performance {
         this.venueIsOutdoors = venueIsOutdoors;
         this.allowSmoking = allowSmoking;
         this.numTicketsTotal = numTicketsTotal;
-        this.numTicketsSold = numTicketsSold;
+        numTicketsSold = 0;
         this.ticketPrice = ticketPrice;
-        this.isSponsored = isSponsored;
-        this.sponsoredAmount = sponsoredAmount;
-        this.reviewRating = reviewRating;
-        this.reviewComments = reviewComments;
-        this.status = status;
+        isSponsored = false;
+        sponsoredAmount = 0;
+        reviewRating = Collections.emptyList(); 
+        reviewComments = Collections.emptyList();
+        status = PerformanceStatus.ACTIVE;
+        this.event = event;
     }
 
     // Getters and setters
