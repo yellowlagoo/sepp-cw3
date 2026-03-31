@@ -12,6 +12,14 @@ public abstract class Controller {
         this.currentUser = currentUser;
     }
 
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
     /**
      * Checks whether or not the current user is a guest, meaning they are not
      * logged in yet
