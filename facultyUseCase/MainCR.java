@@ -1,8 +1,8 @@
-import facultyUseCase.FacultyMember;
-import facultyUseCase.RegistrationUtility;
+package facultyUseCase; 
+
 import java.util.Scanner; 
 
-public class Main {
+public class MainCR {
 
     static Scanner scanner = new Scanner(System.in);
 
