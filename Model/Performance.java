@@ -50,6 +50,7 @@ public class Performance {
         reviewComments = Collections.emptyList();
         status = PerformanceStatus.ACTIVE;
         this.event = event;
+        bookings = new ArrayList<>();
     }
 
     // Getters and setters
@@ -181,6 +182,10 @@ public class Performance {
         this.status = status;
     }
 
+    public Collection<Booking> getBookings() {
+        return bookings;
+    }
+
     // Methods
     public void cancel() {
         this.status = PerformanceStatus.CANCELLED;
@@ -231,12 +236,14 @@ public class Performance {
     }
 
     public String getBookingDetailsForRefund() {
-        String details = "STUDENT DETAILS\n";
+        String details = "";
         for (Booking b : bookings) {
             if (b.getStatus() == BookingStatus.ACTIVE) {
-                details += "Student Details: " + b.getStudentDetails() + "\n";
-                details += "Amount Paid: " + b.getAmountPaid() + "\n";
-                details += "Number of tickets purchased: " + b.getNumTickets() + "\n";
+                String studentdetails = b.getStudentDetails() + "\n";
+                double amountPaid = b.getAmountPaid();
+                int numTickets = b.getNumTickets();
+
+                details += studentdetails + "\n " + amountPaid + "\n " + numTickets + "\n\n";
             }
         }
 

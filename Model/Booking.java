@@ -101,7 +101,10 @@ public class Booking {
     }
 
     public String getStudentDetails() {
-        return student.getEmail();
+        String studentEmail = student.getEmail();
+        int studentPhoneNumber = student.getPhoneNumber();
+        return studentEmail + "\n" + studentPhoneNumber;
+
     }
 
     public String generateBookingRecord() {

@@ -28,56 +28,62 @@ public class BookingController extends Controller {
     // BookPerformance() use case (Michael)
     public void bookPerformance() {
 
+         Performance performance = null;
+         Integer numTickets = null;
+         boolean possible = false;
+         boolean isTicketed = false;
+
+        while ((performance == null) || (possible == false && isTicketed == true)){
+
         String performanceIDInput = view.getInput("Enter the ID of the performance you want to book:");
         long performanceID = Long.parseLong(performanceIDInput);
 
         String numTicketsRequested = view.getInput("Enter the number of tickets you want to book:");
-        int numTickets = Integer.parseInt(numTicketsRequested);
+        numTickets = Integer.parseInt(numTicketsRequested);
 
-        Performance performance = getPerformanceByID(performanceID);
+        performance = getPerformanceByID(performanceID);
 
         if (performance == null) {
             view.displayError("Performance with given number does not exist.");
-            return;
+            continue;
+        }
+
+        isTicketed = performance.checkIfEventIsTicketed();
+        possible = checkIfBookingPossible(performance, numTickets);
+
+        }
+        
+        Student s = (Student) getCurrentUser();
+
+        Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, LocalDateTime.now(), BookingStatus.ACTIVE, s, performance);
+        addBooking(b);
+        performance.addBooking(b);
+
+        nextBookingNumber++;
+
+        String eventTitle = performance.getEventTitle();
+        String studentEmail = s.getEmail();
+        Integer studentPhone = s.getPhoneNumber();
+        String epEmail = performance.getOrganiserEmail();
+        double transactionAmount = performance.getFinalTicketPrice() * numTickets;
+
+         boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, studentPhone, epEmail, transactionAmount); // This error is due to the processPayment not being defined as of yet in the PaymentSystem etc
+
+        if (paymentSuccessful == false) {
+            view.displayError("There was an issue with payment.");
+            b.cancelPaymentFailed();
+                
         }
 
         else {
 
-            boolean possible = checkIfBookingPossible(performance, numTickets);
+        int numTicketsSold = performance.getNumTicketsSold();
+        performance.setNumTicketsSold(numTicketsSold + numTickets);
+        view.displaySuccess("Booking successful");
+        String bookingRecord = b.generateBookingRecord();
+        view.displayBookingRecord(bookingRecord);
 
-            if (possible == true) {
-
-                Student student = (Student) getCurrentUser();
-
-                Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, LocalDateTime.now(), BookingStatus.ACTIVE, student, performance);
-                addBooking(b);
-                performance.addBooking(b);
-
-            nextBookingNumber++;
-
-            String eventTitle = performance.getEventTitle();
-            String studentEmail = student.getEmail();
-            Integer studentPhone = student.getPhoneNumber();
-            String epEmail = performance.getOrganiserEmail();
-            double transactionAmount = performance.getFinalTicketPrice() * numTickets;
-
-            boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, studentPhone, epEmail, transactionAmount); // This error is due to the processPayment not being defined as of yet in the PaymentSystem etc
-
-                if (paymentSuccessful == false) {
-                    view.displayError("There was an issue with payment.");
-                    b.cancelPaymentFailed();
-                }
-
-                else if (paymentSuccessful == true){
-
-                    int numTicketsSold = performance.getNumTicketsSold();
-                    performance.setNumTicketsSold(numTicketsSold + numTickets);
-                    view.displaySuccess("Booking successful");
-                    String bookingRecord = b.generateBookingRecord();
-                    view.displayBookingRecord(bookingRecord);
-                }
-            }
-        }
+        } 
     }
 
     public void reviewPerformance() {
@@ -98,7 +104,8 @@ public class BookingController extends Controller {
             if (p.getPerformanceID() == performanceID) {
                 return p;
             }
-        }        return null;
+        }        
+        return null;
     }
 
     private boolean checkIfBookingPossible(Performance performance, int numTickets) {
@@ -111,7 +118,6 @@ public class BookingController extends Controller {
         }
         
         else {
-
             boolean ticketsLeft = performance.checkIfTicketsLeft(numTickets);
 
             if (ticketsLeft == false) {
@@ -122,7 +128,6 @@ public class BookingController extends Controller {
             else {
                 return true;
             }
-
         }
     }
 
@@ -135,3 +140,4 @@ public class BookingController extends Controller {
     }
 
 }
+
