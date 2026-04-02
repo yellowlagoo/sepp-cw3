@@ -13,7 +13,7 @@ public class FacultyMember extends User {
     }
 
     // call every time a log in is attempted for the account 
-    public void increaseLoginAttempts(){
+    public void incrementLoginAttempts(){
         this.loginAttempts++; 
     }
 
