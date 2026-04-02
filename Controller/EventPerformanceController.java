@@ -8,6 +8,7 @@ public class EventPerformanceController extends Controller {
 
     private long nextEventID;
     private long nextPerformanceID;
+    private Event event;
 
     public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID) {
 
@@ -19,13 +20,16 @@ public class EventPerformanceController extends Controller {
 
     // Task 1 Use cases
 
-    public Event createEvent() {
-        return null;
+    public Event createEvent(String organizer, String title, String type, long eventID, Boolean isTicketed) {
+        Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
+        this.event = newEvent;
+        return newEvent;
         // This is a use case for task 1 (Karina's)
     }
 
-    public void searchforPerformances() {
-        // this is a use cae for task 1 (Toni's)
+    public Performance searchForPerformances(long performanceID) {
+        // this is a use cae for task 1 (Karina's)
+        return event.getPerformanceByID(performanceID);
     }
 
     public void viewPerformance() {
@@ -66,5 +70,7 @@ public class EventPerformanceController extends Controller {
     private Performance getPerformanceByID(long performanceID) {
         return null;
     }
+
+    
 
 }

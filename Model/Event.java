@@ -32,10 +32,10 @@ public class Event{
     //FINISH
     public Performance createPerformance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime, 
         Collection<String> performerNames, String venueAddress, int venueCapacity, boolean venueIsOutdoors,
-        boolean venueAllowsSmoking, int numTickets, double ticketPrice){
+            boolean venueAllowsSmoking, int numTickets, double ticketPrice) {
         Performance p = new Performance(performanceID, startDateTime, endDateTime, performerNames, venueAddress,
             venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice
-        )
+        );
         addPerformance(p);
         return p; //TO DO: constructor once Performance is finished
     }

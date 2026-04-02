@@ -85,15 +85,15 @@ public class Booking {
     }
 
     public void cancelByStudent() {
-
+        this.status = status.CANCELLEDBYSTUDENT;
     }
 
     public void cancelPaymentFailed() {
-
+        this.status = status.PAYMENTFAILED;
     }
 
     public void cancelByProvider() {
-
+        this.status = status.CANCELLEDBYPROVIDER;
     }
     
     public boolean checkBookedByStudent(String email) {
@@ -112,7 +112,7 @@ public class Booking {
 
         record += "\nEVENT DETAILS\n";
         record += "Name: " + performance.getEventTitle() + "\n";
-        record += "Ticketed: " + performance.checkIfEventsTicketed() + "\n";
+        record += "Ticketed: " + performance.checkIfEventIsTicketed() + "\n";
         record += "Organiser: " + performance.getOrganiserEmail() + "\n";
         
         record += "\nPERFORMANCE DETAILS\n";
