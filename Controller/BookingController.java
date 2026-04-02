@@ -1,14 +1,14 @@
-package Controller;
+package controller;
 
-import Model.Booking;
-import Model.BookingStatus;
-import Model.Performance;
-import Model.User;
-import Model.Student;
-import ExternalSystems.PaymentSystem;
+import model.Booking;
+import model.BookingStatus;
+import model.Performance;
+import model.User;
+import model.Student;
+import externalsystems.PaymentSystem;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import View.View;
+import view.View;
 
 public class BookingController extends Controller {
 

@@ -1,13 +1,13 @@
-package Controller;
+package controller;
 
-import Model.AdminStaff;
-import Model.EntertainmentProvider;
-import Model.Event;
-import Model.Model;
-import Model.Student;
-import Model.User;
-import View.View;
-import systems.VerificationSystem;
+import model.AdminStaff;
+import model.EntertainmentProvider;
+import model.Event;
+import model.Model;
+import model.Student;
+import model.User;
+import view.View;
+import externalsystems.VerificationSystem;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

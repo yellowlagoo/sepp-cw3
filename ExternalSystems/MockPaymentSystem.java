@@ -1,4 +1,4 @@
-package ExternalSystems;
+package externalsystems;
 public class MockPaymentSystem{
 
 }

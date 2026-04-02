@@ -1,4 +1,4 @@
-package Model; 
+package model; 
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,11 +48,7 @@ public class Event{
         Collection<String> performerNames, String venueAddress, int venueCapacity, boolean venueIsOutdoors,
             boolean venueAllowsSmoking, int numTickets, double ticketPrice) {
         Performance p = new Performance(performanceID, startDateTime, endDateTime, performerNames, venueAddress,
-<<<<<<< HEAD
-            venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice
-=======
             venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets, ticketPrice, this
->>>>>>> 528d7008933f76715f7c74f27def0ab4ade6c621
         );
         addPerformance(p);
         return p;

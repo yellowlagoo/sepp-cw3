@@ -1,24 +1,20 @@
-package Controller;
+package controller;
 
-import Model.User;
-import Model.Event;
-import Model.Performance;
-import View.View;
-import Model.EntertainmentProvider;
-import ExternalSystems.PaymentSystem;
-import Model.Booking;
-import Model.BookingStatus;
+import model.User;
+import model.Event;
+import model.Performance;
+import view.View;
+import model.EntertainmentProvider;
+import externalsystems.PaymentSystem;
+import model.Booking;
+import model.BookingStatus;
 
 public class EventPerformanceController extends Controller {
 
     private long nextEventID;
     private long nextPerformanceID;
-<<<<<<< HEAD
-    private Event event;
-=======
     private View view;
     private PaymentSystem paymentSystem;
->>>>>>> 528d7008933f76715f7c74f27def0ab4ade6c621
 
     public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID, PaymentSystem paymentSystem) {
 
