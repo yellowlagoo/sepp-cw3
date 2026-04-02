@@ -1,14 +1,22 @@
-package Controller;
+package controller;
 
-import Model.User;
-import Model.AdminStaff;
-import Model.Student;
-import Model.EntertainmentProvider;
+import model.User;
+import model.AdminStaff;
+import model.Student;
+import model.EntertainmentProvider;
 
 public abstract class Controller {
-    private User currentUser; // TODO: make the packages work
+    private User currentUser;
 
     public Controller(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
 

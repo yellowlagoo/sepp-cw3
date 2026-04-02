@@ -1,5 +1,4 @@
-package Model; 
-
+package model; 
 
 public abstract class User {
     private String email;
@@ -8,9 +7,8 @@ public abstract class User {
 
     /**
      * Constructor for the user class
-     *
-     * @param email:    the user's email
-     * @param password: the user's password
+     * @param email - the user's email
+     * @param password - the user's password
      */
     public User(String email, String password) {
         this.email = email;
@@ -28,7 +26,7 @@ public abstract class User {
 
     /**
      * Sets the user's email
-     * @param email: the user's new email
+     * @param email - the user's new email
      */
     public void setEmail(String email) {
         this.email = email;
@@ -36,7 +34,7 @@ public abstract class User {
 
     /**
      * Returns the user's email
-     * @return the user's email
+     * @return - the user's email
      */
     public String getPassword() {
         return password;
@@ -44,7 +42,7 @@ public abstract class User {
 
     /**
      * Sets the user's password
-     * @param password: the user's new password
+     * @param password - the user's new password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -52,7 +50,7 @@ public abstract class User {
 
     /**
      * Returns the user's login status
-     * @return the user's login status
+     * @return - the user's login status
      */
     public boolean isLoggedIn() {
         return loggedIn;
@@ -60,11 +58,9 @@ public abstract class User {
 
     /**
      * Sets the user's login status
-     * @param loggedIn: the user's log status
+     * @param loggedIn - the user's log status
      */
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
-
-    
 }

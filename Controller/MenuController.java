@@ -1,6 +1,6 @@
-package Controller;
+package controller;
 
-import Model.User;
+import model.User;
 
 public class MenuController extends Controller {
 

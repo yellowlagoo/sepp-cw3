@@ -1,4 +1,4 @@
-package Model; 
+package model; 
 
 public class StudentPreferences {
     private boolean preferMusicEvents;
@@ -8,7 +8,7 @@ public class StudentPreferences {
     private boolean preferSportsEvents;
 
     /**
-     * Class constructor specifying a student's preferences for event type
+     * Constructor specifying a student's preferences for event type
      * @param preferMusicEvents - whether the student prefers music events
      * @param preferTheaterEvents - whether the student prefers theater events
      * @param preferDanceEvents - whether the student prefers dance events
