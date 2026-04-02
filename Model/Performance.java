@@ -3,6 +3,7 @@ package Model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class Performance {
 
@@ -28,12 +29,9 @@ public class Performance {
 
     // Constructor
     public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime,
-            Collection<String> peformerNames,
+            Collection<String> performerNames,
             String venueAddress, int venueCapacity, boolean venueIsOutdoors, boolean allowSmoking, int numTicketsTotal,
-            int numTicketsSold,
-            double ticketPrice, boolean isSponsored, double sponsoredAmount, Collection<Integer> reviewRating,
-            Collection<String> reviewComments,
-            PerformanceStatus status) {
+            double ticketPrice, Event event) {
 
         this.performanceID = performanceID;
         this.startDateTime = startDateTime;
@@ -44,13 +42,15 @@ public class Performance {
         this.venueIsOutdoors = venueIsOutdoors;
         this.allowSmoking = allowSmoking;
         this.numTicketsTotal = numTicketsTotal;
-        this.numTicketsSold = numTicketsSold;
+        numTicketsSold = 0;
         this.ticketPrice = ticketPrice;
-        this.isSponsored = isSponsored;
-        this.sponsoredAmount = sponsoredAmount;
-        this.reviewRating = reviewRating;
-        this.reviewComments = reviewComments;
-        this.status = status;
+        isSponsored = false;
+        sponsoredAmount = 0;
+        reviewRating = Collections.emptyList(); 
+        reviewComments = Collections.emptyList();
+        status = PerformanceStatus.ACTIVE;
+        this.event = event;
+        bookings = new ArrayList<>();
     }
 
     // Getters and setters
@@ -182,6 +182,10 @@ public class Performance {
         this.status = status;
     }
 
+    public Collection<Booking> getBookings() {
+        return bookings;
+    }
+
     // Methods
     public void cancel() {
         this.status = PerformanceStatus.CANCELLED;
@@ -232,12 +236,14 @@ public class Performance {
     }
 
     public String getBookingDetailsForRefund() {
-        String details = "STUDENT DETAILS\n";
+        String details = "";
         for (Booking b : bookings) {
             if (b.getStatus() == BookingStatus.ACTIVE) {
-                details += "Student Details: " + b.getStudentDetails() + "\n";
-                details += "Amount Paid: " + b.getAmountPaid() + "\n";
-                details += "Number of tickets purchased: " + b.getNumTickets() + "\n";
+                String studentdetails = b.getStudentDetails() + "\n";
+                double amountPaid = b.getAmountPaid();
+                int numTickets = b.getNumTickets();
+
+                details += studentdetails + "\n " + amountPaid + "\n " + numTickets + "\n\n";
             }
         }
 

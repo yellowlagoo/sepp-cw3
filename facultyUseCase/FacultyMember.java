@@ -1,22 +1,30 @@
 package facultyUseCase;
 
 public class FacultyMember extends User {
+
     private int loginAttempts;
+
+
 
     //should this be just initialized to zero? (no parameter)
     public FacultyMember(String email, String password) {
         super(email, password);
-        loginAttempts = 1;
+        this.loginAttempts = 0;
+    }
+
+    // call every time a log in is attempted for the account 
+    public void increaseLoginAttempts(){
+        this.loginAttempts++; 
     }
 
     public int getLoginAttempts() {
         return loginAttempts;
     }
 
-    //is this necessary? or should it just be increment any time they try to log in?
-    public void setLoginAttempts(int loginAttempts) {
-        this.loginAttempts = loginAttempts;
+    public boolean isFirstLogin(){
+        return loginAttempts == 1; 
     }
+    
 
     
 }
