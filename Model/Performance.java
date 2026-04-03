@@ -199,6 +199,10 @@ public class Performance {
         return bookings;
     }
 
+    public Event getEvent() {
+        return event;
+    }
+
     /**
      * Cancels a performance by changing its status
      */

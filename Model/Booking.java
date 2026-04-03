@@ -67,6 +67,22 @@ public class Booking {
         return status;
     }
 
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Performance getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(Performance performance) {
+        this.performance = performance;
+    }
+
     /**
      * Updates the booking's status to reflect when a student has cancelled their booking
      */
