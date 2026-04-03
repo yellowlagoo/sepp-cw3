@@ -1,12 +1,11 @@
 package controller;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import model.User;
+import java.util.List;
 import model.AdminStaff;
-import model.Student;
 import model.EntertainmentProvider;
+import model.Student;
+import model.User;
 import view.View;
 
 public abstract class Controller {
@@ -29,7 +28,6 @@ public abstract class Controller {
     /**
      * Checks whether or not the current user is a guest, meaning they are not
      * logged in yet
-     * 
      * @return - whether or not the current user is a guest
      */
     protected boolean checkCurrentUserIsGuest() {
@@ -38,7 +36,6 @@ public abstract class Controller {
 
     /**
      * Checks whether or not the current user is an admin staff
-     * 
      * @return - whether or not the current user is an admin staff
      */
     protected boolean checkCurrentUserIsAdmin() {
@@ -47,7 +44,6 @@ public abstract class Controller {
 
     /**
      * Checks whether or not the current user is a student
-     * 
      * @return - whether or not the current user is a student
      */
     protected boolean checkCurrentUserIsStudent() {
@@ -56,7 +52,6 @@ public abstract class Controller {
 
     /**
      * Checks whether or not the current user is an entertainment provider
-     * 
      * @return - whether or not the current user is an entertainment provider
      */
     protected boolean checkCurrentUserIsEntertainmentProvider() {
