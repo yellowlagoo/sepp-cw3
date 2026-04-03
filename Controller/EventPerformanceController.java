@@ -35,7 +35,10 @@ public class EventPerformanceController extends Controller {
 
     public Performance searchForPerformances(long performanceID) {
         // this is a use cae for task 1 (Karina's)
-        return event.getPerformanceByID(performanceID);
+        String performanceIDInput = view.getInput("Enter ID of performance to view");
+        long performanceID = Long.parseLong(performanceIDInput);
+        Performance performance = event.getPerformanceByID(performanceID);
+        return performance;
     }
 
     // viewPerformance() (Michael's)
