@@ -1,13 +1,7 @@
 package Controller;
 
-import Model.User;
-import Model.Event;
-import Model.Performance;
-import View.View;
-import Model.EntertainmentProvider;
+import Model.*;
 import ExternalSystems.PaymentSystem;
-import Model.Booking;
-import Model.BookingStatus;
 
 public class EventPerformanceController extends Controller {
 
