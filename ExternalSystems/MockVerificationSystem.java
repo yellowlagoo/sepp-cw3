@@ -1,4 +1,4 @@
-package externalsystems;
+package ExternalSystems;
 public class MockVerificationSystem implements VerificationSystem{
 
     @Override

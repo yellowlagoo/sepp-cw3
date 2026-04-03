@@ -1,13 +1,13 @@
-package controller;
+package Controller;
 
-import model.User;
-import model.Event;
-import model.Performance;
-import view.View;
-import model.EntertainmentProvider;
-import externalsystems.PaymentSystem;
-import model.Booking;
-import model.BookingStatus;
+import Model.User;
+import Model.Event;
+import Model.Performance;
+import View.View;
+import Model.EntertainmentProvider;
+import ExternalSystems.PaymentSystem;
+import Model.Booking;
+import Model.BookingStatus;
 
 public class EventPerformanceController extends Controller {
 

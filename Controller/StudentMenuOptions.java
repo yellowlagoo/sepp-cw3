@@ -1,4 +1,4 @@
-package controller;
+package Controller;
 
 public enum StudentMenuOptions {
     

@@ -1,33 +1,28 @@
-package controller;
+package Controller;
 
-import model.AdminStaff;
-import model.EntertainmentProvider;
-import model.Event;
-import model.Model;
-import model.Student;
-import model.User;
-import view.View;
-import externalsystems.VerificationSystem;
+import Model.*;
+import View.View;
+import ExternalSystems.VerificationSystem;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-
 public class UserController extends Controller {
 
-    public static final String PREREGISTERED_USERS_FILE_PATH  = "preregistered_students.csv";
-    public static final String PREREGISTERED_ADMIN_FILE_PATH  = "preregistered_admins.csv";
+    public static final String PREREGISTERED_USERS_FILE_PATH = "preregistered_students.csv";
+    public static final String PREREGISTERED_ADMIN_FILE_PATH = "preregistered_admins.csv";
 
     private final VerificationSystem verificationSystem;
 
+    // we dont have a general model
     public UserController(Model model, View view, VerificationSystem verificationSystem) {
         super(model, view);
         this.verificationSystem = verificationSystem;
     }
 
     public void login() {
-        String email    = view.getInput("Enter email:");
+        String email = view.getInput("Enter email:");
         String password = view.getInput("Enter password:");
 
         User user = model.getUserByEmail(email);
@@ -50,12 +45,11 @@ public class UserController extends Controller {
         view.displaySuccess("You have been logged out successfully.");
     }
 
-    
     public void registerEntertainmentProvider() {
         System.out.println(" Register as Entertainment Provider ");
 
-        String email          = view.getInput("Enter your email address:");
-        String orgName        = view.getInput("Enter your organisation name:");
+        String email = view.getInput("Enter your email address:");
+        String orgName = view.getInput("Enter your organisation name:");
         String businessNumber = view.getInput("Enter your business registration number:");
 
         // Duplicate check (email, orgName, or businessNumber already in use)
@@ -70,8 +64,8 @@ public class UserController extends Controller {
             return;
         }
 
-        String name        = view.getInput("Enter contact person name:");
-        String password    = view.getInput("Create a password:");
+        String name = view.getInput("Enter contact person name:");
+        String password = view.getInput("Create a password:");
         String description = view.getInput("Enter a short description of your organisation:");
 
         EntertainmentProvider ep = new EntertainmentProvider(
@@ -81,7 +75,6 @@ public class UserController extends Controller {
         view.displaySuccess("Entertainment Provider account created for '" + orgName + "'!");
     }
 
-    
     public void editPreferences() {
         if (!checkCurrentUserIsStudent()) {
             view.displayError("Only students can edit preferences.");
@@ -101,19 +94,17 @@ public class UserController extends Controller {
         }
     }
 
-
     public void addPreregisteredUsers() {
         loadStudents();
         loadAdmins();
     }
 
-
     private void loadStudents() {
-        
+
     }
 
     private void loadAdmins() {
-        
+
     }
 
     /** Delegates duplicate-check to the model. */
@@ -121,18 +112,17 @@ public class UserController extends Controller {
         return model.epAccountAlreadyExists(email, orgName, businessNumber);
     }
 
-    
     private void addUser(User user) {
         model.addUser(user);
     }
 
-    
     public EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
         for (User u : model.getUsers()) {
             if (u instanceof EntertainmentProvider) {
                 EntertainmentProvider ep = (EntertainmentProvider) u;
                 for (Event e : ep.getEvents()) {
-                    if (e.getEventID() == eventNumber) return ep;
+                    if (e.getEventID() == eventNumber)
+                        return ep;
                 }
             }
         }

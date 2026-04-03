@@ -1,16 +1,12 @@
-package controller;
+package Controller;
 
 import java.util.ArrayList;
 
-import model.Booking;
-import model.BookingStatus;
-import model.Performance;
-import model.User;
-import model.Student;
-import externalsystems.PaymentSystem;
+import Model.*;
+import ExternalSystems.PaymentSystem;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import view.View;
+import View.View;
 
 public class BookingController extends Controller {
 

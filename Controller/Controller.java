@@ -1,12 +1,12 @@
-package controller;
+package Controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.AdminStaff;
-import model.EntertainmentProvider;
-import model.Student;
-import model.User;
-import view.View;
+import Model.AdminStaff;
+import Model.EntertainmentProvider;
+import Model.Student;
+import Model.User;
+import View.View;
 
 public abstract class Controller {
     private User currentUser;

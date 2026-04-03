@@ -1,4 +1,4 @@
-package model; 
+package Model; 
 
 public class AdminStaff extends User{
     private String name; 
