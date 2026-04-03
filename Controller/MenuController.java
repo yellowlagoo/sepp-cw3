@@ -76,7 +76,7 @@ public class MenuController extends Controller {
                                 return false;
 
                         case 2:
-                                eventPerformanceController.searchForPerformance();
+                                eventPerformanceController.searchForPerformances();
                                 return true;
 
                         case 3:
@@ -117,7 +117,7 @@ public class MenuController extends Controller {
                                 return false;
 
                         case 2:
-                                eventPerformanceController.searchForPerformance();
+                                eventPerformanceController.searchForPerformances();
                                 return true;
 
                         case 3:
@@ -150,7 +150,7 @@ public class MenuController extends Controller {
                                 return false;
 
                         case 2:
-                                eventPerformanceController.searchForPerformance();
+                                eventPerformanceController.searchForPerformances();
                                 return true;
 
                         case 3:
