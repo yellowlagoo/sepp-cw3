@@ -1,6 +1,8 @@
 package controller;
 
 import java.util.List;
+import java.util.ArrayList;
+import view.View;
 
 import model.User;
 
@@ -42,9 +44,11 @@ public class MenuController extends Controller {
     }
 }
 
-    // Implement after use cases ?
+
+
+
     private boolean handleGuestMainMenu() {
-        List<GuestMenuOptions> options = List.of(GuestMenuOptions.values());
+        ArrayList<GuestMenuOptions> options = new ArrayList<>(List.of(GuestMenuOptions.values()));
         int option = getMenuOption(options, "Choose an option: ");
 
         switch (option) {
@@ -64,7 +68,7 @@ public class MenuController extends Controller {
     }
 
     private boolean handleStudentMainMenu() {
-        List<StudentMenuOptions> options = List.of(StudentMenuOptions.values());
+        ArrayList<StudentMenuOptions> options = new ArrayList<>(List.of(StudentMenuOptions.values()));
         int option = getMenuOption(options, "Choose an option: ");
 
         switch (option) {
@@ -97,7 +101,7 @@ public class MenuController extends Controller {
     }
 
     private boolean handleEntertainmentProviderMainMenu() {
-        List<EPMenuOptions> options = List.of(EPMenuOptions.values());
+        ArrayList<EPMenuOptions> options = new ArrayList<>(List.of(EPMenuOptions.values()));
         int option = getMenuOption(options, "Choose an option: ");
 
         switch (option) {
@@ -124,7 +128,7 @@ public class MenuController extends Controller {
     }
 
     private boolean handleAdminStaffMainMenu() {
-        List<AdminMenuOptions> options = List.of(AdminMenuOptions.values());
+        ArrayList<AdminMenuOptions> options = new ArrayList<>(List.of(AdminMenuOptions.values()));
         int option = getMenuOption(options, "Choose an option: ");
 
         switch (option) {
