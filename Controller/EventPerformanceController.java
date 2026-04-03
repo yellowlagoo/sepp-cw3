@@ -13,12 +13,11 @@ public class EventPerformanceController extends Controller {
 
     private long nextEventID;
     private long nextPerformanceID;
-    private View view;
     private PaymentSystem paymentSystem;
 
-    public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID, PaymentSystem paymentSystem) {
+    public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID, PaymentSystem paymentSystem, View view) {
 
-        super(currentUser);
+        super(currentUser, view);
         this.nextEventID = nextEventID;
         this.nextPerformanceID = nextPerformanceID;
         this.paymentSystem = paymentSystem;

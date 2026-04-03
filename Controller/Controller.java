@@ -72,8 +72,8 @@ public abstract class Controller {
             System.out.println((i + 1) + ". " + menuOptions.get(i).toString());
 
         }
-        
-        String option = view.getInput("Enter option number: ")
+
+        String option = view.getInput("Enter option number: ");
         return Integer.parseInt(option);
     
     }

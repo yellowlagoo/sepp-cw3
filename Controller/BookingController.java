@@ -15,13 +15,12 @@ import view.View;
 public class BookingController extends Controller {
 
     private long nextBookingNumber;
-    private View view;
     private Collection<Performance> performances;
     private PaymentSystem paymentSystem;
     private Collection<Booking> bookings;
 
-    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem) {
-        super(currentUser);
+    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem, View view) {
+        super(currentUser, view);
         this.nextBookingNumber = nextBookingNumber;
         this.performances = performances;
         this.paymentSystem = paymentSystem; 
