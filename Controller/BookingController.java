@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.ArrayList;
+
 import model.Booking;
 import model.BookingStatus;
 import model.Performance;
@@ -13,15 +15,16 @@ import view.View;
 public class BookingController extends Controller {
 
     private long nextBookingNumber;
-    private View view;
     private Collection<Performance> performances;
     private PaymentSystem paymentSystem;
+    private Collection<Booking> bookings;
 
-    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem) {
-        super(currentUser);
+    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem, View view) {
+        super(currentUser, view);
         this.nextBookingNumber = nextBookingNumber;
         this.performances = performances;
         this.paymentSystem = paymentSystem; 
+        this.bookings = new ArrayList<Booking>();
     }
 
 
@@ -120,6 +123,7 @@ public class BookingController extends Controller {
 
     // add to as we complete our use cases
     private void addBooking(Booking b) {
+        bookings.add(b);
 
     }
 

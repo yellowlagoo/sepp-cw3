@@ -1,19 +1,20 @@
 package controller;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import model.User;
 import model.AdminStaff;
 import model.EntertainmentProvider;
-import model.Student;
-import model.User;
+import view.View;
 
 public abstract class Controller {
     private User currentUser;
+    protected View view;
 
-    /**
-     * Constructor for the Controller class
-     * @param currentUser - the user currently interacting with the system
-     */
-    public Controller(User currentUser) {
+    public Controller(User currentUser, View view) {
         this.currentUser = currentUser;
+        this.view = view;
     }
 
     public User getCurrentUser() {
@@ -57,5 +58,21 @@ public abstract class Controller {
         return currentUser instanceof EntertainmentProvider;
     }
 
-    // TODO: add selectFromMenu
+    protected <T> int getMenuOption(List<T> options, String prompt) {
+        List<T> menuOptions = new ArrayList<>(options);
+
+        System.out.println(prompt);
+
+        for (int i = 0; i < menuOptions.size(); i++) {
+            System.out.println((i + 1) + ". " + menuOptions.get(i).toString());
+
+        }
+
+        String option = view.getInput("Enter option number: ");
+        return Integer.parseInt(option);
+    
+    }
+
+    
+    
 }

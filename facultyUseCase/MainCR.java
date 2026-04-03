@@ -25,7 +25,7 @@ public class MainCR {
         }
 
         // Account created — first login
-        faculty.increaseLoginAttempts();
+        faculty.incrementLoginAttempts();
         System.out.println("Welcome! Your faculty account has been created.");
 
         System.out.println("Logged in as: " + faculty.getEmail());
