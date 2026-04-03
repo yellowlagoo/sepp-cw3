@@ -100,9 +100,70 @@ public class BookingController extends Controller {
         } 
     }
 
-    //@TODO finish
+    /**
+     * Adds a student's review and rating to a performance that they have booked in the past
+     */
     public void reviewPerformance() {
-        // This is one of our assigned use cases for task 1 (Toni's)
+        if(!checkCurrentUserIsStudent()){
+            view.displayError("Only students may review a performance");
+            return;
+        }
+        else{
+            String performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
+            long performanceID = Long.parseLong(performanceIDinput);
+            Performance performanceToReview = getPerformanceByID(performanceID);
+
+            //Ensure performance with ID exists, reprompting user if not
+            while(performanceToReview == null){
+                view.displayError("A performance with the given ID does not exist. Please enter a new ID.");
+                performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
+                performanceID = Long.parseLong(performanceIDinput);
+                performanceToReview = getPerformanceByID(performanceID);
+            }
+
+            //Ensure performance has a booking corresponding to the student, reprompting user if not
+            String currentEmail = getCurrentUser().getEmail();
+            boolean belongsToStudent = false;
+            for(Booking b : performanceToReview.getBookings()){
+                if(b.checkBookedByStudent(currentEmail))
+                    belongsToStudent = true;
+            }
+            while(!belongsToStudent){
+                view.displayError("You have not created a booking for this performance. Please enter a new performance ID.");
+                performanceIDinput = view.getInput("Enter the ID of the performance you want to cancel: ");
+                performanceID = Long.parseLong(performanceIDinput);
+                performanceToReview = getPerformanceByID(performanceID);
+
+                for(Booking b : performanceToReview.getBookings()){
+                    if(b.checkBookedByStudent(currentEmail))
+                        belongsToStudent = true;
+                }
+            }
+
+            //Ask student for rating, providing an error upon invalid rating
+            boolean valid = false;
+            int rating = -1;
+            while (!valid) {
+                String ratingInput = view.getInput("Please enter a rating 1-5 for the performance: ");
+
+                try {
+                    rating = Integer.parseInt(ratingInput);
+
+                    if (rating < 1 || rating > 5)
+                        view.displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
+                    else
+                        valid = true;
+                } 
+                catch (NumberFormatException e) {
+                    view.displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
+                }
+            }
+
+            String comment = view.getInput("You may enter a comment for the review. Please press enter if you do not want to " +
+                                            "add a comment, otherwise type your comment here: ");
+            performanceToReview.review(rating, comment);
+            view.displaySuccess("You have successfully reviewed the performance. Thank you!");
+        }
     }
 
     /**
@@ -118,16 +179,24 @@ public class BookingController extends Controller {
             long bookingID = Long.parseLong(bookingIDinput);
             Booking bookingToCancel = getBookingByNumber(bookingID);
             
-            //Ensure booking with given number exists and belongs to user, reprompting user if not
-            String currentEmail = getCurrentUser().getEmail();
-            boolean belongsToStudent = false; 
-            if(bookingToCancel != null)
-                belongsToStudent = bookingToCancel.checkBookedByStudent(currentEmail);
-            while(bookingToCancel == null || !belongsToStudent){
-                view.displayError("Booking with given number does not exist. Please enter a valid booking number: ");
+            //Ensure booking with given number exists, reprompting user if not
+            while(bookingToCancel == null){
+                view.displayError("Booking with given number does not exist. Please enter a valid booking number.");
                 bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
                 bookingID = Long.parseLong(bookingIDinput);
                 bookingToCancel = getBookingByNumber(bookingID);
+            }
+
+            //Ensure booking belongs to user, reprompting if not
+            String currentEmail = getCurrentUser().getEmail();
+            boolean belongsToStudent = bookingToCancel.checkBookedByStudent(currentEmail);
+            while(!belongsToStudent){
+                view.displayError("This booking does not belong to you. Please enter a new booking number.");
+                bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
+                bookingID = Long.parseLong(bookingIDinput);
+                bookingToCancel = getBookingByNumber(bookingID);
+
+                belongsToStudent = bookingToCancel.checkBookedByStudent(currentEmail);
             }
 
             //Ensure booking is at least 24 hours away, ending cancellation if not
@@ -141,7 +210,7 @@ public class BookingController extends Controller {
             //Refund payment, notifying student if there is an issue with processing refund
             boolean refunded = paymentSystem.processRefund(bookingToCancel.getNumTickets(), bookingToCancel.getPerformance().getEventTitle(), 
                                                         bookingToCancel.getStudent().getEmail(), bookingToCancel.getStudent().getPhoneNumber(), 
-                                                        bookingToCancel.getPerformance().getOrganizerEmail(), bookingToCancel.getAmountPaid());
+                                                        bookingToCancel.getPerformance().getOrganizerEmail(), bookingToCancel.getAmountPaid(), "");
             if(refunded){
                 view.displaySuccess("The booking for the booking ID " + bookingID + " was successfully cancelled and refunded");
                 bookingToCancel.cancelByStudent();
@@ -229,4 +298,3 @@ public class BookingController extends Controller {
         return null;
     }
 }
-
