@@ -1,13 +1,17 @@
 package controller;
 
-import model.User;
 import model.AdminStaff;
-import model.Student;
 import model.EntertainmentProvider;
+import model.Student;
+import model.User;
 
 public abstract class Controller {
     private User currentUser;
 
+    /**
+     * Constructor for the Controller class
+     * @param currentUser - the user currently interacting with the system
+     */
     public Controller(User currentUser) {
         this.currentUser = currentUser;
     }
@@ -23,7 +27,6 @@ public abstract class Controller {
     /**
      * Checks whether or not the current user is a guest, meaning they are not
      * logged in yet
-     * 
      * @return - whether or not the current user is a guest
      */
     protected boolean checkCurrentUserIsGuest() {
@@ -32,7 +35,6 @@ public abstract class Controller {
 
     /**
      * Checks whether or not the current user is an admin staff
-     * 
      * @return - whether or not the current user is an admin staff
      */
     protected boolean checkCurrentUserIsAdmin() {
@@ -41,7 +43,6 @@ public abstract class Controller {
 
     /**
      * Checks whether or not the current user is a student
-     * 
      * @return - whether or not the current user is a student
      */
     protected boolean checkCurrentUserIsStudent() {
@@ -50,7 +51,6 @@ public abstract class Controller {
 
     /**
      * Checks whether or not the current user is an entertainment provider
-     * 
      * @return - whether or not the current user is an entertainment provider
      */
     protected boolean checkCurrentUserIsEntertainmentProvider() {

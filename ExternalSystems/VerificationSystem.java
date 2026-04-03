@@ -1,4 +1,4 @@
 package externalsystems;
-interface VerificationSystem{
+public interface VerificationSystem{
 
 }

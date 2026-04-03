@@ -64,7 +64,7 @@ public class BookingController extends Controller {
         String eventTitle = performance.getEventTitle();
         String studentEmail = s.getEmail();
         Integer studentPhone = s.getPhoneNumber();
-        String epEmail = performance.getOrganiserEmail();
+        String epEmail = performance.getOrganizerEmail();
         double transactionAmount = performance.getFinalTicketPrice() * numTickets;
 
          boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, studentPhone, epEmail, transactionAmount); // This error is due to the processPayment not being defined as of yet in the PaymentSystem etc
@@ -90,8 +90,32 @@ public class BookingController extends Controller {
         // This is one of our assigned use cases for task 1 (Toni's)
     }
 
+    /**
+     * Cancels the booking of the current booking number when the student that booked it chooses to cancel
+     */
     public void cancelBooking() {
-        // This is one of our assigned use cases for task 1 (Amelia's)
+        if(!checkCurrentUserIsStudent()) {
+            view.displayError("Only students may cancel a booking");
+            return;
+        }
+        else{
+            String bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
+            long bookingID = Long.parseLong(bookingIDinput);
+            Booking bookingToCancel = getBookingByNumber(bookingID);
+            
+            //Ensure booking with given number exists and belongs to user, reprompting user if not
+            String currentEmail = getCurrentUser().getEmail();
+            boolean belongsToStudent = false; 
+            if(bookingToCancel != null)
+                belongsToStudent = bookingToCancel.checkBookedByStudent(currentEmail);
+            while(bookingToCancel == null || !belongsToStudent){
+                view.displayError("Booking with given number does not exist. Please enter a valid booking number: ");
+                bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
+                bookingID = Long.parseLong(bookingIDinput);
+                bookingToCancel = getBookingByNumber(bookingID);
+            }
+
+        }
     }
 
     // add to as we complete our use cases
@@ -136,6 +160,7 @@ public class BookingController extends Controller {
     }
 
     private Booking getBookingByNumber(long bookingNumber) {
+        //iterate thru performances
         return null;
     }
 
