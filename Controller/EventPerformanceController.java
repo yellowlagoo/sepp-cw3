@@ -8,6 +8,7 @@ public class EventPerformanceController extends Controller {
     private long nextEventID;
     private long nextPerformanceID;
     private PaymentSystem paymentSystem;
+    private Event event;
 
     public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID, PaymentSystem paymentSystem, View view) {
 
@@ -20,18 +21,18 @@ public class EventPerformanceController extends Controller {
 
     // Task 1 Use cases
 
-    public Event createEvent(String organizer, String title, String type, long eventID, Boolean isTicketed) {
+    public Event createEvent(EntertainmentProvider organizer, long eventID, String title, EventType type, boolean isTicketed) {
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.event = newEvent;
         return newEvent;
         // This is a use case for task 1 (Karina's)
     }
 
-    public Performance searchForPerformances(long performanceID) {
+    public Performance searchForPerformances() {
         // this is a use cae for task 1 (Karina's)
         String performanceIDInput = view.getInput("Enter ID of performance to view");
         long performanceID = Long.parseLong(performanceIDInput);
-        Performance performance = event.getPerformanceByID(performanceID);
+        Performance performance = this.event.getPerformanceByID(performanceID);
         return performance;
     }
 
