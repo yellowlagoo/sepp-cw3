@@ -1,7 +1,10 @@
 package Controller;
 
+import java.util.Collection;
+
 import Model.*;
-import ExternalSystems.PaymentSystem;
+import ExternalSystems.*;
+import View.*;
 
 public class EventPerformanceController extends Controller {
 
@@ -9,19 +12,22 @@ public class EventPerformanceController extends Controller {
     private long nextPerformanceID;
     private PaymentSystem paymentSystem;
     private Event event;
+    private Collection<Performance> performances;
 
-    public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID, PaymentSystem paymentSystem, View view) {
+    public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID,
+            PaymentSystem paymentSystem, View view, Collection<Performance> performances) {
 
         super(currentUser, view);
         this.nextEventID = nextEventID;
         this.nextPerformanceID = nextPerformanceID;
         this.paymentSystem = paymentSystem;
+        this.performances = performances;
     }
-
 
     // Task 1 Use cases
 
-    public Event createEvent(EntertainmentProvider organizer, long eventID, String title, EventType type, boolean isTicketed) {
+    public Event createEvent(EntertainmentProvider organizer, long eventID, String title, EventType type,
+            boolean isTicketed) {
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.event = newEvent;
         return newEvent;
@@ -57,7 +63,6 @@ public class EventPerformanceController extends Controller {
 
     }
 
-
     // cancelPerformance() Use case (Michael's)
     public void cancelPerformance() {
 
@@ -67,40 +72,40 @@ public class EventPerformanceController extends Controller {
 
         while (performance == null || sameEP == false || hasNotHappenedYet == false) {
 
-        String performanceIDInput = view.getInput("Enter ID of performance to cancel");
-        long performanceID = Long.parseLong(performanceIDInput);
-        
-        performance = getPerformanceByID(performanceID);
+            String performanceIDInput = view.getInput("Enter ID of performance to cancel");
+            long performanceID = Long.parseLong(performanceIDInput);
 
-        if (performance == null) {
-            view.displayError("Performance with given number does not exist");
-            continue;
+            performance = getPerformanceByID(performanceID);
+
+            if (performance == null) {
+                view.displayError("Performance with given number does not exist");
+                continue;
+            }
+
+            EntertainmentProvider currEP = (EntertainmentProvider) getCurrentUser();
+
+            String currEp = currEP.getEmail();
+
+            sameEP = performance.checkCreatedByEP(currEp);
+
+            if (sameEP == false) {
+                view.displayError("The performance with given number does not belong to you");
+                continue;
+            }
+
+            hasNotHappenedYet = performance.checkHasNotHappenedYet();
+
+            if (hasNotHappenedYet == false) {
+
+                view.displayError("Performance cant't be cancelled as it has already happened");
+                continue;
+
+            }
         }
-
-        EntertainmentProvider currEP = (EntertainmentProvider) getCurrentUser();
-        
-        String currEp = currEP.getEmail();
-
-        sameEP = performance.checkCreatedByEP(currEp);
-
-        if (sameEP == false) {
-            view.displayError("The performance with given number does not belong to you");
-            continue;
-        }
-
-        hasNotHappenedYet = performance.checkHasNotHappenedYet();
-
-        if (hasNotHappenedYet == false) {
-
-            view.displayError("Performance cant't be cancelled as it has already happened");
-            continue;
-
-        }
-    }
 
         String organiserMessage = null;
 
-        while (organiserMessage == null || organiserMessage.isEmpty()){
+        while (organiserMessage == null || organiserMessage.isEmpty()) {
 
             String organiserMessageInpt = view.getInput("Provide a cancellation message for affected students:");
             organiserMessage = organiserMessageInpt;
@@ -112,7 +117,7 @@ public class EventPerformanceController extends Controller {
 
             }
         }
-            
+
         boolean hasActiveBookings = performance.hasActiveBookings();
 
         if (hasActiveBookings == true) {
@@ -132,7 +137,8 @@ public class EventPerformanceController extends Controller {
                 double transactionAmount = Double.parseDouble(lines[2]);
                 int numTickets = Integer.parseInt(lines[3]);
 
-                boolean refundSuccessful = paymentSystem.processRefund(numTickets, eventTitle, studentEmail, studentPhone, emailEP, transactionAmount, organiserMessage);
+                boolean refundSuccessful = paymentSystem.processRefund(numTickets, eventTitle, studentEmail,
+                        studentPhone, emailEP, transactionAmount, organiserMessage);
 
                 if (refundSuccessful == false) {
                     view.displayError("There was an issue with a refund.  The performance cannot be cancelled");
@@ -140,7 +146,7 @@ public class EventPerformanceController extends Controller {
                 }
             }
 
-            for (Booking b: performance.getBookings()) {
+            for (Booking b : performance.getBookings()) {
 
                 if (b.getStatus() == BookingStatus.ACTIVE) {
 
@@ -149,8 +155,8 @@ public class EventPerformanceController extends Controller {
                 }
             }
         }
-            performance.cancel();
-            view.displaySuccess("Cancellation successful!");
+        performance.cancel();
+        view.displaySuccess("Cancellation successful!");
     }
 
     private boolean checkIfSponsorshipPossible(Performance performance, int amount) {
@@ -181,9 +187,12 @@ public class EventPerformanceController extends Controller {
     }
 
     private Performance getPerformanceByID(long performanceID) {
+        for (Performance p : performances) {
+            if (p.getPerformanceID() == performanceID) {
+                return p;
+            }
+        }
         return null;
     }
-
-    
 
 }
