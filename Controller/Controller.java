@@ -4,12 +4,15 @@ import model.User;
 import model.AdminStaff;
 import model.Student;
 import model.EntertainmentProvider;
+import view.View;
 
 public abstract class Controller {
     private User currentUser;
+    protected View view;
 
-    public Controller(User currentUser) {
+    public Controller(User currentUser, View view) {
         this.currentUser = currentUser;
+        this.view = view;
     }
 
     public User getCurrentUser() {

@@ -187,10 +187,6 @@ public class EventPerformanceController extends Controller {
         return null;
     }
 
-<<<<<<< HEAD
     
 
 }
-=======
-}
->>>>>>> 528d7008933f76715f7c74f27def0ab4ade6c621
