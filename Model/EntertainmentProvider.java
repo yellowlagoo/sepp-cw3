@@ -11,6 +11,15 @@ public class EntertainmentProvider extends User {
     private String description;
     private Collection<Event> events;
 
+    /**
+     * Constructor for the EntertainmentProvider class
+     * @param email - the entertainment provider's email
+     * @param password - the entertainment provider's password
+     * @param orgName - the name of the entertainment provider's business
+     * @param businessNumber - the official business number of the organization
+     * @param name - the name of the main contact for the business
+     * @param description - a description of the business
+     */
     public EntertainmentProvider(String email, String password, String orgName, String businessNumber, String name,
             String description) {
         super(email, password);
@@ -22,6 +31,7 @@ public class EntertainmentProvider extends User {
 
     }
 
+    //Getters and setters
     public String getOrgName() {
         return orgName;
     }
