@@ -154,12 +154,8 @@ public class Event{
         performances.add(p);
     }
 
-    //FINISH
+    @Override
     public String toString(){
-        /*
-    private boolean isTicketed;
-
-         */
         String ticketed;
         if(isTicketed)
             ticketed = "The event is ticketed";
@@ -170,7 +166,8 @@ public class Event{
         + "\nEvent ID: " + eventID
         + "\nEvent Title: " + title
         + "\nEvent Type: " + type
-        + "\n" + ticketed;
+        + "\n" + ticketed
+        + "\nThere are " + performances.size() + " performances for this event";
     }
 
     // Getters and setters
