@@ -5,5 +5,15 @@ public enum EventType {
     THEATRE,
     DANCE,
     MOVIE,
-    SPORTS
+    SPORTS;
+
+    public static EventType findByName(String name) {
+        for (EventType type : values()) {
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }
+

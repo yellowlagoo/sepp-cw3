@@ -32,27 +32,33 @@ public class EventPerformanceController extends Controller {
         String eventIDInput = view.getInput("Enter ID of event to view");
 
         long eventID = Long.parseLong(eventIDInput);
-        // added error handling 
+        // added handling 
 
         String title = view.getInput("Enter title of event");
 
         String typeInput = view.getInput("Enter event type");
+        try {
+            EventType type = EventType.findByName(typeInput);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("This is an invalid event type");
+        }
 
         String isTicketedInput = view.getInput("Is the event ticketed?");
+        Boolean isTicketed = null;
         try {
             isTicketedInput = isTicketedInput.toLowerCase();
             if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
-                Boolean isTicketed = Boolean.parseBoolean(isTicketedInput);
+                isTicketed = Boolean.parseBoolean(isTicketedInput);
             } else {
                 throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
             }
-            Boolean isTicketed = ("True".equals(isTicketedInput) || "False".equals(isTicketedInput));
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("Is ticketed can't be empty");
         }
-        
+
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.event = newEvent;
+        EventType eventType = EventType.DANCE;
         return newEvent;
         // This is a use case for task 1 (Karina's)
     }
