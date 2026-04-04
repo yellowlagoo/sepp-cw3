@@ -1,6 +1,8 @@
 package src.Model;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 public class Performance {
@@ -55,8 +57,8 @@ public class Performance {
         this.ticketPrice = ticketPrice;
         isSponsored = false;
         sponsoredAmount = 0;
-        reviewRating = Collections.emptyList(); 
-        reviewComments = Collections.emptyList();
+        reviewRating = new ArrayList<>();
+        reviewComments = new ArrayList<>();
         status = PerformanceStatus.ACTIVE;
         this.event = event;
         bookings = new ArrayList<>();
@@ -294,7 +296,7 @@ public class Performance {
                 double amountPaid = b.getAmountPaid();
                 int numTickets = b.getNumTickets();
 
-                details += studentdetails + "\n " + amountPaid + "\n " + numTickets + "\n\n";
+                details += studentdetails + "\n" + amountPaid + "\n" + numTickets + "\n\n";
             }
         }
         return details;
