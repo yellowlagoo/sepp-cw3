@@ -1,12 +1,16 @@
 package Controller;
 
 import Model.*;
-import View.View;
+import View.*;
+import facultyUseCase.RegistrationUtility;
 import ExternalSystems.VerificationSystem;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ArrayList;
 
 public class UserController extends Controller {
 
@@ -14,26 +18,29 @@ public class UserController extends Controller {
     public static final String PREREGISTERED_ADMIN_FILE_PATH = "preregistered_admins.csv";
 
     private final VerificationSystem verificationSystem;
+    private Collection<User> users;
 
     // we dont have a general model
-    public UserController(Model model, View view, VerificationSystem verificationSystem) {
-        super(model, view);
+    public UserController(User currentUser, View view, VerificationSystem verificationSystem, Collection<User> users) {
+        super(currentUser, view);
         this.verificationSystem = verificationSystem;
+        this.users = new ArrayList<>();
     }
 
     public void login() {
         String email = view.getInput("Enter email:");
         String password = view.getInput("Enter password:");
 
-        User user = model.getUserByEmail(email);
+        for (User u : users) {
 
-        if (user == null || !user.getPassword().equals(password)) {
-            view.displayError("Invalid email or password. Please try again.");
-            return;
+            if (u == null || !u.getPassword().equals(password)) {
+                view.displayError("Invalid email or password. Please try again.");
+                return;
+            }
+
+            String currentUser = u;
+            view.displaySuccess("Welcome back, " + getDisplayName(u) + "!");
         }
-
-        currentUser = user;
-        view.displaySuccess("Welcome back, " + getDisplayName(user) + "!");
     }
 
     /**
@@ -95,15 +102,22 @@ public class UserController extends Controller {
     }
 
     public void addPreregisteredUsers() {
+
+        // will add the loaded students and admin to the predefined empty array list
+
         loadStudents();
         loadAdmins();
     }
 
     private void loadStudents() {
 
+        // need to loop throug the students txt file and store them
+
     }
 
     private void loadAdmins() {
+
+        // need to loop through the admins txt file and store them
 
     }
 

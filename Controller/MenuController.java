@@ -3,7 +3,6 @@ package Controller;
 import java.util.List;
 import java.util.ArrayList;
 import View.View;
-
 import Model.User;
 
 public class MenuController extends Controller {
