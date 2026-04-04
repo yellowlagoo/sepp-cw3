@@ -1,37 +1,51 @@
 package Controller;
 
+import ExternalSystems.*;
+import Model.*;
+import View.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
-import Model.*;
-import ExternalSystems.*;
-import View.*;
-
 public class EventPerformanceController extends Controller {
-
     private long nextEventID;
     private long nextPerformanceID;
     private PaymentSystem paymentSystem;
     private Event event;
     private Collection<Performance> performances;
 
+    /**
+     * Constructor for the EventPerformanceController class
+     * @param currentUser - the current user of the system
+     * @param nextEventID - the next ID to be given to an event
+     * @param nextPerformanceID - the next ID to be given to a performance
+     * @param paymentSystem - the payment system to be interfaced with
+     * @param view - the user interface of the system
+     */
     public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID,
-            PaymentSystem paymentSystem, View view, Collection<Performance> performances) {
+            PaymentSystem paymentSystem, View view) {
 
         super(currentUser, view);
         this.nextEventID = nextEventID;
         this.nextPerformanceID = nextPerformanceID;
         this.paymentSystem = paymentSystem;
-        this.performances = performances;
+        performances = new ArrayList<>();
     }
 
-    // Task 1 Use cases
-
+    /**
+     * 
+     * @param organizer
+     * @param eventID
+     * @param title
+     * @param type
+     * @param isTicketed
+     * @return
+     */
     public Event createEvent(EntertainmentProvider organizer, long eventID, String title, EventType type,
             boolean isTicketed) {
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.event = newEvent;
+        nextEventID++;
         return newEvent;
-        // This is a use case for task 1 (Karina's)
     }
 
     public Performance searchForPerformances() {
@@ -160,12 +174,43 @@ public class EventPerformanceController extends Controller {
     }
 
     private boolean checkIfSponsorshipPossible(Performance performance, int amount) {
-        return false;
-        // this will likely be used for toni's use case below
+        boolean ticketed = performance.getEvent().isTicketed();
+        if(!ticketed){
+            view.displayError("The requested performance's event is nonticketed. It cannot be sponsored.");
+            return false;
+        }
+        else if(amount < 0 || amount > performance.getFinalTicketPrice()){
+            view.displayError("The amount provided is invalid.");
+            return false;
+        }
+        return true;
     }
 
     public void sponsorPerformance() {
-        // This is a use case of task 1 (Toni's)
+        Performance performance = null;
+        boolean possible = false;
+        int amount = 0;
+
+        while(performance == null || possible == false){
+            String performanceIDinput = view.getInput("Enter performance ID: ");
+            long performanceID = Long.parseLong(performanceIDinput);
+            performance = getPerformanceByID(performanceID);
+
+            if(performance == null){
+                view.displayError("Performance with given number does not exist");
+            }
+            else{
+                String amountInput = view.getInput("Enter amount to sponsor by: ");
+                amount = Integer.parseInt(amountInput);
+                possible = checkIfSponsorshipPossible(performance, amount);
+            }
+        }
+
+        performance.sponsor(amount);
+        performance.setSponsored(true);
+        performance.setSponsoredAmount(amount);
+
+        view.displaySuccess("Sponsorship successfully processed.");
     }
 
     // Would be better to implement these as we do our use cases ???
