@@ -6,4 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPerformance {
 
+    @Test
+    void testTrue() {
+        assertTrue(true);
+    }
 }
+
+
