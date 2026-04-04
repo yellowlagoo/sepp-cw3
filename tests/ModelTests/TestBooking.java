@@ -1,10 +1,10 @@
 package ModelTests;
 
-import org.junit.jupiter.api.Test;         
-import org.junit.jupiter.api.BeforeEach;      
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
-import Model.Booking;
+import Model.Booking; 
 
 public class TestBooking {
     private Booking booking;
@@ -13,4 +13,7 @@ public class TestBooking {
     public void setUp() {
 
     }
+
+    @Test
+    
 }
