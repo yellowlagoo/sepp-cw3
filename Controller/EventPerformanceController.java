@@ -50,8 +50,6 @@ public class EventPerformanceController extends Controller {
     // Task 1 Use cases
 
     public Event createEvent() {
-        String organizer = view.getInput("Enter organizer to view");
-
         String eventIDInput = view.getInput("Enter ID of event to view");
 
         long eventID = Long.parseLong(eventIDInput);
@@ -80,14 +78,9 @@ public class EventPerformanceController extends Controller {
             throw new IllegalArgumentException("Is ticketed can't be empty");
         }
 
-        Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
-<<<<<<< HEAD
-        this.event = newEvent;
-        EventType eventType = EventType.DANCE;
->>>>>>> 44e79d12e44578e9e87433f770d628a698edddf0
-=======
+        Event newEvent = new Event(super(currentUser), eventID, title, type, isTicketed);
+
         // call add event with this new event 
->>>>>>> 2eb7803 (error handling)
         return newEvent;
     }
 
