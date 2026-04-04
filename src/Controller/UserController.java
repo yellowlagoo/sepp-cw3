@@ -126,22 +126,23 @@ public class UserController extends Controller {
     }
 
     public void editPreferences() {
-        if (!checkCurrentUserIsStudent()) {
+        if (!super.checkCurrentUserIsStudent()) {
             view.displayError("Only students can edit preferences.");
             return;
         }
 
         Student student = (Student) super.getCurrentUser();
         StudentPreferences preferences = student.getPreferences();
+
         System.out.println("Current preferences: " + preferences.toString());
-        System.out.println("Available categories: music, theatre, dance, movie, sports");
+        System.out.println("Available categories: music, theatre, dance, movie, sports.");
 
         String raw = view.getInput("Enter new preferences (comma-separated, e.g. music, dance):");
 
         if (preferences.updatePreferences(raw)) {
             view.displaySuccess("Preferences updated: " + preferences.toString());
         } else {
-            view.displayError("One or more preference values were not recognised. No changes made.");
+            view.displayError("An error occurred while updating preferences.");
         }
     }
 
