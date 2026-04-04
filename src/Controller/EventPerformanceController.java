@@ -1,10 +1,9 @@
-package Controller;
+package src.Controller;
 
-import ExternalSystems.*;
-import Model.*;
-import View.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import src.ExternalSystems.*;
+import src.Model.*;
+import src.View.*;
+import java.util.*;
 
 public class EventPerformanceController extends Controller {
     private long nextEventID;

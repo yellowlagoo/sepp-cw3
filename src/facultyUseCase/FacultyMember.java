@@ -1,4 +1,4 @@
-package facultyUseCase;
+package src.facultyUseCase;
 
 public class FacultyMember extends User {
 

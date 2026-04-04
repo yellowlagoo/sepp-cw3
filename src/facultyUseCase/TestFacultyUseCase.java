@@ -1,4 +1,4 @@
-package facultyUseCase;
+package src.facultyUseCase;
 
 import java.io.IOException;
 import java.nio.file.Files;

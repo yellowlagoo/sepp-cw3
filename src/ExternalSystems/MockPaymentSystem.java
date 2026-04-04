@@ -1,4 +1,4 @@
-package ExternalSystems;
+package src.ExternalSystems;
 
 public class MockPaymentSystem implements PaymentSystem{
 

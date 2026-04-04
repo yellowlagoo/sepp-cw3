@@ -1,4 +1,4 @@
-package facultyUseCase; 
+package src.facultyUseCase; 
 
 import java.util.Scanner; 
 

@@ -1,10 +1,7 @@
-package Controller;
+package src.Controller;
 
-import Model.AdminStaff;
-import Model.EntertainmentProvider;
-import Model.Student;
-import Model.User;
-import View.View;
+import src.Model.*;
+import src.View.*;
 import java.util.ArrayList;
 import java.util.List;
 

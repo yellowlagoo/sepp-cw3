@@ -1,7 +1,7 @@
-package Controller;
+package src.Controller;
 
-import Model.User;
-import View.View;
+import src.Model.User;
+import src.View.View;
 import java.util.ArrayList;
 import java.util.List;
 

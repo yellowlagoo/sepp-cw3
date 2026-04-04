@@ -1,6 +1,5 @@
-package View;
-import java.util.Collection;
-import java.util.Scanner;
+package src.View;
+import java.util.*;
 
 public class TextUserInterface implements View {
     @Override

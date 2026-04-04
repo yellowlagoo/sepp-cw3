@@ -1,8 +1,8 @@
-package Controller;
+package src.Controller;
 
 public enum GuestMenuOptions {
 
     LOGIN,
-    REGISTER_EP
+    REGISTER_EP;
 
 }

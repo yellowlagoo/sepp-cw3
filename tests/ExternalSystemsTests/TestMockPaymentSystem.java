@@ -1,4 +1,4 @@
-package ExternalSystemsTests;
+package tests.ExternalSystemsTests;
 
 import org.junit.jupiter.api.Test;         
 import org.junit.jupiter.api.BeforeEach;      

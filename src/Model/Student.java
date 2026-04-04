@@ -1,9 +1,7 @@
-package Model; 
+package src.Model; 
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import Model.StudentPreferences;
 
 public class Student extends User {
     private String name;

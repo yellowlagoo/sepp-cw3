@@ -1,4 +1,4 @@
-package Model; 
+package src.Model; 
 
 public class StudentPreferences {
     private boolean preferMusicEvents;
@@ -42,7 +42,7 @@ public class StudentPreferences {
             // return false also if there is an element that is not music theater dance movie or sports 
         }
         throw new IllegalArgumentException("The inputted preference string is empty");
-        return false;
+        //return false;
         
     }
 

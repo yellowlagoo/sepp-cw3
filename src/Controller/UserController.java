@@ -1,9 +1,9 @@
-package Controller;
+package src.Controller;
 
-import Model.*;
-import View.*;
-import facultyUseCase.RegistrationUtility;
-import ExternalSystems.VerificationSystem;
+import src.Model.*;
+import src.View.*;
+import src.facultyUseCase.RegistrationUtility;
+import src.ExternalSystems.VerificationSystem;
 
 import java.io.*;
 import java.util.*;
