@@ -5,12 +5,13 @@ import View.*;
 import facultyUseCase.RegistrationUtility;
 import ExternalSystems.VerificationSystem;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
+
+import javax.imageio.IIOException;
+
+import org.omg.CORBA.SystemException;
+
 
 public class UserController extends Controller {
 
@@ -23,23 +24,78 @@ public class UserController extends Controller {
     // we dont have a general model
     public UserController(User currentUser, View view, VerificationSystem verificationSystem, Collection<User> users) {
         super(currentUser, view);
+        super.getCurrentUser().setLoggedIn(false);
         this.verificationSystem = verificationSystem;
         this.users = new ArrayList<>();
     }
 
     public void login() {
+        if (super.getCurrentUser().isLoggedIn()) return;
+
         String email = view.getInput("Enter email:");
+        if (email == null || email.equals("")) {
+            view.displayError("Email can't be empty");
+            throw new IllegalArgumentException("Email can't be empty");
+        }
+
         String password = view.getInput("Enter password:");
+        if (password == null || password.equals("")) {
+            view.displayError("Password can't be empty");
+            throw new IllegalArgumentException("Password can't be empty");
+        }
+        
+        String fileName = super.checkCurrentUserIsAdmin()? PREREGISTERED_ADMIN_FILE_PATH : PREREGISTERED_USERS_FILE_PATH;
+        // check if users credentials is in the file 
+        // assumptions for file structure:
+        // email, password 
+        // password contains no commas 
+        // each email only appears once 
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line;
+            List<String> elements = new ArrayList<String>();
+            Boolean found = false;
 
-        for (User u : users) {
+            while ((line = br.readLine()) != null) {
+                elements = Arrays.asList(line.split(","));
+                if (elements.size() != 2) {
+                    //malformed input on this line  
+                    throw new Exception("Malformed line in the file " + fileName + ".");
+                }
 
-            if (u == null || !u.getPassword().equals(password)) {
-                view.displayError("Invalid email or password. Please try again.");
-                return;
+                // check if email equals first and password equals second 
+                String parsedEmail = elements.get(0);
+                String parsedPassword = elements.get(1);
+                //error handling for empty vals 
+                if (parsedEmail.equals(email)) {
+                    found = parsedPassword.equals(password);
+                    if (!found) {
+                        view.displayError("Password is incorrect.");
+                    } else {
+                        super.getCurrentUser().setLoggedIn(true);
+                        view.displaySuccess("Login successful!");
+                    }
+                    break;
+                    // if the email is found whether or not the password is correct we are done 
+                }
+
             }
 
-            String currentUser = u;
-            view.displaySuccess("Welcome back, " + getDisplayName(u) + "!");
+        } catch (IOException e) {
+            // handle specific errors 
+            // io exeption on reading 
+            // file not found on opening br 
+            FileNotFoundException f = new FileNotFoundException();
+            IOException i = new IOException();
+            if (e.equals(f)) {
+                System.err.println("The file " + fileName + " could not be found.")
+            } else if (e.equals(i)) {
+               // throw new IOException("An error occurred while reading the file");
+                System.err.println("An error occured while reading the file " + fileName + ".");
+            } else {
+                throw new Error("An error occurred while logging in");
+            }
+            
         }
     }
 
@@ -48,7 +104,7 @@ public class UserController extends Controller {
      * MenuController propagates the null to all other controllers afterwards.
      */
     public void logout() {
-        currentUser = null;
+        super.getCurrentUser().setLoggedIn(false);
         view.displaySuccess("You have been logged out successfully.");
     }
 
