@@ -1,4 +1,4 @@
-package src.Model; 
+package Model; 
 
 public abstract class User {
     private String email;
