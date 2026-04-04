@@ -10,7 +10,7 @@ public class EventPerformanceController extends Controller {
     private long nextEventID;
     private long nextPerformanceID;
     private PaymentSystem paymentSystem;
-    private Collection<Performance> events;
+    private Collection<Event> events;
     private Collection<Performance> performances;
 
     /**
@@ -37,38 +37,43 @@ public class EventPerformanceController extends Controller {
      * @return event that was created
      */
     public Event createEvent() {
-        String eventIDInput = view.getInput("Enter ID of event to view");
+        if (super.checkCurrentUserIsEntertainmentProvider()) {
+            EntertainmentProvider organizer = (EntertainmentProvider) super.getCurrentUser();
+            
+            String eventIDInput = view.getInput("Enter ID of event to view");
 
-        long eventID = Long.parseLong(eventIDInput);
+            long eventID = Long.parseLong(eventIDInput);
 
-        String title = view.getInput("Enter title of event");
+            String title = view.getInput("Enter title of event");
 
-        //make sure declaring variables as null does not prematurely cause a NullPointerException 
-        String typeInput = view.getInput("Enter event type");
-        EventType type = null;
-        try {
-            type = EventType.findByName(typeInput);
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("This is an invalid event type");
-        }
-
-        String isTicketedInput = view.getInput("Is the event ticketed?");
-        Boolean isTicketed = null;
-        try {
-            isTicketedInput = isTicketedInput.toLowerCase();
-            if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
-                isTicketed = Boolean.parseBoolean(isTicketedInput);
-            } else {
-                throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
+            //make sure declaring variables as null does not prematurely cause a NullPointerException 
+            String typeInput = view.getInput("Enter event type");
+            EventType type = null;
+            try {
+                type = EventType.findByName(typeInput);
+            } catch (NullPointerException e) {
+                throw new IllegalArgumentException("This is an invalid event type");
             }
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Is ticketed can't be empty");
+
+            String isTicketedInput = view.getInput("Is the event ticketed?");
+            Boolean isTicketed = null;
+            try {
+                isTicketedInput = isTicketedInput.toLowerCase();
+                if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
+                    isTicketed = Boolean.parseBoolean(isTicketedInput);
+                } else {
+                    throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
+                }
+            } catch (NullPointerException e) {
+                throw new IllegalArgumentException("Is ticketed can't be empty");
+            }
+            
+            Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
+            this.addEvent(newEvent);
+            return newEvent;
+        } else {
+            throw new Error("the current user is not ");
         }
-
-        Event newEvent = new Event(super(currentUser), eventID, title, type, isTicketed);
-
-        // call add event with this new event 
-        return newEvent;
     }
 
     public Performance searchForPerformances() {
@@ -239,7 +244,7 @@ public class EventPerformanceController extends Controller {
     // Would be better to implement these as we do our use cases ???
 
     private void addEvent(Event e) {
-
+        this.events.add(e);
     }
 
     private void addPerformance(Performance p) {
