@@ -13,7 +13,7 @@ public class Student extends User {
      * @param email - the student's email
      * @param password - the student's password
      * @param name - the student's name
-     * @param phonenumber - the student's phone number
+     * @param phoneNumber - the student's phone number
      */
     public Student(String email, String password, String name, int phoneNumber) {
         super(email, password);
