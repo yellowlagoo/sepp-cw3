@@ -8,9 +8,9 @@ public class AdminStaff extends User{
      * @param email - the staff member's email
      * @param password - the staff member's password
      */
-    public AdminStaff(String email, String password, String name){
+    public AdminStaff(String email, String password){
         super(email, password); 
-        this.name = name; 
+        this.name = ""; 
     }
 
     public String getName() {

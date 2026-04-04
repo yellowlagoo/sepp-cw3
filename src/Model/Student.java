@@ -16,10 +16,10 @@ public class Student extends User {
      * @param name - the student's name
      * @param phoneNumber - the student's phone number
      */
-    public Student(String email, String password, String name, int phoneNumber) {
+    public Student(String email, String password) {
         super(email, password);
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.name = "";
+        this.phoneNumber = -1;
         this.bookings = new ArrayList<>();
         this.preferences = new StudentPreferences();
     }

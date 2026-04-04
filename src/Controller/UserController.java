@@ -146,27 +146,74 @@ public class UserController extends Controller {
         }
     }
 
-    public void addPreregisteredUsers() {
-
-        // will add the loaded students and admin to the predefined empty array list 
-
-        loadStudents();
-        loadAdmins();
-    }
-
-    private void loadStudents() {
-
-        // need to loop throug the students txt file and store them
-        // ./filename
+    private void addPreregisteredUsers() {
+        // add all users to an array 
+        // read the files and create a user for each one, then add them to the collection of users 
+        // if in admin create admin 
+        // filename, user type
+        // assume preregistered students only need email to be created 
+       List<Student> students = this.loadStudents(PREREGISTERED_USERS_FILE_PATH);
+       List<AdminStaff> admin = this.loadAdmin(PREREGISTERED_ADMIN_FILE_PATH);
 
     }
 
-    private void loadAdmins() {
-
-        // need to loop through the admins txt file and store them
-        // ./filename
-
+    private List<Student> loadStudents(String fileName) {
+        List<Student> students = new ArrayList<Student>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = br.readLine()) != null) {
+                List<String> elements = Arrays.asList((line.trim()).split(","));
+                this.validate(elements, fileName); // do i need this in a try catch or will it be caught by the outer try catch 
+                Student parsed = new Student(elements.get(0), elements.get(1));
+                this.addUser(parsed);
+            }
+        } catch (Exception f) {
+            //errorHandling(f);
+            //file not found - fileReader 
+            //io exception - readline 
+            //illegal argument exception when parsing lines 
+            if (f.equals(new IllegalArgumentException())) {
+                return students;
+            }
+            throw new Error("file not found");
+        }
+        return students;
     }
+
+    private List<AdminStaff> loadAdmin(String fileName) {
+        List<AdminStaff> admin = new ArrayList<AdminStaff>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = br.readLine()) != null) {
+                List<String> elements = Arrays.asList((line.trim()).split(","));
+                this.validate(elements, fileName); // do i need this in a try catch or will it be caught by the outer try catch 
+                AdminStaff parsed = new AdminStaff(elements.get(0), elements.get(1));
+                this.addUser(parsed);
+            }
+        } catch (Exception f) {
+            //file not found - fileReader 
+            //io exception - readline 
+            //illegal argument exception when parsing lines 
+            if (f.equals(new IllegalArgumentException())) {
+                return admin;
+            }
+            throw new Error("file not found");
+        }
+        return admin;
+    }
+
+    private void validate(List<String> elements, String fileName) {
+        if (elements == null || elements.isEmpty()) {
+            throw new IllegalArgumentException("This line is empty in the file + " + fileName + ".");
+        }
+
+        if (elements.size() != 2) {
+            throw new IllegalArgumentException("The line is malformed. Ensure the line follows the structure : <email>, <password>. File: " + fileName);
+        }
+    }
+
 
     /** Delegates duplicate-check to the model. */
     private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
@@ -174,11 +221,11 @@ public class UserController extends Controller {
     }
 
     private void addUser(User user) {
-        model.addUser(user);
+        this.addUser(user);
     }
 
-    public EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
-        for (User u : model.getUsers()) {
+    private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
+        for (User u : this.getUsers()) {
             if (u instanceof EntertainmentProvider) {
                 EntertainmentProvider ep = (EntertainmentProvider) u;
                 for (Event e : ep.getEvents()) {
