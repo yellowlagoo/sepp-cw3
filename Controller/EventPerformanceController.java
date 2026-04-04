@@ -31,24 +31,11 @@ public class EventPerformanceController extends Controller {
         performances = new ArrayList<>();
     }
 
-<<<<<<< HEAD
     /**
      * 
-     * @param organizer
-     * @param eventID
-     * @param title
-     * @param type
-     * @param isTicketed
-     * @return
+     * 
+     * @return event that was created
      */
-    public Event createEvent(EntertainmentProvider organizer, long eventID, String title, EventType type,
-            boolean isTicketed) {
-        Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
-        this.event = newEvent;
-        nextEventID++;
-=======
-    // Task 1 Use cases
-
     public Event createEvent() {
         String eventIDInput = view.getInput("Enter ID of event to view");
 
