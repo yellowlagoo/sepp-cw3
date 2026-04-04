@@ -1,4 +1,4 @@
-package Model; 
+package src.Model; 
 import java.time.LocalDateTime;
 
 public class Booking {
