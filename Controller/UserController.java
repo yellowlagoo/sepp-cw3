@@ -85,11 +85,9 @@ public class UserController extends Controller {
             // handle specific errors 
             // io exeption on reading 
             // file not found on opening br 
-            FileNotFoundException f = new FileNotFoundException();
-            IOException i = new IOException();
-            if (e.equals(f)) {
+            if (e.equals(new FileNotFoundException())) {
                 System.err.println("The file " + fileName + " could not be found.")
-            } else if (e.equals(i)) {
+            } else if (e.equals(new IOException())) {
                // throw new IOException("An error occurred while reading the file");
                 System.err.println("An error occured while reading the file " + fileName + ".");
             } else {
