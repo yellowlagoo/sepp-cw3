@@ -28,8 +28,11 @@ public class StudentPreferences {
      * @param studentRawStringPreferences
      * @return - whether or not the preferences have been successfully updated
      */
-    public boolean updatePreferences(String studentRawStringPreferences){
-        if (studentRawStringPreferences != null && !studentRawStringPreferences.equals("")){
+    public boolean updatePreferences(String studentRawStringPreferences) {
+        // comma separated list 
+        validatePreferences(studentRawStringPreferences);
+        if (studentRawStringPreferences != null && !studentRawStringPreferences.equals("")) {
+
             studentRawStringPreferences = studentRawStringPreferences.toLowerCase();
         
             preferMusicEvents = studentRawStringPreferences.contains("music");
@@ -41,9 +44,20 @@ public class StudentPreferences {
             return true;
             // return false also if there is an element that is not music theater dance movie or sports 
         }
-        throw new IllegalArgumentException("The inputted preference string is empty");
+        
         //return false;
         
+    }
+
+    private Boolean validatePreferences(String str) {
+        Boolean isValid = false;
+        if (str == null || str.equals("")) {
+            isValid = false;
+            //throw new IllegalArgumentException("The inputted preference string is empty");
+        } 
+        //check if string contains an element that is not music theater dance movie sports 
+        List<String> elements = new ArrayList()<String>;
+        return isValid;
     }
 
     //Getters and setters

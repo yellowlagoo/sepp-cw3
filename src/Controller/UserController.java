@@ -66,12 +66,11 @@ public class UserController extends Controller {
                 String parsedPassword = elements.get(1);
                 //error handling for empty vals 
                 if (parsedEmail.equals(email)) {
-                    found = parsedPassword.equals(password);
-                    if (!found) {
-                        view.displayError("Password is incorrect.");
-                    } else {
+                    if (parsedPassword.equals(password)) {
                         super.getCurrentUser().setLoggedIn(true);
-                        view.displaySuccess("Login successful!");
+                        view.displaySuccess("Login successful.");
+                    } else {
+                        view.displayError("Password is incorrect.");
                     }
                     break;
                     // if the email is found whether or not the password is correct we are done 
@@ -80,14 +79,10 @@ public class UserController extends Controller {
             }
 
         } catch (Exception e) {
-            // handle specific errors 
-            // io exeption on reading 
-            // file not found on opening br 
             if (e.equals(new FileNotFoundException())) {
                 System.err.println("The file " + fileName + " could not be found.");
             } else if (e.equals(new IOException())) {
-               // throw new IOException("An error occurred while reading the file");
-                System.err.println("An error occured while reading the file " + fileName + ".");
+                System.err.println("An error occurred while reading the file " + fileName + ".");
             } else {
                 throw new Error("An error occurred while logging in");
             }
