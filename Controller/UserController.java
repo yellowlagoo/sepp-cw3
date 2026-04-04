@@ -88,7 +88,7 @@ public class UserController extends Controller {
             return;
         }
 
-        Student student = (Student) super.getCurrentUser();
+        Student student = (Student) currentUser;
         System.out.println("Current preferences: " + student.getPreferences());
         System.out.println("Available categories: music, theatre, dance, movie, sports");
 
