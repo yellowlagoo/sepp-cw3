@@ -112,12 +112,14 @@ public class UserController extends Controller {
     private void loadStudents() {
 
         // need to loop throug the students txt file and store them
+        // ./filename
 
     }
 
     private void loadAdmins() {
 
         // need to loop through the admins txt file and store them
+        // ./filename
 
     }
 
