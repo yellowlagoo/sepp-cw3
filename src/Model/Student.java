@@ -3,25 +3,34 @@ package Model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import Model.StudentPreferences;
+
 public class Student extends User {
     private String name;
     private int phoneNumber;
     private Collection<Booking> bookings;
+    private StudentPreferences preferences;
 
     /**
      * Constructor for the student class
      * @param email - the student's email
      * @param password - the student's password
      * @param name - the student's name
-     * @param phonenumber - the student's phone number
+     * @param phoneNumber - the student's phone number
      */
     public Student(String email, String password, String name, int phoneNumber) {
         super(email, password);
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.bookings = new ArrayList<>();
+        this.preferences = new StudentPreferences();
     }
-
+    public StudentPreferences getPreferences() {
+        return this.preferences;
+    }
+    public void setPreferences(String rawInput) {
+        preferences.updatePreferences(rawInput);
+    }
     // Getters and Setters
     public String getName() {
         return name;

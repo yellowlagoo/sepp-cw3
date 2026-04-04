@@ -15,13 +15,12 @@ public class StudentPreferences {
      * @param preferMovieEvents - whether the student prefers movie events
      * @param preferSportsEvents - whether the student prefers sports events
      */
-    public StudentPreferences(boolean preferMusicEvents, boolean preferTheaterEvents, boolean preferDanceEvents,
-            boolean preferMovieEvents, boolean preferSportsEvents) {
-        this.preferMusicEvents = preferMusicEvents;
-        this.preferTheaterEvents = preferTheaterEvents;
-        this.preferDanceEvents = preferDanceEvents;
-        this.preferMovieEvents = preferMovieEvents;
-        this.preferSportsEvents = preferSportsEvents;
+    public StudentPreferences() {
+        this.preferMusicEvents = false;
+        this.preferTheaterEvents = false;
+        this.preferDanceEvents = false;
+        this.preferMovieEvents = false;
+        this.preferSportsEvents = false;
     }
     
     /**
@@ -30,15 +29,21 @@ public class StudentPreferences {
      * @return - whether or not the preferences have been successfully updated
      */
     public boolean updatePreferences(String studentRawStringPreferences){
-        studentRawStringPreferences = studentRawStringPreferences.toLowerCase();
+        if (studentRawStringPreferences != null && !studentRawStringPreferences.equals("")){
+            studentRawStringPreferences = studentRawStringPreferences.toLowerCase();
         
-        preferMusicEvents = studentRawStringPreferences.contains("music");
-        preferTheaterEvents = studentRawStringPreferences.contains("theater") || studentRawStringPreferences.contains("theatre");
-        preferDanceEvents = studentRawStringPreferences.contains("dance");
-        preferMovieEvents = studentRawStringPreferences.contains("movie");
-        preferSportsEvents = studentRawStringPreferences.contains("sports");
+            preferMusicEvents = studentRawStringPreferences.contains("music");
+            preferTheaterEvents = studentRawStringPreferences.contains("theater") || studentRawStringPreferences.contains("theatre");
+            preferDanceEvents = studentRawStringPreferences.contains("dance");
+            preferMovieEvents = studentRawStringPreferences.contains("movie");
+            preferSportsEvents = studentRawStringPreferences.contains("sports");
 
-        return true;
+            return true;
+            // return false also if there is an element that is not music theater dance movie or sports 
+        }
+        throw new IllegalArgumentException("The inputted preference string is empty");
+        return false;
+        
     }
 
     //Getters and setters
@@ -80,5 +85,11 @@ public class StudentPreferences {
 
     public void setPreferSportsEvents(boolean preferSportsEvents) {
         this.preferSportsEvents = preferSportsEvents;
+    }
+
+    public String toString() {
+        String preferenceShell = "Dance: %s, Movie: %s, Music: %s, Sports: %s, Theater: %s";
+        String preferences = String.format(preferenceShell, prefersDanceEvents(), prefersMovieEvents(), prefersMusicEvents(), prefersSportsEvents(), prefersTheaterEvents());
+        return preferences;
     }
 }

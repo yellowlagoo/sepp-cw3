@@ -20,7 +20,7 @@ public class UserController extends Controller {
     private Collection<User> users;
 
     // we dont have a general model
-    public UserController(User currentUser, View view, VerificationSystem verificationSystem, Collection<User> users) {
+    public UserController(User currentUser, View view, VerificationSystem verificationSystem) {
         super(currentUser, view);
         super.getCurrentUser().setLoggedIn(false);
         this.verificationSystem = verificationSystem;
@@ -84,7 +84,7 @@ public class UserController extends Controller {
             // io exeption on reading 
             // file not found on opening br 
             if (e.equals(new FileNotFoundException())) {
-                System.err.println("The file " + fileName + " could not be found.")
+                System.err.println("The file " + fileName + " could not be found.");
             } else if (e.equals(new IOException())) {
                // throw new IOException("An error occurred while reading the file");
                 System.err.println("An error occured while reading the file " + fileName + ".");
@@ -95,10 +95,6 @@ public class UserController extends Controller {
         }
     }
 
-    /**
-     * Clears the current session (sets currentUser to null).
-     * MenuController propagates the null to all other controllers afterwards.
-     */
     public void logout() {
         super.getCurrentUser().setLoggedIn(false);
         view.displaySuccess("You have been logged out successfully.");
@@ -131,7 +127,7 @@ public class UserController extends Controller {
                 email, password, orgName, businessNumber, name, description);
         addUser(ep);
 
-        view.displaySuccess("Entertainment Provider account created for '" + orgName + "'!");
+        view.displaySuccess("Entertainment Provider account created for '" + orgName + "!");
     }
 
     public void editPreferences() {
@@ -140,14 +136,15 @@ public class UserController extends Controller {
             return;
         }
 
-        Student student = (Student) currentUser;
-        System.out.println("Current preferences: " + student.getPreferences());
+        Student student = (Student) super.getCurrentUser();
+        StudentPreferences preferences = student.getPreferences();
+        System.out.println("Current preferences: " + preferences.toString());
         System.out.println("Available categories: music, theatre, dance, movie, sports");
 
-        String raw = view.getInput("Enter new preferences (comma-separated, e.g. music,dance):");
+        String raw = view.getInput("Enter new preferences (comma-separated, e.g. music, dance):");
 
-        if (student.getPreferences().updatePreferences(raw)) {
-            view.displaySuccess("Preferences updated: " + student.getPreferences());
+        if (preferences.updatePreferences(raw)) {
+            view.displaySuccess("Preferences updated: " + preferences.toString());
         } else {
             view.displayError("One or more preference values were not recognised. No changes made.");
         }
@@ -155,7 +152,7 @@ public class UserController extends Controller {
 
     public void addPreregisteredUsers() {
 
-        // will add the loaded students and admin to the predefined empty array list
+        // will add the loaded students and admin to the predefined empty array list 
 
         loadStudents();
         loadAdmins();
