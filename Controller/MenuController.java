@@ -1,9 +1,9 @@
 package Controller;
 
-import java.util.List;
-import java.util.ArrayList;
-import View.View;
 import Model.User;
+import View.View;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuController extends Controller {
 
