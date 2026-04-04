@@ -1,4 +1,6 @@
 package src.Model; 
+import java.util.*;
+import src.Model.*;
 
 public class StudentPreferences {
     private boolean preferMusicEvents;
@@ -30,34 +32,32 @@ public class StudentPreferences {
      */
     public boolean updatePreferences(String studentRawStringPreferences) {
         // comma separated list 
-        validatePreferences(studentRawStringPreferences);
-        if (studentRawStringPreferences != null && !studentRawStringPreferences.equals("")) {
-
-            studentRawStringPreferences = studentRawStringPreferences.toLowerCase();
-        
-            preferMusicEvents = studentRawStringPreferences.contains("music");
-            preferTheaterEvents = studentRawStringPreferences.contains("theater") || studentRawStringPreferences.contains("theatre");
-            preferDanceEvents = studentRawStringPreferences.contains("dance");
-            preferMovieEvents = studentRawStringPreferences.contains("movie");
-            preferSportsEvents = studentRawStringPreferences.contains("sports");
-
-            return true;
-            // return false also if there is an element that is not music theater dance movie or sports 
+        try {
+            validatePreferences(studentRawStringPreferences);
+        } catch (IllegalArgumentException e) {
+            return false;
         }
-        
-        //return false;
-        
+        studentRawStringPreferences = studentRawStringPreferences.toLowerCase();
+        preferMusicEvents = studentRawStringPreferences.contains("music");
+        preferTheaterEvents = studentRawStringPreferences.contains("theater") || studentRawStringPreferences.contains("theatre");
+        preferDanceEvents = studentRawStringPreferences.contains("dance");
+        preferMovieEvents = studentRawStringPreferences.contains("movie");
+        preferSportsEvents = studentRawStringPreferences.contains("sports");
+        return true;
     }
 
-    private Boolean validatePreferences(String str) {
-        Boolean isValid = false;
+    private void validatePreferences(String str) {
         if (str == null || str.equals("")) {
-            isValid = false;
-            //throw new IllegalArgumentException("The inputted preference string is empty");
+            throw new IllegalArgumentException("The inputted preference string is empty");
         } 
-        //check if string contains an element that is not music theater dance movie sports 
-        List<String> elements = new ArrayList()<String>;
-        return isValid;
+        
+        List<String> elements = Arrays.asList((str.trim()).split(","));
+
+        for (int i = 0; i < elements.size(); i++) {
+            if (EventType.findByName(elements.get(i)) == null) {
+                throw new IllegalArgumentException("There is at least one preference that is not recognized");
+            }
+        }
     }
 
     //Getters and setters
