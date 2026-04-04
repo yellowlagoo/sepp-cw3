@@ -26,8 +26,31 @@ public class EventPerformanceController extends Controller {
 
     // Task 1 Use cases
 
-    public Event createEvent(EntertainmentProvider organizer, long eventID, String title, EventType type,
-            boolean isTicketed) {
+    public Event createEvent() {
+        String organizer = view.getInput("Enter organizer to view");
+
+        String eventIDInput = view.getInput("Enter ID of event to view");
+
+        long eventID = Long.parseLong(eventIDInput);
+        // added error handling 
+
+        String title = view.getInput("Enter title of event");
+
+        String typeInput = view.getInput("Enter event type");
+
+        String isTicketedInput = view.getInput("Is the event ticketed?");
+        try {
+            isTicketedInput = isTicketedInput.toLowerCase();
+            if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
+                Boolean isTicketed = Boolean.parseBoolean(isTicketedInput);
+            } else {
+                throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
+            }
+            Boolean isTicketed = ("True".equals(isTicketedInput) || "False".equals(isTicketedInput));
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Is ticketed can't be empty");
+        }
+        
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.event = newEvent;
         return newEvent;
