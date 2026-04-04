@@ -155,6 +155,9 @@ public class UserController extends Controller {
        List<Student> students = this.loadStudents(PREREGISTERED_USERS_FILE_PATH);
        List<AdminStaff> admin = this.loadAdmin(PREREGISTERED_ADMIN_FILE_PATH);
 
+        //maybe change return type to true or false or have some sort of error handling here
+       
+
     }
 
     private List<Student> loadStudents(String fileName) {
