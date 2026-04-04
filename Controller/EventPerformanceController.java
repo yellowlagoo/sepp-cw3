@@ -10,7 +10,7 @@ public class EventPerformanceController extends Controller {
     private long nextEventID;
     private long nextPerformanceID;
     private PaymentSystem paymentSystem;
-    private Event event;
+    private Collection<Performance> events;
     private Collection<Performance> performances;
 
     /**
@@ -55,13 +55,14 @@ public class EventPerformanceController extends Controller {
         String eventIDInput = view.getInput("Enter ID of event to view");
 
         long eventID = Long.parseLong(eventIDInput);
-        // added handling 
 
         String title = view.getInput("Enter title of event");
 
+        //make sure declaring variables as null does not prematurely cause a NullPointerException 
         String typeInput = view.getInput("Enter event type");
+        EventType type = null;
         try {
-            EventType type = EventType.findByName(typeInput);
+            type = EventType.findByName(typeInput);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("This is an invalid event type");
         }
@@ -80,9 +81,13 @@ public class EventPerformanceController extends Controller {
         }
 
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
+<<<<<<< HEAD
         this.event = newEvent;
         EventType eventType = EventType.DANCE;
 >>>>>>> 44e79d12e44578e9e87433f770d628a698edddf0
+=======
+        // call add event with this new event 
+>>>>>>> 2eb7803 (error handling)
         return newEvent;
     }
 
