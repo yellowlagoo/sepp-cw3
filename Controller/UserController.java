@@ -79,7 +79,7 @@ public class UserController extends Controller {
 
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             // handle specific errors 
             // io exeption on reading 
             // file not found on opening br 
