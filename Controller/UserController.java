@@ -8,8 +8,6 @@ import ExternalSystems.VerificationSystem;
 import java.io.*;
 import java.util.*;
 
-import javax.imageio.IIOException;
-
 import org.omg.CORBA.SystemException;
 
 
