@@ -31,6 +31,7 @@ public class EventPerformanceController extends Controller {
         performances = new ArrayList<>();
     }
 
+<<<<<<< HEAD
     /**
      * 
      * @param organizer
@@ -45,6 +46,43 @@ public class EventPerformanceController extends Controller {
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.event = newEvent;
         nextEventID++;
+=======
+    // Task 1 Use cases
+
+    public Event createEvent() {
+        String organizer = view.getInput("Enter organizer to view");
+
+        String eventIDInput = view.getInput("Enter ID of event to view");
+
+        long eventID = Long.parseLong(eventIDInput);
+        // added handling 
+
+        String title = view.getInput("Enter title of event");
+
+        String typeInput = view.getInput("Enter event type");
+        try {
+            EventType type = EventType.findByName(typeInput);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("This is an invalid event type");
+        }
+
+        String isTicketedInput = view.getInput("Is the event ticketed?");
+        Boolean isTicketed = null;
+        try {
+            isTicketedInput = isTicketedInput.toLowerCase();
+            if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
+                isTicketed = Boolean.parseBoolean(isTicketedInput);
+            } else {
+                throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
+            }
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Is ticketed can't be empty");
+        }
+
+        Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
+        this.event = newEvent;
+        EventType eventType = EventType.DANCE;
+>>>>>>> 44e79d12e44578e9e87433f770d628a698edddf0
         return newEvent;
     }
 
