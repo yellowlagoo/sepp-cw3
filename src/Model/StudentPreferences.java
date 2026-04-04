@@ -1,6 +1,5 @@
 package src.Model; 
 import java.util.*;
-import src.Model.*;
 
 public class StudentPreferences {
     private boolean preferMusicEvents;
@@ -50,7 +49,7 @@ public class StudentPreferences {
         if (str == null || str.equals("")) {
             throw new IllegalArgumentException("The inputted preference string is empty");
         } 
-        
+
         List<String> elements = Arrays.asList((str.trim()).split(","));
 
         for (int i = 0; i < elements.size(); i++) {
