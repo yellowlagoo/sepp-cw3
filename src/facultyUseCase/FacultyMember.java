@@ -1,18 +1,20 @@
 package src.facultyUseCase;
 
 public class FacultyMember extends User {
-
     private int loginAttempts;
 
-
-
-    //should this be just initialized to zero? (no parameter)
+    /**
+     * Constructor for the Faculty Member class
+     * Initializes the login attempts to 0 as a faculty member object will only be created upon first login attempt
+     * @param email - the faculty member's email
+     * @param password - the faculty member's password
+     */
     public FacultyMember(String email, String password) {
         super(email, password);
         this.loginAttempts = 0;
     }
 
-    // call every time a log in is attempted for the account 
+    // Called every time a log in is attempted for the account 
     public void incrementLoginAttempts(){
         this.loginAttempts++; 
     }
@@ -24,7 +26,4 @@ public class FacultyMember extends User {
     public boolean isFirstLogin(){
         return loginAttempts == 1; 
     }
-    
-
-    
 }
