@@ -1,6 +1,8 @@
 package src.Model; 
 import java.time.LocalDateTime;
 
+import src.Model.BookingStatus;
+
 public class Booking {
     private long bookingNumber;
     private int numTickets;
@@ -20,12 +22,12 @@ public class Booking {
      * @param performance - the performance student is booking
      */
     public Booking(long bookingNumber, int numTickets, double amountPaid, LocalDateTime bookingDateTime,
-            BookingStatus status, Student student, Performance performance) {
+                Student student, Performance performance) {
         this.bookingNumber = bookingNumber;
         this.numTickets = numTickets;
         this.amountPaid = amountPaid; 
         this.bookingDateTime = bookingDateTime;
-        this.status = status;
+        status = BookingStatus.ACTIVE;
         this.student = student;
         this.performance = performance;
     }

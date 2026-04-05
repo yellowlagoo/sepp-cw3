@@ -67,7 +67,7 @@ public class BookingController extends Controller {
         //Create booking
         Student s = (Student) getCurrentUser();
         Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, 
-                                LocalDateTime.now(), BookingStatus.ACTIVE, s, performance);
+                                LocalDateTime.now(), s, performance);
         addBooking(b);
         performance.addBooking(b);
 
