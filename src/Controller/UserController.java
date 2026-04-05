@@ -39,11 +39,11 @@ public class UserController extends Controller {
             //throw new NullPointerException("Password can't be empty");
             return;
         }
-        // check if users credentials is in the file 
         // assumptions for file structure:
-        // email, password 
-        // password contains no commas 
-        // each email only appears once 
+            // email, password 
+            // password contains no commas 
+            // each email only appears once 
+            // check if users credentials is in the file 
         String readForStudent = this.readFileForUser(PREREGISTERED_USERS_FILE_PATH, email, password);
         // if current user's email and password match then we have successfully 
         String notFound = "User not found";
@@ -84,8 +84,10 @@ public class UserController extends Controller {
                     if (parsedPassword.equals(password)) {
                         if (fileName.equals(PREREGISTERED_USERS_FILE_PATH)) {
                             this.setCurrentUser(new Student(email, password));
-                        } else {
+                        } else if (fileName.equals(PREREGISTERED_ADMIN_FILE_PATH)) {
                             this.setCurrentUser(new AdminStaff(email, password));
+                        } else {
+                            return "Error parsing the file: unrecognized file " + fileName + ".";
                         }
                         this.getCurrentUser().setLoggedIn(true);
                         return "User exists: login successful";
