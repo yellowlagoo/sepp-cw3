@@ -146,7 +146,7 @@ public class BookingController extends Controller {
             view.displayError(errStr.equals(super.getErrMsg())? "Must be logged in to review performance." : errStr);
         } catch (NumberFormatException e) {
             view.displayError("You must enter an integer rating between 1 and 5 for your review.");
-            String retry = (view.getInput("Would you like to retry? (y/n not case sensitve)")).toLowerCase();
+            String retry = (view.getInput("Would you like to retry? (y/n not case sensitive)")).toLowerCase();
             if (retry != null && retry.equals("y")) {
                 this.promptRating(performanceToReview);
             }

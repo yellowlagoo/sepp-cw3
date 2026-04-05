@@ -5,6 +5,8 @@ import src.Model.*;
 import src.View.*;
 import java.util.*;
 
+import javax.crypto.NullCipher;
+
 public class EventPerformanceController extends Controller {
     private long nextEventID;
     private long nextPerformanceID;
@@ -14,16 +16,14 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Constructor for the EventPerformanceController class
-     * @param currentUser - the current user of the system
      * @param nextEventID - the next ID to be given to an event
      * @param nextPerformanceID - the next ID to be given to a performance
      * @param paymentSystem - the payment system to be interfaced with
      * @param view - the user interface of the system
      */
-    public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID,
+    public EventPerformanceController(long nextEventID, long nextPerformanceID,
             PaymentSystem paymentSystem, TextUserInterface view) {
-
-        super(currentUser, view);
+        super(view);
         this.nextEventID = nextEventID;
         this.nextPerformanceID = nextPerformanceID;
         this.paymentSystem = paymentSystem;
@@ -36,72 +36,77 @@ public class EventPerformanceController extends Controller {
      * @return event that was created
      */
     public Event createEvent() {
-        if (super.checkCurrentUserIsEntertainmentProvider()) {
-            EntertainmentProvider organizer = (EntertainmentProvider) super.getCurrentUser();
-            
-            String eventIDInput = view.getInput("Enter ID of event to view");
-
-            long eventID = Long.parseLong(eventIDInput);
-
-            String title = view.getInput("Enter title of event");
-
-            //make sure declaring variables as null does not prematurely cause a NullPointerException 
-            String typeInput = view.getInput("Enter event type");
-            EventType type = null;
-            try {
-                type = EventType.findByName(typeInput);
-            } catch (NullPointerException e) {
-                throw new IllegalArgumentException("This is an invalid event type");
+        try {
+            if (!super.checkCurrentUserIsAdmin()) {
+                return null;
             }
-
-            String isTicketedInput = view.getInput("Is the event ticketed?");
-            Boolean isTicketed = null;
-            try {
-                isTicketedInput = isTicketedInput.toLowerCase();
-                if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
-                    isTicketed = Boolean.parseBoolean(isTicketedInput);
-                } else {
-                    throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
-                }
-            } catch (NullPointerException e) {
-                throw new IllegalArgumentException("Is ticketed can't be empty");
-            }
-            
-            Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
-            this.addEvent(newEvent);
-            return newEvent;
-        } else {
-            throw new Error("the current user is not ");
+        } catch (NullPointerException e) {
+            view.displayError("Must be logged in to create an event");
+            throw new NullPointerException(super.getErrMsg()); 
         }
+        EntertainmentProvider organizer = (EntertainmentProvider) this.getCurrentUser();
+        
+        String eventIDInput = view.getInput("Enter ID of event to view");
+
+        long eventID = Long.parseLong(eventIDInput);
+
+        String title = view.getInput("Enter title of event");
+
+        //make sure declaring variables as null does not prematurely cause a NullPointerException 
+        String typeInput = view.getInput("Enter event type");
+        EventType type = null;
+        try {
+            type = EventType.findByName(typeInput);
+        } catch (NullPointerException e) {
+            view.displayError("This is an invalid event type");
+            throw new IllegalArgumentException("This is an invalid event type");
+        }
+
+        String isTicketedInput = view.getInput("Is the event ticketed?");
+        Boolean isTicketed = null;
+        try {
+            isTicketedInput = isTicketedInput.toLowerCase();
+            if ("true".equals(isTicketedInput) || "false".equals(isTicketedInput)) {
+                isTicketed = Boolean.parseBoolean(isTicketedInput);
+            } else {
+                throw new IllegalArgumentException("Is ticketed must be True or False (not case sensitive).");
+            }
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Is ticketed can't be empty");
+        }
+        
+        Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
+        this.addEvent(newEvent);
+        return newEvent;
     }
 
     public Performance searchForPerformances() {
         // this is a use cae for task 1 (Karina's)
         String performanceIDInput = view.getInput("Enter ID of performance to view");
-        long performanceID = Long.parseLong(performanceIDInput);
-        Performance performance = this.event.getPerformanceByID(performanceID);
-        return performance;
+        try {
+            long performanceID = Long.parseLong(performanceIDInput);
+            return getPerformanceByID(performanceID);
+        } catch (NullPointerException e) {
+            view.displayError("Search failed: performance ID must be non empty");
+            throw new NullPointerException("Search failed: performance ID must be non empty");
+        } catch (NumberFormatException e) {
+            view.displayError("Search failed: performance ID must be a number");
+            throw new IllegalArgumentException("Search failed: performance ID must be a number");
+        }
     }
 
     // viewPerformance() (Michael's)
     public void viewPerformance() {
-
         String performanceIDInput = view.getInput("Enter ID of performance to view");
         long performanceID = Long.parseLong(performanceIDInput);
-
-        Performance performance = getPerformanceByID(performanceID);
-
-        if (performance == null) {
-            view.displayError("Performance with given number does not exits");
-            return;
-        }
-
-        else {
-
+        try {
+            Performance performance = getPerformanceByID(performanceID);
             view.displaySpecificPerformance(performance.toString());
-
+        } catch (NullPointerException e) {
+            view.displayError("Performance with given number does not exits");
+        } catch (NumberFormatException e) {
+            view.displayError("Performance ID must be a number");
         }
-
     }
 
     // cancelPerformance() Use case (Michael's)
@@ -137,32 +142,26 @@ public class EventPerformanceController extends Controller {
             hasNotHappenedYet = performance.checkHasNotHappenedYet();
 
             if (hasNotHappenedYet == false) {
-
                 view.displayError("Performance cant't be cancelled as it has already happened");
                 continue;
-
             }
         }
 
         String organiserMessage = null;
 
         while (organiserMessage == null || organiserMessage.isEmpty()) {
-
             String organiserMessageInpt = view.getInput("Provide a cancellation message for affected students:");
             organiserMessage = organiserMessageInpt;
 
             if (organiserMessage.isEmpty()) {
-
                 view.displayError("Please provide a non-empty cancellation message for the students");
                 continue;
-
             }
         }
 
         boolean hasActiveBookings = performance.hasActiveBookings();
 
         if (hasActiveBookings == true) {
-
             String eventTitle = performance.getEventTitle();
             EntertainmentProvider ep = (EntertainmentProvider) getCurrentUser();
             String emailEP = ep.getEmail();
@@ -171,7 +170,6 @@ public class EventPerformanceController extends Controller {
             String[] bookingEntries = bookingDetailsForRefund.split("\n\n");
 
             for (String bookingEntry : bookingEntries) {
-
                 String[] lines = bookingEntry.split("\n");
                 String studentEmail = lines[0];
                 int studentPhone = Integer.parseInt(lines[1]);
@@ -188,11 +186,8 @@ public class EventPerformanceController extends Controller {
             }
 
             for (Booking b : performance.getBookings()) {
-
                 if (b.getStatus() == BookingStatus.ACTIVE) {
-
                     b.cancelByProvider();
-
                 }
             }
         }
@@ -247,14 +242,24 @@ public class EventPerformanceController extends Controller {
     }
 
     private void addPerformance(Performance p) {
-
+        this.performances.add(p);
     }
 
     private Event getEventByID(long eventID) {
+        for (Event e : this.events) {
+            if (e.getEventID() == eventID) {
+                return e;
+            }
+        }
         return null;
     }
 
     private Event getEventByTitle(String title) {
+        for (Event e : this.events) {
+            if (e.getTitle() == title) {
+                return e;
+            }
+        }
         return null;
     }
 
