@@ -22,8 +22,8 @@ public class BookingController extends Controller {
      * @param paymentSystem - the payment system used to process payments for bookings
      * @param view - the view used to interact with the user
      */
-    public BookingController(User currentUser, PaymentSystem paymentSystem, TextUserInterface view) {
-        super(currentUser, view);
+    public BookingController(PaymentSystem paymentSystem, TextUserInterface view) {
+        super(view);
         this.nextBookingNumber = 0;
         this.performances = new ArrayList<Performance>();
         this.paymentSystem = paymentSystem; 
@@ -167,9 +167,8 @@ public class BookingController extends Controller {
     public void cancelBooking() {
         if(!checkCurrentUserIsStudent()) {
             view.displayError("Only students may cancel a booking");
-            return;
-        }
-        else{
+            throw new IllegalArgumentException("Only students may cancel a booking");
+        } else {
             String bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
             long bookingID = Long.parseLong(bookingIDinput);
             Booking bookingToCancel = getBookingByNumber(bookingID);

@@ -14,14 +14,14 @@ public abstract class Controller {
         currentUser = null;
     }
 
-    public User getCurrentUser() {
+    protected User getCurrentUser() {
         if (currentUser == null) {
-            view.displayError(errMsg);
-            throw new IllegalArgumentException(errMsg);
+            throw new NullPointerException(errMsg);
         }
         return this.currentUser;
     }
-    public void setCurrentUser(User currentUser) {
+
+    protected void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -32,8 +32,7 @@ public abstract class Controller {
      */
     protected boolean checkCurrentUserIsGuest() {
         if (currentUser == null) {
-            view.displayError(errMsg);
-            throw new IllegalArgumentException(errMsg);
+            throw new NullPointerException(errMsg);
         }
         return currentUser.isLoggedIn() == false;
     }
@@ -44,8 +43,7 @@ public abstract class Controller {
      */
     protected boolean checkCurrentUserIsAdmin() {
         if (currentUser == null) {
-            view.displayError(errMsg);
-            throw new IllegalArgumentException(errMsg);
+            throw new NullPointerException(errMsg);
         }
         return currentUser instanceof AdminStaff;
     }
@@ -56,8 +54,7 @@ public abstract class Controller {
      */
     protected boolean checkCurrentUserIsStudent() {
         if (currentUser == null) {
-            view.displayError(errMsg);
-            throw new IllegalArgumentException(errMsg);
+            throw new NullPointerException(errMsg);
         }
         return currentUser instanceof Student;
     }
@@ -68,8 +65,7 @@ public abstract class Controller {
      */
     protected boolean checkCurrentUserIsEntertainmentProvider() {
         if (currentUser == null) {
-            view.displayError(errMsg);
-            throw new IllegalArgumentException(errMsg);
+            throw new NullPointerException(errMsg);
         }
         return currentUser instanceof EntertainmentProvider;
     }
@@ -88,7 +84,5 @@ public abstract class Controller {
         return Integer.parseInt(option);
     
     }
-
-    
     
 }
