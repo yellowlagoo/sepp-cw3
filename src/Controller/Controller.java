@@ -9,6 +9,7 @@ public abstract class Controller {
     private User currentUser;
     protected TextUserInterface view;
     private String errMsg = "Please set the current user before accessing it's attributes.";
+
     public Controller(TextUserInterface view) {
         this.view = view;
         currentUser = null;
@@ -83,6 +84,10 @@ public abstract class Controller {
         String option = view.getInput("Enter option number: ");
         return Integer.parseInt(option);
     
+    }
+
+    public String getErrMsg() {
+        return this.errMsg;
     }
     
 }
