@@ -2,13 +2,11 @@ package src.Controller;
 
 import src.Model.*;
 import src.View.*;
-import src.facultyUseCase.RegistrationUtility;
 import src.ExternalSystems.VerificationSystem;
 
 import java.io.*;
 import java.util.*;
 
-import org.omg.CORBA.SystemException;
 
 
 public class UserController extends Controller {
