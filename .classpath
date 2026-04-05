@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path=""/>
-	<classpathentry kind="output" path="bin"/>
+        <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+        <classpathentry kind="src" path="src"/>
+        <classpathentry kind="src" path="tests"/>
+        <classpathentry kind="lib" path="lib/junit-jupiter-api-5.10.2.jar"/>
+        <classpathentry kind="lib" path="lib/junit-jupiter-engine-5.10.2.jar"/>
+        <classpathentry kind="lib" path="lib/junit-platform-commons-1.10.2.jar"/>
+        <classpathentry kind="lib" path="lib/junit-platform-engine-1.10.2.jar"/>
+        <classpathentry kind="lib" path="lib/junit-platform-launcher-1.10.2.jar"/>
+        <classpathentry kind="lib" path="lib/mockito-core-5.11.0.jar"/>
+        <classpathentry kind="lib" path="lib/byte-buddy-1.14.17.jar"/>
+        <classpathentry kind="lib" path="lib/byte-buddy-agent-1.14.17.jar"/>
+        <classpathentry kind="lib" path="lib/objenesis-3.3.jar"/>
+        <classpathentry kind="lib" path="lib/apiguardian-api-1.1.2.jar"/>
+        <classpathentry kind="lib" path="lib/opentest4j-1.3.0.jar"/>
+        <classpathentry kind="output" path="bin"/>
 </classpath>
