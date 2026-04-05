@@ -196,11 +196,10 @@ public class EventPerformanceController extends Controller {
 
     private boolean checkIfSponsorshipPossible(Performance performance, int amount) {
         boolean ticketed = performance.getEvent().isTicketed();
-        if(!ticketed){
+        if (!ticketed){
             view.displayError("The requested performance's event is nonticketed. It cannot be sponsored.");
             return false;
-        }
-        else if(amount < 0 || amount > performance.getFinalTicketPrice()){
+        } else if (amount < 0 || amount > performance.getFinalTicketPrice()){
             view.displayError("The amount provided is invalid.");
             return false;
         }
@@ -217,10 +216,9 @@ public class EventPerformanceController extends Controller {
             long performanceID = Long.parseLong(performanceIDinput);
             performance = getPerformanceByID(performanceID);
 
-            if(performance == null){
+            if (performance == null) {
                 view.displayError("Performance with given number does not exist");
-            }
-            else{
+            } else{
                 String amountInput = view.getInput("Enter amount to sponsor by: ");
                 amount = Integer.parseInt(amountInput);
                 possible = checkIfSponsorshipPossible(performance, amount);
