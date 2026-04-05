@@ -7,9 +7,9 @@ import java.util.List;
 
 public abstract class Controller {
     private User currentUser;
-    protected View view;
+    protected TextUserInterface view;
 
-    public Controller(User currentUser, View view) {
+    public Controller(User currentUser, TextUserInterface view) {
         this.currentUser = currentUser;
         this.view = view;
     }

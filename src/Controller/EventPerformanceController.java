@@ -21,7 +21,7 @@ public class EventPerformanceController extends Controller {
      * @param view - the user interface of the system
      */
     public EventPerformanceController(User currentUser, long nextEventID, long nextPerformanceID,
-            PaymentSystem paymentSystem, View view) {
+            PaymentSystem paymentSystem, TextUserInterface view) {
 
         super(currentUser, view);
         this.nextEventID = nextEventID;

@@ -1,6 +1,7 @@
 package src.Controller;
 
 import src.Model.User;
+import src.View.TextUserInterface;
 import src.View.View;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public class MenuController extends Controller {
         private EventPerformanceController eventPerformanceController;
 
         public MenuController(User currentUser, UserController userController, BookingController bookingController,
-                        EventPerformanceController eventPerformanceController, View view) {
+                        EventPerformanceController eventPerformanceController, TextUserInterface view) {
                 super(currentUser, view);
                 this.userController = userController;
                 this.bookingController = bookingController;

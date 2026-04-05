@@ -5,7 +5,7 @@ import java.util.*;
 import src.Model.*;
 import src.ExternalSystems.PaymentSystem;
 import java.time.LocalDateTime;
-import src.View.View;
+import src.View.*;
 
 public class BookingController extends Controller {
 
@@ -22,7 +22,7 @@ public class BookingController extends Controller {
      * @param paymentSystem - the payment system used to process payments for bookings
      * @param view - the view used to interact with the user
      */
-    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem, View view) {
+    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem, TextUserInterface view) {
         super(currentUser, view);
         this.nextBookingNumber = nextBookingNumber;
         this.performances = performances;

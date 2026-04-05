@@ -16,13 +16,14 @@ public class UserController extends Controller {
 
     private final VerificationSystem verificationSystem;
     private Collection<User> users;
-
+    private TextUserInterface view;
     // we dont have a general model
-    public UserController(User currentUser, View view, VerificationSystem verificationSystem) {
+    public UserController(User currentUser, TextUserInterface view, VerificationSystem verificationSystem) {
         super(currentUser, view);
         super.getCurrentUser().setLoggedIn(false);
         this.verificationSystem = verificationSystem;
         this.users = new ArrayList<>();
+        this.view = view;
     }
 
     public void login() {
