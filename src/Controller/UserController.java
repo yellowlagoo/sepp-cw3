@@ -2,13 +2,11 @@ package src.Controller;
 
 import src.Model.*;
 import src.View.*;
-import src.facultyUseCase.RegistrationUtility;
 import src.ExternalSystems.VerificationSystem;
 
 import java.io.*;
 import java.util.*;
 
-import org.omg.CORBA.SystemException;
 
 
 public class UserController extends Controller {
@@ -52,15 +50,9 @@ public class UserController extends Controller {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String line;
             List<String> elements = new ArrayList<String>();
-            Boolean found = false;
-
             while ((line = br.readLine()) != null) {
-                elements = Arrays.asList(line.split(","));
-                if (elements.size() != 2) {
-                    //malformed input on this line  
-                    throw new Exception("Malformed line in the file " + fileName + ".");
-                }
-
+                elements = Arrays.asList((line.trim()).split(","));
+                this.validate(elements, fileName);
                 // check if email equals first and password equals second 
                 String parsedEmail = elements.get(0);
                 String parsedPassword = elements.get(1);
@@ -75,19 +67,15 @@ public class UserController extends Controller {
                     break;
                     // if the email is found whether or not the password is correct we are done 
                 }
-
             }
-
-        } catch (Exception e) {
-            if (e.equals(new FileNotFoundException())) {
-                System.err.println("The file " + fileName + " could not be found.");
-            } else if (e.equals(new IOException())) {
-                System.err.println("An error occurred while reading the file " + fileName + ".");
-            } else {
-                throw new Error("An error occurred while logging in");
-            }
-            
+        } catch (FileNotFoundException e) {
+            System.err.println("The file " + fileName + " could not be found.");
+        } catch (IOException e) {
+            System.err.println("An error occurred while reading the file " + fileName + ".");
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error parsing the file due to a malformed line. Make sure it follows <email>, <password>");
         }
+
     }
 
     public void logout() {
@@ -103,10 +91,16 @@ public class UserController extends Controller {
         String businessNumber = view.getInput("Enter your business registration number:");
 
         // Duplicate check (email, orgName, or businessNumber already in use)
-        if (EPAccountAlreadyExists(email, orgName, businessNumber)) {
-            view.displayError("An account with this email, organisation name, or business number already exists.");
+        try {
+            if (this.EPAccountAlreadyExists(email, orgName, businessNumber)) {
+                view.displayError("An account with this email, organisation name, or business number already exists.");
+                return;
+            }
+        } catch (IllegalArgumentException e) {
+            view.displayError("One of the fields is empty: email, organisation name, and business registration number. Please try again.");
             return;
         }
+        
 
         // Verify the business registration number with the external service
         if (!verificationSystem.verifyEntertainmentProvider(businessNumber)) {
@@ -120,7 +114,7 @@ public class UserController extends Controller {
 
         EntertainmentProvider ep = new EntertainmentProvider(
                 email, password, orgName, businessNumber, name, description);
-        addUser(ep);
+        this.addUser(ep);
 
         view.displaySuccess("Entertainment Provider account created for '" + orgName + "!");
     }
@@ -151,65 +145,39 @@ public class UserController extends Controller {
         // read the files and create a user for each one, then add them to the collection of users 
         // if in admin create admin 
         // filename, user type
-        // assume preregistered students only need email to be created 
-       List<Student> students = this.loadStudents(PREREGISTERED_USERS_FILE_PATH);
-       List<AdminStaff> admin = this.loadAdmin(PREREGISTERED_ADMIN_FILE_PATH);
-
-        //maybe change return type to true or false or have some sort of error handling here
-       
-
+        // assume preregistered students only need email and password to be created 
+        boolean loadSuccess = this.load(PREREGISTERED_USERS_FILE_PATH, 0) && this.load(PREREGISTERED_ADMIN_FILE_PATH, 1);
+        if (!loadSuccess) {
+            view.displayError("There was an error parsing the preregistered user files, check the error logs");
+        }
     }
 
-    private List<Student> loadStudents(String fileName) {
-        List<Student> students = new ArrayList<Student>();
+    private boolean load(String fileName, int type) {
+        //List<AdminStaff> admin = new ArrayList<AdminStaff>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            FileReader fr = new FileReader(fileName);
+            BufferedReader br = new BufferedReader(fr);
             String line;
             while ((line = br.readLine()) != null) {
                 List<String> elements = Arrays.asList((line.trim()).split(","));
-                this.validate(elements, fileName); // do i need this in a try catch or will it be caught by the outer try catch 
-                Student parsed = new Student(elements.get(0), elements.get(1));
+                this.validate(elements, fileName); 
+                
+                User parsed;
+                if (type > 0) parsed = new AdminStaff(elements.get(0), elements.get(1));
+                else parsed = new Student(elements.get(0), elements.get(1));
                 this.addUser(parsed);
             }
-        } catch (Exception f) {
-            //errorHandling(f);
-            //file not found - fileReader 
-            //io exception - readline 
-            //illegal argument exception when parsing lines 
-            if (f.equals(new IllegalArgumentException())) {
-                return students;
-            }
-            throw new Error("file not found");
+            br.close();
+            fr.close();
+        } catch (Exception e) { 
+            return false;
         }
-        return students;
-    }
-
-    private List<AdminStaff> loadAdmin(String fileName) {
-        List<AdminStaff> admin = new ArrayList<AdminStaff>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = br.readLine()) != null) {
-                List<String> elements = Arrays.asList((line.trim()).split(","));
-                this.validate(elements, fileName); // do i need this in a try catch or will it be caught by the outer try catch 
-                AdminStaff parsed = new AdminStaff(elements.get(0), elements.get(1));
-                this.addUser(parsed);
-            }
-        } catch (Exception f) {
-            //file not found - fileReader 
-            //io exception - readline 
-            //illegal argument exception when parsing lines 
-            if (f.equals(new IllegalArgumentException())) {
-                return admin;
-            }
-            throw new Error("file not found");
-        }
-        return admin;
+        return true;
     }
 
     private void validate(List<String> elements, String fileName) {
         if (elements == null || elements.isEmpty()) {
-            throw new IllegalArgumentException("This line is empty in the file + " + fileName + ".");
+            throw new NullPointerException("This line is empty in the file + " + fileName + ".");
         }
 
         if (elements.size() != 2) {
@@ -220,24 +188,45 @@ public class UserController extends Controller {
 
     /** Delegates duplicate-check to the model. */
     private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
-        return model.epAccountAlreadyExists(email, orgName, businessNumber);
+        if (email == null || orgName == null || businessNumber == null) {
+            throw new IllegalArgumentException("When validating EP account, all fields must be non-empty.");
+        }
+
+        for (User user : this.getUsers()) {
+            super.setCurrentUser(user);
+            if (super.checkCurrentUserIsEntertainmentProvider()) {
+                EntertainmentProvider checkEP = (EntertainmentProvider) super.getCurrentUser();
+                String checkEmail = checkEP.getEmail();
+                String checkOrg = checkEP.getOrgName();
+                String checkBusiness = checkEP.getBusinessNumber();
+                if (checkEmail.equals(email) && checkOrg.equals(orgName) && checkBusiness.equals(businessNumber)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void addUser(User user) {
-        this.addUser(user);
+        this.users.add(user);
     }
 
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
-        for (User u : this.getUsers()) {
-            if (u instanceof EntertainmentProvider) {
-                EntertainmentProvider ep = (EntertainmentProvider) u;
+        for (User user : this.getUsers()) {
+            super.setCurrentUser(user);
+            if (super.checkCurrentUserIsEntertainmentProvider()) {
+                EntertainmentProvider ep = (EntertainmentProvider) user;
                 for (Event e : ep.getEvents()) {
-                    if (e.getEventID() == eventNumber)
+                    if (e.getEventID() == eventNumber) {
                         return ep;
+                    }
                 }
             }
         }
         return null;
     }
 
+    public Collection<User> getUsers() {
+        return users;
+    }
 }
