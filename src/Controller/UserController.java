@@ -39,16 +39,17 @@ public class UserController extends Controller {
             //throw new NullPointerException("Password can't be empty");
             return;
         }
-        // check if users credentials is in the file 
         // assumptions for file structure:
-        // email, password 
-        // password contains no commas 
-        // each email only appears once 
+            // email, password 
+            // password contains no commas 
+            // each email only appears once 
+            // check if users credentials is in the file 
         String readForStudent = this.readFileForUser(PREREGISTERED_USERS_FILE_PATH, email, password);
         // if current user's email and password match then we have successfully 
-        if (readForStudent.equals("User not found")) {
+        String notFound = "User not found";
+        if (readForStudent.equals(notFound)) {
             String readForAdmin = this.readFileForUser(PREREGISTERED_ADMIN_FILE_PATH, email, password);
-            if (readForAdmin.equals("User not found")) {
+            if (readForAdmin.equals(notFound)) {
                 readForAdmin = "This user is not preregistered.";
             } 
             displayMessaging(readForAdmin);
@@ -83,8 +84,10 @@ public class UserController extends Controller {
                     if (parsedPassword.equals(password)) {
                         if (fileName.equals(PREREGISTERED_USERS_FILE_PATH)) {
                             this.setCurrentUser(new Student(email, password));
-                        } else {
+                        } else if (fileName.equals(PREREGISTERED_ADMIN_FILE_PATH)) {
                             this.setCurrentUser(new AdminStaff(email, password));
+                        } else {
+                            return "Error parsing the file: unrecognized file " + fileName + ".";
                         }
                         this.getCurrentUser().setLoggedIn(true);
                         return "User exists: login successful";
@@ -102,6 +105,8 @@ public class UserController extends Controller {
             return "Error parsing file: problem reading a line in the file "  + fileName + ".";
         } catch (IllegalArgumentException e) {
             return "Error parsing file: malformed line in the file " + fileName + ", ensure all lines follow the format <email>, <password>.";
+        } catch (NullPointerException e) {
+            return "Error parsing file: there is an empty line in the file " + fileName + ".";
         }
     }
 
