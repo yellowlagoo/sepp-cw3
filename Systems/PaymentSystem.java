@@ -1,0 +1,4 @@
+package Systems;
+interface PaymentSystem{
+
+}

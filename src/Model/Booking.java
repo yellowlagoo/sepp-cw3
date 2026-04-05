@@ -1,8 +1,6 @@
 package src.Model; 
 import java.time.LocalDateTime;
 
-import src.Model.BookingStatus;
-
 public class Booking {
     private long bookingNumber;
     private int numTickets;
@@ -122,7 +120,7 @@ public class Booking {
      */
     public String getStudentDetails() {
         String studentEmail = student.getEmail();
-        int studentPhoneNumber = student.getPhoneNumber();
+        long studentPhoneNumber = student.getPhoneNumber();
         return studentEmail + "\n" + studentPhoneNumber;
     }
 

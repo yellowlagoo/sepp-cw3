@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class Student extends User {
     private String name;
-    private int phoneNumber;
+    private long phoneNumber;
     private Collection<Booking> bookings;
     private StudentPreferences preferences;
 
@@ -38,11 +38,11 @@ public class Student extends User {
         this.name = name;
     }
 
-    public int getPhoneNumber() {
+    public long getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

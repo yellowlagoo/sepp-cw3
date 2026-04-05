@@ -109,7 +109,7 @@ public class BookingController extends Controller {
             // Process the student's payment
             String eventTitle = performance.getEventTitle();
             String studentEmail = s.getEmail();
-            Integer studentPhone = s.getPhoneNumber();
+            long studentPhone = s.getPhoneNumber();
             String epEmail = performance.getOrganizerEmail();
             double transactionAmount = performance.getFinalTicketPrice() * numTickets;
             boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail,
