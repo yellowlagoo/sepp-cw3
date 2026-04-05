@@ -1,7 +1,6 @@
 package src.Model; 
 import java.time.LocalDateTime;
 
-import src.Model.BookingStatus;
 
 public class Booking {
     private long bookingNumber;
