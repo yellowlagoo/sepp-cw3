@@ -67,4 +67,12 @@ public class EntertainmentProvider extends User {
     public void addEvent(Event event) {
         events.add(event);
     }
+
+    public Collection<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Collection<Event> events) {
+        this.events = events;
+    }
 }

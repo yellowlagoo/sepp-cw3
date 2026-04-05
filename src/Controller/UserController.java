@@ -93,10 +93,16 @@ public class UserController extends Controller {
         String businessNumber = view.getInput("Enter your business registration number:");
 
         // Duplicate check (email, orgName, or businessNumber already in use)
-        if (EPAccountAlreadyExists(email, orgName, businessNumber)) {
-            view.displayError("An account with this email, organisation name, or business number already exists.");
+        try {
+            if (this.EPAccountAlreadyExists(email, orgName, businessNumber)) {
+                view.displayError("An account with this email, organisation name, or business number already exists.");
+                return;
+            }
+        } catch (IllegalArgumentException e) {
+            view.displayError("One of the fields is empty: email, organisation name, and business registration number. Please try again.");
             return;
         }
+        
 
         // Verify the business registration number with the external service
         if (!verificationSystem.verifyEntertainmentProvider(businessNumber)) {
@@ -110,7 +116,7 @@ public class UserController extends Controller {
 
         EntertainmentProvider ep = new EntertainmentProvider(
                 email, password, orgName, businessNumber, name, description);
-        addUser(ep);
+        this.addUser(ep);
 
         view.displaySuccess("Entertainment Provider account created for '" + orgName + "!");
     }
@@ -184,7 +190,23 @@ public class UserController extends Controller {
 
     /** Delegates duplicate-check to the model. */
     private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
-        return model.epAccountAlreadyExists(email, orgName, businessNumber);
+        if (email == null || orgName == null || businessNumber == null) {
+            throw new IllegalArgumentException("When validating EP account, all fields must be non-empty.");
+        }
+
+        for (User user : this.getUsers()) {
+            super.setCurrentUser(user);
+            if (super.checkCurrentUserIsEntertainmentProvider()) {
+                EntertainmentProvider checkEP = (EntertainmentProvider) super.getCurrentUser();
+                String checkEmail = checkEP.getEmail();
+                String checkOrg = checkEP.getOrgName();
+                String checkBusiness = checkEP.getBusinessNumber();
+                if (checkEmail.equals(email) && checkOrg.equals(orgName) && checkBusiness.equals(businessNumber)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void addUser(User user) {
@@ -193,11 +215,13 @@ public class UserController extends Controller {
 
     private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
         for (User user : this.getUsers()) {
-            if (user.check) {
-                EntertainmentProvider ep = (EntertainmentProvider) u;
+            super.setCurrentUser(user);
+            if (super.checkCurrentUserIsEntertainmentProvider()) {
+                EntertainmentProvider ep = (EntertainmentProvider) user;
                 for (Event e : ep.getEvents()) {
-                    if (e.getEventID() == eventNumber)
+                    if (e.getEventID() == eventNumber) {
                         return ep;
+                    }
                 }
             }
         }
