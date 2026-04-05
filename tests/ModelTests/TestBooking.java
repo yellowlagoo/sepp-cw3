@@ -8,6 +8,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +20,12 @@ public class TestBooking {
     private Student student;
     private Performance performance;
     private Event event;
+
+    @BeforeAll
+    static void initAll() {
+        System.out.println("Testing for Booking class started");
+        System.out.println("--------------------------------");
+    }
 
     @BeforeEach
     void setup() {
@@ -38,6 +47,16 @@ public class TestBooking {
         //Initialize booking
         LocalDateTime bookingTime = LocalDateTime.of(2026, 4, 1, 16, 30);
         booking = new Booking(0, 2, 11.5, bookingTime, student, performance);
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    void tearDownAll() {
+        System.out.println("Testing for Booking class completed");
     }
 
     //cancelByStudent tests
