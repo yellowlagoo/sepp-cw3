@@ -16,13 +16,11 @@ public class UserController extends Controller {
 
     private final MockVerificationSystem verificationSystem;
     private Collection<User> users;
-    private TextUserInterface view;
     
     public UserController(TextUserInterface view, MockVerificationSystem verificationSystem) {
         super(view);
         this.verificationSystem = verificationSystem;
         this.users = new ArrayList<>();
-        this.view = view;
     }
 
     public void login() {
@@ -112,10 +110,11 @@ public class UserController extends Controller {
 
     public void logout() {
         try {
-            (super.getCurrentUser()).setLoggedIn(false);
+            super.getCurrentUser().setLoggedIn(false);
+            super.setCurrentUser(null);
             view.displaySuccess("You have been logged out successfully.");
         } catch (NullPointerException e) {
-            view.displayError("No user is logged in, log out failed.");
+            view.displayError("No user is logged in.");
         }
     }
 
@@ -225,17 +224,14 @@ public class UserController extends Controller {
     /** Delegates duplicate-check to the model. */
     private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
         if (email == null || orgName == null || businessNumber == null) {
-            throw new IllegalArgumentException("When validating EP account, all fields must be non-empty.");
+            throw new IllegalArgumentException("All fields must be non-empty.");
         }
-
         for (User user : this.getUsers()) {
-            super.setCurrentUser(user);
-            if (super.checkCurrentUserIsEntertainmentProvider()) {
-                EntertainmentProvider checkEP = (EntertainmentProvider) super.getCurrentUser();
-                String checkEmail = checkEP.getEmail();
-                String checkOrg = checkEP.getOrgName();
-                String checkBusiness = checkEP.getBusinessNumber();
-                if (checkEmail.equals(email) && checkOrg.equals(orgName) && checkBusiness.equals(businessNumber)) {
+            if (user instanceof EntertainmentProvider) {
+                EntertainmentProvider checkEP = (EntertainmentProvider) user;
+                if (checkEP.getEmail().equals(email) 
+                    && checkEP.getOrgName().equals(orgName) 
+                    && checkEP.getBusinessNumber().equals(businessNumber)) {
                     return true;
                 }
             }

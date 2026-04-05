@@ -32,10 +32,7 @@ public abstract class Controller {
      * @return - whether or not the current user is a guest
      */
     protected boolean checkCurrentUserIsGuest() {
-        if (currentUser == null) {
-            throw new NullPointerException(errMsg);
-        }
-        return currentUser.isLoggedIn() == false;
+        return currentUser == null || currentUser.isLoggedIn() == false;
     }
 
     /**
