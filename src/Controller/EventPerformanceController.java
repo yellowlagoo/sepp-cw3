@@ -5,8 +5,11 @@ import src.Model.*;
 import src.View.*;
 import java.util.*;
 
-import javax.crypto.NullCipher;
-
+/**
+ * Controller responsible for event and performance-related operations
+ * including creating events, searching, viewing, cancelling,
+ * and sponsoring performances.
+ */
 public class EventPerformanceController extends Controller {
     private long nextEventID;
     private long nextPerformanceID;
@@ -15,7 +18,7 @@ public class EventPerformanceController extends Controller {
     private Collection<Performance> performances;
 
     /**
-     * Constructor for the EventPerformanceController class
+     * Constructor for the EventPerformanceController class.
      * @param nextEventID - the next ID to be given to an event
      * @param nextPerformanceID - the next ID to be given to a performance
      * @param paymentSystem - the payment system to be interfaced with
@@ -27,13 +30,14 @@ public class EventPerformanceController extends Controller {
         this.nextEventID = nextEventID;
         this.nextPerformanceID = nextPerformanceID;
         this.paymentSystem = paymentSystem;
-        performances = new ArrayList<>();
+        this.events = new ArrayList<>();
+        this.performances = new ArrayList<>();
     }
 
     /**
-     * 
-     * 
-     * @return event that was created
+     * Creates a new event. Only entertainment providers can create events.
+     * Auto-assigns the next available event ID.
+     * @return the newly created Event, or null if creation failed
      */
     public Event createEvent() {
         try {
@@ -43,18 +47,15 @@ public class EventPerformanceController extends Controller {
             }
         } catch (NullPointerException e) {
             view.displayError("Must be logged in to create an event");
-            throw new NullPointerException(super.getErrMsg()); 
+            throw new NullPointerException(super.getErrMsg());
         }
 
         EntertainmentProvider organizer = (EntertainmentProvider) this.getCurrentUser();
-        
-        String eventIDInput = view.getInput("Enter ID of event to view");
 
-        long eventID = Long.parseLong(eventIDInput);
+        long eventID = this.nextEventID++;
 
         String title = view.getInput("Enter title of event");
 
-        //make sure declaring variables as null does not prematurely cause a NullPointerException 
         String typeInput = view.getInput("Enter event type");
         EventType type = null;
         try {
@@ -76,15 +77,18 @@ public class EventPerformanceController extends Controller {
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("Is ticketed can't be empty");
         }
-        
+
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.addEvent(newEvent);
         return newEvent;
     }
 
+    /**
+     * Searches for a performance by its ID.
+     * @return the Performance if found, or null if not found
+     */
     public Performance searchForPerformances() {
-        // this is a use cae for task 1 (Karina's)
-        String performanceIDInput = view.getInput("Enter ID of performance to view");
+        String performanceIDInput = view.getInput("Enter ID of performance to search for");
         try {
             long performanceID = Long.parseLong(performanceIDInput);
             return getPerformanceByID(performanceID);
@@ -97,21 +101,29 @@ public class EventPerformanceController extends Controller {
         }
     }
 
-    // viewPerformance() (Michael's)
+    /**
+     * Displays the details of a performance identified by the user-provided ID.
+     */
     public void viewPerformance() {
         String performanceIDInput = view.getInput("Enter ID of performance to view");
-        long performanceID = Long.parseLong(performanceIDInput);
         try {
+            long performanceID = Long.parseLong(performanceIDInput);
             Performance performance = getPerformanceByID(performanceID);
+            if (performance == null) {
+                view.displayError("Performance with given number does not exist");
+                return;
+            }
             view.displaySpecificPerformance(performance.toString());
-        } catch (NullPointerException e) {
-            view.displayError("Performance with given number does not exits");
         } catch (NumberFormatException e) {
             view.displayError("Performance ID must be a number");
         }
     }
 
-    // cancelPerformance() Use case (Michael's)
+    /**
+     * Cancels a performance. Only the entertainment provider who created the
+     * performance can cancel it, and only if it has not yet happened.
+     * If the performance has active bookings, refunds are processed before cancellation.
+     */
     public void cancelPerformance() {
         Performance performance = null;
         boolean sameEP = false;
@@ -119,9 +131,13 @@ public class EventPerformanceController extends Controller {
 
         while (performance == null || sameEP == false || hasNotHappenedYet == false) {
             String performanceIDInput = view.getInput("Enter ID of performance to cancel");
-            long performanceID = Long.parseLong(performanceIDInput);
-
-            performance = getPerformanceByID(performanceID);
+            try {
+                long performanceID = Long.parseLong(performanceIDInput);
+                performance = getPerformanceByID(performanceID);
+            } catch (NumberFormatException e) {
+                view.displayError("Performance ID must be a number");
+                continue;
+            }
 
             if (performance == null) {
                 view.displayError("Performance with given number does not exist");
@@ -129,9 +145,7 @@ public class EventPerformanceController extends Controller {
             }
 
             EntertainmentProvider currEP = (EntertainmentProvider) getCurrentUser();
-
             String currEp = currEP.getEmail();
-
             sameEP = performance.checkCreatedByEP(currEp);
 
             if (sameEP == false) {
@@ -142,7 +156,7 @@ public class EventPerformanceController extends Controller {
             hasNotHappenedYet = performance.checkHasNotHappenedYet();
 
             if (hasNotHappenedYet == false) {
-                view.displayError("Performance cant't be cancelled as it has already happened");
+                view.displayError("Performance can't be cancelled as it has already happened");
                 continue;
             }
         }
@@ -180,7 +194,7 @@ public class EventPerformanceController extends Controller {
                         studentPhone, emailEP, transactionAmount, organiserMessage);
 
                 if (refundSuccessful == false) {
-                    view.displayError("There was an issue with a refund.  The performance cannot be cancelled");
+                    view.displayError("There was an issue with a refund. The performance cannot be cancelled");
                     return;
                 }
             }
@@ -195,33 +209,57 @@ public class EventPerformanceController extends Controller {
         view.displaySuccess("Cancellation successful!");
     }
 
-    private boolean checkIfSponsorshipPossible(Performance performance, int amount) {
+    /**
+     * Checks whether a performance can be sponsored with the given amount.
+     * The performance's event must be ticketed, and the amount must be
+     * between 0 and the final ticket price.
+     * @param performance - the performance to check
+     * @param amount - the proposed sponsorship amount
+     * @return true if sponsorship is possible, false otherwise
+     */
+    private boolean checkIfSponsorshipPossible(Performance performance, double amount) {
         boolean ticketed = performance.getEvent().isTicketed();
-        if (!ticketed){
+        if (!ticketed) {
             view.displayError("The requested performance's event is nonticketed. It cannot be sponsored.");
             return false;
-        } else if (amount < 0 || amount > performance.getFinalTicketPrice()){
+        } else if (amount < 0 || amount > performance.getFinalTicketPrice()) {
             view.displayError("The amount provided is invalid.");
             return false;
         }
         return true;
     }
 
+    /**
+     * Sponsors a performance by reducing its ticket price by the given amount.
+     * Prompts the admin for a performance ID and sponsorship amount, validating
+     * both before applying the sponsorship.
+     */
     public void sponsorPerformance() {
         Performance performance = null;
         boolean possible = false;
-        int amount = 0;
+        double amount = 0;
 
-        while(performance == null || possible == false){
+        while (performance == null || possible == false) {
             String performanceIDinput = view.getInput("Enter performance ID: ");
-            long performanceID = Long.parseLong(performanceIDinput);
-            performance = getPerformanceByID(performanceID);
+            try {
+                long performanceID = Long.parseLong(performanceIDinput);
+                performance = getPerformanceByID(performanceID);
+            } catch (NumberFormatException e) {
+                view.displayError("Performance ID must be a number");
+                continue;
+            }
 
             if (performance == null) {
                 view.displayError("Performance with given number does not exist");
-            } else{
+            } else {
                 String amountInput = view.getInput("Enter amount to sponsor by: ");
-                amount = Integer.parseInt(amountInput);
+                try {
+                    amount = Double.parseDouble(amountInput);
+                } catch (NumberFormatException e) {
+                    view.displayError("Amount must be a number");
+                    performance = null;
+                    continue;
+                }
                 possible = checkIfSponsorshipPossible(performance, amount);
             }
         }
@@ -233,16 +271,27 @@ public class EventPerformanceController extends Controller {
         view.displaySuccess("Sponsorship successfully processed.");
     }
 
-    // Would be better to implement these as we do our use cases ???
-
+    /**
+     * Adds an event to the collection of events.
+     * @param e - the event to add
+     */
     private void addEvent(Event e) {
         this.events.add(e);
     }
 
+    /**
+     * Adds a performance to the collection of performances.
+     * @param p - the performance to add
+     */
     private void addPerformance(Performance p) {
         this.performances.add(p);
     }
 
+    /**
+     * Finds an event by its ID.
+     * @param eventID - the ID of the event to find
+     * @return the Event if found, or null if not found
+     */
     private Event getEventByID(long eventID) {
         for (Event e : this.events) {
             if (e.getEventID() == eventID) {
@@ -252,15 +301,25 @@ public class EventPerformanceController extends Controller {
         return null;
     }
 
+    /**
+     * Finds an event by its title.
+     * @param title - the title of the event to find
+     * @return the Event if found, or null if not found
+     */
     private Event getEventByTitle(String title) {
         for (Event e : this.events) {
-            if (e.getTitle() == title) {
+            if (e.getTitle().equals(title)) {
                 return e;
             }
         }
         return null;
     }
 
+    /**
+     * Finds a performance by its ID.
+     * @param performanceID - the ID of the performance to find
+     * @return the Performance if found, or null if not found
+     */
     private Performance getPerformanceByID(long performanceID) {
         for (Performance p : performances) {
             if (p.getPerformanceID() == performanceID) {
@@ -269,5 +328,4 @@ public class EventPerformanceController extends Controller {
         }
         return null;
     }
-
 }
