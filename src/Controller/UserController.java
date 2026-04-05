@@ -46,9 +46,10 @@ public class UserController extends Controller {
         // each email only appears once 
         String readForStudent = this.readFileForUser(PREREGISTERED_USERS_FILE_PATH, email, password);
         // if current user's email and password match then we have successfully 
-        if (readForStudent.equals("User not found")) {
+        String notFound = "User not found";
+        if (readForStudent.equals(notFound)) {
             String readForAdmin = this.readFileForUser(PREREGISTERED_ADMIN_FILE_PATH, email, password);
-            if (readForAdmin.equals("User not found")) {
+            if (readForAdmin.equals(notFound)) {
                 readForAdmin = "This user is not preregistered.";
             } 
             displayMessaging(readForAdmin);
