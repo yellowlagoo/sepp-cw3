@@ -103,6 +103,8 @@ public class UserController extends Controller {
             return "Error parsing file: problem reading a line in the file "  + fileName + ".";
         } catch (IllegalArgumentException e) {
             return "Error parsing file: malformed line in the file " + fileName + ", ensure all lines follow the format <email>, <password>.";
+        } catch (NullPointerException e) {
+            return "Error parsing file: there is an empty line in the file " + fileName + ".";
         }
     }
 
