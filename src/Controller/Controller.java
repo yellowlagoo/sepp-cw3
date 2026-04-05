@@ -9,19 +9,17 @@ public abstract class Controller {
     private User currentUser;
     protected TextUserInterface view;
     private String errMsg = "Please set the current user before accessing it's attributes.";
-    
     public Controller(TextUserInterface view) {
         this.view = view;
         currentUser = null;
     }
 
     public User getCurrentUser() {
-        try {
-            return this.currentUser;
-        } catch (NullPointerException e) {
+        if (currentUser == null) {
             view.displayError(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+        return this.currentUser;
     }
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
@@ -33,12 +31,11 @@ public abstract class Controller {
      * @return - whether or not the current user is a guest
      */
     protected boolean checkCurrentUserIsGuest() {
-        try {
-            return currentUser.isLoggedIn() == false;
-        } catch (NullPointerException e) {
+        if (currentUser == null) {
             view.displayError(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+        return currentUser.isLoggedIn() == false;
     }
 
     /**
@@ -46,12 +43,11 @@ public abstract class Controller {
      * @return - whether or not the current user is an admin staff
      */
     protected boolean checkCurrentUserIsAdmin() {
-        try {
-            return currentUser instanceof AdminStaff;
-        } catch (NullPointerException e) {
+        if (currentUser == null) {
             view.displayError(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+        return currentUser instanceof AdminStaff;
     }
 
     /**
@@ -59,12 +55,11 @@ public abstract class Controller {
      * @return - whether or not the current user is a student
      */
     protected boolean checkCurrentUserIsStudent() {
-        try {
-            return currentUser instanceof Student;
-        } catch (NullPointerException e) {
+        if (currentUser == null) {
             view.displayError(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+        return currentUser instanceof Student;
     }
 
     /**
@@ -72,12 +67,11 @@ public abstract class Controller {
      * @return - whether or not the current user is an entertainment provider
      */
     protected boolean checkCurrentUserIsEntertainmentProvider() {
-        try {
-            return currentUser instanceof EntertainmentProvider;
-        } catch (NullPointerException e) {
+        if (currentUser == null) {
             view.displayError(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+        return currentUser instanceof EntertainmentProvider;
     }
 
     protected <T> int getMenuOption(List<T> options, String prompt) {
