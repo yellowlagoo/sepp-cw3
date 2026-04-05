@@ -351,7 +351,7 @@ public class Performance {
 
         message += "The performance has " + reviewRating.size() + " reviews\n";
         message += "Status: " + status + "\n";
-        message += "The performance has " + bookings.size() + "bookings";
+        message += "The performance has " + bookings.size() + " bookings";
 
         return message;
     }

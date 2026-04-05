@@ -2,12 +2,12 @@ package src.View;
 import java.util.*;
 
 public class TextUserInterface implements View {
+    private Scanner scanner = new Scanner(System.in);
+
     @Override
     public String getInput(String inputPrompt) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println(inputPrompt);
         String input = scanner.nextLine();
-        scanner.close();
         return input;
     }
 
@@ -37,5 +37,4 @@ public class TextUserInterface implements View {
     public void displayBookingRecord(String bookingRecord) {
         System.out.println(bookingRecord);
     }
-
 }

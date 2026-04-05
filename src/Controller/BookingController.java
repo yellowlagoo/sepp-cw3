@@ -22,16 +22,17 @@ public class BookingController extends Controller {
      * @param paymentSystem - the payment system used to process payments for bookings
      * @param view - the view used to interact with the user
      */
-    public BookingController(PaymentSystem paymentSystem, TextUserInterface view) {
+    public BookingController(PaymentSystem paymentSystem, TextUserInterface view, Collection<Performance> performances) {
         super(view);
         this.nextBookingNumber = 0;
-        this.performances = new ArrayList<Performance>();
-        this.paymentSystem = paymentSystem; 
+        this.performances = performances;
+        this.paymentSystem = paymentSystem;
         this.bookings = new ArrayList<Booking>();
     }
 
     /**
-     * Books a performance for the current user, providing a booking record upon success
+     * Books a performance for the current user, providing a booking record upon success.
+     * Prompts the user for their name and phone number before creating the booking.
      */
     public void bookPerformance() {
         Performance performance = null;
@@ -39,7 +40,8 @@ public class BookingController extends Controller {
         boolean possible = false;
         boolean isTicketed = false;
         String notLoggedInMsg = "Must be logged in to book a performance.";
-        //Ensures current user is a student, ending booking process if not
+        
+        // Ensures current user is a student, ending booking process if not
         try {
             if (!super.checkCurrentUserIsStudent()) {
                 view.displayError("Only students may book a performance");
@@ -49,14 +51,12 @@ public class BookingController extends Controller {
             view.displayError(notLoggedInMsg);
             return;
         }
-        
 
-        //Getting user input
-        while ((performance == null) || (possible == false && isTicketed == true)){
+        // Getting user input for performance and tickets
+        while ((performance == null) || (possible == false && isTicketed == true)) {
             String performanceIDInput = view.getInput("Enter the ID of the performance you want to book:");
             long performanceID = Long.parseLong(performanceIDInput);
 
-            //Gives error if invalid performance ID given
             performance = getPerformanceByID(performanceID);
             if (performance == null) {
                 view.displayError("Performance with given number does not exist.");
@@ -69,35 +69,61 @@ public class BookingController extends Controller {
             isTicketed = performance.checkIfEventIsTicketed();
             possible = checkIfBookingPossible(performance, numTickets);
         }
-        
-        //Create booking
+
+        // Prompt for name and phone number, both are required
+        String name = null;
+        while (name == null || name.trim().isEmpty()) {
+            name = view.getInput("Enter your name:");
+            if (name == null || name.trim().isEmpty()) {
+                view.displayError("Name cannot be empty. Please enter your name.");
+            }
+        }
+
+        Integer phoneNumber = null;
+        while (phoneNumber == null) {
+            String phoneInput = view.getInput("Enter your phone number:");
+            if (phoneInput == null || phoneInput.trim().isEmpty()) {
+                view.displayError("Phone number cannot be empty. Please enter your phone number.");
+                continue;
+            }
+            try {
+                phoneNumber = Integer.parseInt(phoneInput.trim());
+            } catch (NumberFormatException e) {
+                view.displayError("Phone number must be a number. Please try again.");
+            }
+        }
+
+        // Update the student model with the provided name and phone number
+        Student s = (Student) getCurrentUser();
+        s.setName(name.trim());
+        s.setPhoneNumber(phoneNumber);
+
+        // Create booking
         try {
-            Student s = (Student) getCurrentUser();
-            Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, 
-                                    LocalDateTime.now(), s, performance);
+            Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets,
+                    LocalDateTime.now(), s, performance);
             addBooking(b);
             performance.addBooking(b);
-             //Increment next booking number so each booking has a unique ID
             nextBookingNumber++;
 
-            //Process the student's payment, providing an error message if unsuccessful
+            // Process the student's payment
             String eventTitle = performance.getEventTitle();
             String studentEmail = s.getEmail();
             Integer studentPhone = s.getPhoneNumber();
             String epEmail = performance.getOrganizerEmail();
             double transactionAmount = performance.getFinalTicketPrice() * numTickets;
-            boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, 
-                                                                    studentPhone, epEmail, transactionAmount);
+            boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail,
+                    studentPhone, epEmail, transactionAmount);
             if (paymentSuccessful) {
                 int numTicketsSold = performance.getNumTicketsSold();
                 performance.setNumTicketsSold(numTicketsSold + numTickets);
                 view.displaySuccess("Booking successful");
                 String bookingRecord = b.generateBookingRecord();
-                view.displayBookingRecord(bookingRecord);      
+                view.displayBookingRecord(bookingRecord);
             } else {
                 view.displayError("There was an issue with payment.");
                 b.cancelPaymentFailed();
-            } 
+            }
         } catch (NullPointerException e) {
             String errStr = e.getMessage();
             if (errStr.equals(super.getErrMsg())) {

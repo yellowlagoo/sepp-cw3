@@ -3,6 +3,9 @@ package src.Controller;
 import src.ExternalSystems.*;
 import src.Model.*;
 import src.View.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -25,17 +28,17 @@ public class EventPerformanceController extends Controller {
      * @param view - the user interface of the system
      */
     public EventPerformanceController(long nextEventID, long nextPerformanceID,
-            PaymentSystem paymentSystem, TextUserInterface view) {
-        super(view);
-        this.nextEventID = nextEventID;
-        this.nextPerformanceID = nextPerformanceID;
-        this.paymentSystem = paymentSystem;
-        this.events = new ArrayList<>();
-        this.performances = new ArrayList<>();
-    }
-
+        PaymentSystem paymentSystem, TextUserInterface view, Collection<Performance> performances) {
+    super(view);
+    this.nextEventID = nextEventID;
+    this.nextPerformanceID = nextPerformanceID;
+    this.paymentSystem = paymentSystem;
+    this.events = new ArrayList<>();
+    this.performances = performances;
+}
     /**
-     * Creates a new event. Only entertainment providers can create events.
+     * Creates a new event and optionally adds performances to it.
+     * Only entertainment providers can create events.
      * Auto-assigns the next available event ID.
      * @return the newly created Event, or null if creation failed
      */
@@ -56,7 +59,7 @@ public class EventPerformanceController extends Controller {
 
         String title = view.getInput("Enter title of event");
 
-        String typeInput = view.getInput("Enter event type");
+        String typeInput = view.getInput("Enter event type (Music, Theatre, Dance, Movie, Sports)");
         EventType type = null;
         try {
             type = EventType.findByName(typeInput);
@@ -65,7 +68,7 @@ public class EventPerformanceController extends Controller {
             throw new IllegalArgumentException("This is an invalid event type");
         }
 
-        String isTicketedInput = view.getInput("Is the event ticketed?");
+        String isTicketedInput = view.getInput("Is the event ticketed? (true/false)");
         Boolean isTicketed = null;
         try {
             isTicketedInput = isTicketedInput.toLowerCase();
@@ -80,25 +83,99 @@ public class EventPerformanceController extends Controller {
 
         Event newEvent = new Event(organizer, eventID, title, type, isTicketed);
         this.addEvent(newEvent);
+
+        // Ask if the user wants to add performances to the event
+        String addPerformance = view.getInput("Would you like to add a performance to this event? (true/false)");
+        while (addPerformance != null && addPerformance.trim().toLowerCase().equals("true")) {
+            try {
+                Performance performance = createPerformance(newEvent);
+                if (performance != null) {
+                    view.displaySuccess("Performance added successfully with ID: " + performance.getPerformanceID());
+                }
+            } catch (Exception e) {
+                view.displayError("Error creating performance: " + e.getMessage());
+            }
+            addPerformance = view.getInput("Would you like to add another performance? (true/false)");
+        }
+
+        view.displaySuccess("Event '" + title + "' created successfully with ID: " + eventID);
         return newEvent;
     }
 
     /**
-     * Searches for a performance by its ID.
-     * @return the Performance if found, or null if not found
+     * Creates a new performance and adds it to the given event.
+     * Delegates to the Event model's createPerformance method.
+     * @param event - the event to add the performance to
+     * @return the newly created Performance
      */
-    public Performance searchForPerformances() {
-        String performanceIDInput = view.getInput("Enter ID of performance to search for");
-        try {
-            long performanceID = Long.parseLong(performanceIDInput);
-            return getPerformanceByID(performanceID);
-        } catch (NullPointerException e) {
-            view.displayError("Search failed: performance ID must be non empty");
-            throw new NullPointerException("Search failed: performance ID must be non empty");
-        } catch (NumberFormatException e) {
-            view.displayError("Search failed: performance ID must be a number");
-            throw new IllegalArgumentException("Search failed: performance ID must be a number");
+    private Performance createPerformance(Event event) {
+        long performanceID = this.nextPerformanceID++;
+
+        String startDateInput = view.getInput("Enter start date and time (yyyy-MM-dd HH:mm)");
+        LocalDateTime startDateTime = LocalDateTime.parse(startDateInput,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+        String endDateInput = view.getInput("Enter end date and time (yyyy-MM-dd HH:mm)");
+        LocalDateTime endDateTime = LocalDateTime.parse(endDateInput,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+        String performerNamesInput = view.getInput("Enter performer names (comma-separated)");
+        Collection<String> performerNames = new ArrayList<>();
+        for (String name : performerNamesInput.split(",")) {
+            performerNames.add(name.trim());
         }
+
+        String venueAddress = view.getInput("Enter venue address");
+
+        String venueCapacityInput = view.getInput("Enter venue capacity");
+        int venueCapacity = Integer.parseInt(venueCapacityInput);
+
+        String venueIsOutdoorsInput = view.getInput("Is the venue outdoors? (true/false)");
+        boolean venueIsOutdoors = Boolean.parseBoolean(venueIsOutdoorsInput.trim().toLowerCase());
+
+        String allowSmokingInput = view.getInput("Does the venue allow smoking? (true/false)");
+        boolean allowSmoking = Boolean.parseBoolean(allowSmokingInput.trim().toLowerCase());
+
+        String numTicketsInput = view.getInput("Enter total number of tickets");
+        int numTickets = Integer.parseInt(numTicketsInput);
+
+        double ticketPrice = 0;
+        if (event.isTicketed()) {
+            String ticketPriceInput = view.getInput("Enter ticket price");
+            ticketPrice = Double.parseDouble(ticketPriceInput);
+        }
+
+        // Delegate to Event model — it creates the Performance and adds it internally
+        Performance performance = event.createPerformance(performanceID, startDateTime, endDateTime,
+                performerNames, venueAddress, venueCapacity, venueIsOutdoors, allowSmoking,
+                numTickets, ticketPrice);
+
+        // Also add to the controller's collection so searchForPerformances/viewPerformance can find it
+        this.addPerformance(performance);
+
+        return performance;
+    }
+
+    /**
+     * Displays a list of all performances in the system.
+     * If no performances exist, displays an appropriate message.
+     */
+    public void searchForPerformances() {
+        if (performances.isEmpty()) {
+            view.displayError("There are no performances in the system.");
+            return;
+        }
+
+        Collection<String> performanceInfoList = new ArrayList<>();
+        for (Performance p : performances) {
+            performanceInfoList.add("ID: " + p.getPerformanceID()
+                    + " | " + p.getEventTitle()
+                    + " | " + p.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                    + " | " + p.getVenueAddress()
+                    + " | Status: " + p.getStatus());
+        }
+
+        view.displayListofPerformances(performanceInfoList);
     }
 
     /**

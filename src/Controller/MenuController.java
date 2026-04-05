@@ -4,7 +4,7 @@ import src.Model.User;
 import src.View.TextUserInterface;
 import src.View.View;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Controller responsible for displaying and handling the main menu.
@@ -68,7 +68,7 @@ public class MenuController extends Controller {
          * @return true to keep the main menu loop running
          */
         private boolean handleGuestMainMenu() {
-                ArrayList<GuestMenuOptions> options = new ArrayList<>(List.of(GuestMenuOptions.values()));
+                ArrayList<GuestMenuOptions> options = new ArrayList<>(Arrays.asList(GuestMenuOptions.values()));
                 int option = getMenuOption(options, "Choose an option: ");
 
                 switch (option) {
@@ -111,7 +111,7 @@ public class MenuController extends Controller {
          * @return true to keep the main menu loop running
          */
         private boolean handleStudentMainMenu() {
-                ArrayList<StudentMenuOptions> options = new ArrayList<>(List.of(StudentMenuOptions.values()));
+                ArrayList<StudentMenuOptions> options = new ArrayList<>(Arrays.asList(StudentMenuOptions.values()));
                 int option = getMenuOption(options, "Choose an option: ");
 
                 switch (option) {
@@ -158,7 +158,7 @@ public class MenuController extends Controller {
          * @return true to keep the main menu loop running
          */
         private boolean handleEntertainmentProviderMainMenu() {
-                ArrayList<EPMenuOptions> options = new ArrayList<>(List.of(EPMenuOptions.values()));
+                ArrayList<EPMenuOptions> options = new ArrayList<>(Arrays.asList(EPMenuOptions.values()));
                 int option = getMenuOption(options, "Choose an option: ");
 
                 switch (option) {
@@ -196,7 +196,7 @@ public class MenuController extends Controller {
          * @return true to keep the main menu loop running
          */
         private boolean handleAdminStaffMainMenu() {
-                ArrayList<AdminMenuOptions> options = new ArrayList<>(List.of(AdminMenuOptions.values()));
+                ArrayList<AdminMenuOptions> options = new ArrayList<>(Arrays.asList(AdminMenuOptions.values()));
                 int option = getMenuOption(options, "Choose an option: ");
 
                 switch (option) {

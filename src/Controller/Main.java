@@ -2,28 +2,33 @@ package src.Controller;
 
 import src.View.*;
 import src.Model.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import src.Controller.*;
 import src.ExternalSystems.MockPaymentSystem;
 import src.ExternalSystems.MockVerificationSystem;
 
 public class Main {
-    private TextUserInterface view;
-    private MockVerificationSystem verificationSystem;
-    private MockPaymentSystem paymentSystem;
-    private BookingController bookingController;
-    private MenuController menuController;
-    private UserController userController;
-    private AdminStaff initUser;
     public static void main(String[] args) {
-        //initializeComponents();
-    }
+        System.out.println("Working directory: " + System.getProperty("user.dir"));
+        TextUserInterface view = new TextUserInterface();
+        MockVerificationSystem verificationSystem = new MockVerificationSystem();
+        MockPaymentSystem paymentSystem = new MockPaymentSystem();
 
-    private void initializeComponents() {
-        view = new TextUserInterface();
-        verificationSystem = new MockVerificationSystem();
-        paymentSystem = new MockPaymentSystem();
-        initUser = new AdminStaff("maintainer@acme.com", "initial");
-        initUser.setName("Maintainer");
+        UserController userController = new UserController(view, verificationSystem);
+        Collection<Performance> sharedPerformances = new ArrayList<>();
 
+        EventPerformanceController epController = new EventPerformanceController(
+                1, 1, paymentSystem, view, sharedPerformances);
+
+        BookingController bookingController = new BookingController(
+                paymentSystem, view, sharedPerformances);
+
+        MenuController menuController = new MenuController(
+                userController, bookingController, epController, view);
+
+        menuController.mainMenu();
     }
 }

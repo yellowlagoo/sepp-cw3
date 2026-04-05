@@ -13,8 +13,8 @@ import java.util.*;
  */
 public class UserController extends Controller {
 
-    public static final String PREREGISTERED_USERS_FILE_PATH = "preregistered_students.csv";
-    public static final String PREREGISTERED_ADMIN_FILE_PATH = "preregistered_admins.csv";
+    public static final String PREREGISTERED_USERS_FILE_PATH = "src/Controller/ValidStudents.txt";
+    public static final String PREREGISTERED_ADMIN_FILE_PATH = "src/Controller/ValidAdmin.txt";
 
     private final MockVerificationSystem verificationSystem;
     private Collection<User> users;
@@ -32,7 +32,7 @@ public class UserController extends Controller {
 
     /**
      * Prompts the user for email and password, then attempts to log them in
-     * by checking against preregistered student and admin CSV files.
+     * by checking against preregistered student and admin files.
      */
     public void login() {
         String email = view.getInput("Enter email:");
@@ -52,7 +52,15 @@ public class UserController extends Controller {
         if (readForStudent.equals(notFound)) {
             String readForAdmin = this.readFileForUser(PREREGISTERED_ADMIN_FILE_PATH, email, password);
             if (readForAdmin.equals(notFound)) {
-                readForAdmin = "This user is not preregistered.";
+                //check if ep 
+                for (User user : this.getUsers()) {
+                    this.setCurrentUser(user);
+                    if (super.checkCurrentUserIsEntertainmentProvider() && user.getEmail().equals(email)) {
+                        this.getCurrentUser().setLoggedIn(true);
+                        displayMessaging("User exists: login successful");
+                        return;
+                    }
+                }
             }
             displayMessaging(readForAdmin);
         } else {
@@ -73,9 +81,9 @@ public class UserController extends Controller {
     }
 
     /**
-     * Reads a CSV file to find a user with the given email and password.
+     * Reads a file to find a user with the given email and password.
      * On success, sets the current user and marks them as logged in.
-     * @param fileName - the path to the CSV file to read
+     * @param fileName - the path to the file to read
      * @param email - the email to search for
      * @param password - the password to verify
      * @return a result string indicating success or the type of failure
@@ -88,8 +96,8 @@ public class UserController extends Controller {
             while ((line = br.readLine()) != null) {
                 elements = Arrays.asList((line.trim()).split(","));
                 this.validate(elements, fileName);
-                String parsedEmail = elements.get(0);
-                String parsedPassword = elements.get(1);
+                String parsedEmail = elements.get(0).trim();
+                String parsedPassword = elements.get(1).trim();
                 if (parsedEmail.equals(email)) {
                     if (parsedPassword.equals(password)) {
                         if (fileName.equals(PREREGISTERED_USERS_FILE_PATH)) {
@@ -102,7 +110,6 @@ public class UserController extends Controller {
                         this.getCurrentUser().setLoggedIn(true);
                         return "User exists: login successful";
                     } else {
-                        view.displayError("Password is incorrect.");
                         return "User exists: incorrect password";
                     }
                 }
@@ -169,7 +176,7 @@ public class UserController extends Controller {
                 email, password, orgName, businessNumber, name, description);
         this.addUser(ep);
 
-        view.displaySuccess("Entertainment Provider account created for '" + orgName + "!");
+        view.displaySuccess("Entertainment Provider account created for '" + orgName + "' !");
     }
 
     /**
@@ -199,7 +206,7 @@ public class UserController extends Controller {
 
     /**
      * Loads all preregistered students and admins from their respective
-     * CSV files into the users collection.
+     * files into the users collection.
      */
     private void addPreregisteredUsers() {
         boolean loadSuccess = this.load(PREREGISTERED_USERS_FILE_PATH, 0) && this.load(PREREGISTERED_ADMIN_FILE_PATH, 1);
@@ -209,8 +216,8 @@ public class UserController extends Controller {
     }
 
     /**
-     * Reads a CSV file and creates User objects for each line.
-     * @param fileName - the path to the CSV file
+     * Reads a file and creates User objects for each line.
+     * @param fileName - the path to the file
      * @param type - 0 for students, 1 or above for admin staff
      * @return true if the file was loaded successfully, false otherwise
      */
@@ -224,8 +231,8 @@ public class UserController extends Controller {
                 this.validate(elements, fileName);
 
                 User parsed;
-                if (type > 0) parsed = new AdminStaff(elements.get(0), elements.get(1));
-                else parsed = new Student(elements.get(0), elements.get(1));
+                if (type > 0) parsed = new AdminStaff(elements.get(0).trim(), elements.get(1).trim());
+                else parsed = new Student(elements.get(0).trim(), elements.get(1).trim());
                 this.addUser(parsed);
             }
             br.close();
@@ -237,8 +244,8 @@ public class UserController extends Controller {
     }
 
     /**
-     * Validates that a parsed CSV line has exactly two elements.
-     * @param elements - the parsed elements from the CSV line
+     * Validates that a parsed line has exactly two elements.
+     * @param elements - the parsed elements from the line
      * @param fileName - the file being parsed, used in error messages
      * @throws NullPointerException if elements is null or empty
      * @throws IllegalArgumentException if the line does not have exactly two elements
