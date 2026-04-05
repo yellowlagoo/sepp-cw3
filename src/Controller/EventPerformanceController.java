@@ -44,6 +44,7 @@ public class EventPerformanceController extends Controller {
             view.displayError("Must be logged in to create an event");
             throw new NullPointerException(super.getErrMsg()); 
         }
+
         EntertainmentProvider organizer = (EntertainmentProvider) this.getCurrentUser();
         
         String eventIDInput = view.getInput("Enter ID of event to view");
@@ -111,13 +112,11 @@ public class EventPerformanceController extends Controller {
 
     // cancelPerformance() Use case (Michael's)
     public void cancelPerformance() {
-
         Performance performance = null;
         boolean sameEP = false;
         boolean hasNotHappenedYet = false;
 
         while (performance == null || sameEP == false || hasNotHappenedYet == false) {
-
             String performanceIDInput = view.getInput("Enter ID of performance to cancel");
             long performanceID = Long.parseLong(performanceIDInput);
 
