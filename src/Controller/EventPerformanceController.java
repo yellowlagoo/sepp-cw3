@@ -405,4 +405,12 @@ public class EventPerformanceController extends Controller {
         }
         return null;
     }
+
+    public void setCurrentUser(User user) {
+        super.setCurrentUser(user);
+    }
+    
+    public User getCurrentUser() {
+        return super.getCurrentUser();
+    }
 }

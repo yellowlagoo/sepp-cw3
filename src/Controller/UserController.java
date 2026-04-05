@@ -319,4 +319,12 @@ public class UserController extends Controller {
     public Collection<User> getUsers() {
         return users;
     }
+
+    public void setCurrentUser(User user) {
+        super.setCurrentUser(user);
+    }
+    
+    public User getCurrentUser() {
+        return super.getCurrentUser();
+    }
 }
