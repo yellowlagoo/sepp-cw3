@@ -17,8 +17,8 @@ public class UserController extends Controller {
     private final MockVerificationSystem verificationSystem;
     private Collection<User> users;
     private TextUserInterface view;
-    // we dont have a general model
-    public UserController(User currentUser, TextUserInterface view, MockVerificationSystem verificationSystem) {
+    
+    public UserController(TextUserInterface view, MockVerificationSystem verificationSystem) {
         super(view);
         this.verificationSystem = verificationSystem;
         this.users = new ArrayList<>();
@@ -27,14 +27,14 @@ public class UserController extends Controller {
 
     public void login() {
         String email = view.getInput("Enter email:");
-        if (email == null || email.equals("")) {
+        if (email == null || email.equals(" ")) {
             view.displayError("Email can't be empty");
             //throw new IllegalArgumentException("Email can't be empty");
             return;
         }
 
         String password = view.getInput("Enter password:");
-        if (password == null || password.equals("")) {
+        if (password == null || password.equals(" ")) {
             view.displayError("Password can't be empty");
             //throw new NullPointerException("Password can't be empty");
             return;

@@ -38,12 +38,18 @@ public class BookingController extends Controller {
         Integer numTickets = null;
         boolean possible = false;
         boolean isTicketed = false;
-
+        String notLoggedInMsg = "Must be logged in to book a performance.";
         //Ensures current user is a student, ending booking process if not
-        if(!checkCurrentUserIsStudent()) {
-            view.displayError("Only students may book a performance");
+        try {
+            if (!super.checkCurrentUserIsStudent()) {
+                view.displayError("Only students may book a performance");
+                return;
+            }
+        } catch (NullPointerException e) {
+            view.displayError(notLoggedInMsg);
             return;
         }
+        
 
         //Getting user input
         while ((performance == null) || (possible == false && isTicketed == true)){
@@ -65,102 +71,123 @@ public class BookingController extends Controller {
         }
         
         //Create booking
-        Student s = (Student) getCurrentUser();
-        Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, 
-                                LocalDateTime.now(), s, performance);
-        addBooking(b);
-        performance.addBooking(b);
+        try {
+            Student s = (Student) getCurrentUser();
+            Booking b = new Booking(nextBookingNumber, numTickets, performance.getFinalTicketPrice() * numTickets, 
+                                    LocalDateTime.now(), s, performance);
+            addBooking(b);
+            performance.addBooking(b);
+             //Increment next booking number so each booking has a unique ID
+            nextBookingNumber++;
 
-        //Increment next booking number so each booking has a unique ID
-        nextBookingNumber++;
-
-        //Process the student's payment, providing an error message if unsuccessful
-        String eventTitle = performance.getEventTitle();
-        String studentEmail = s.getEmail();
-        Integer studentPhone = s.getPhoneNumber();
-        String epEmail = performance.getOrganizerEmail();
-        double transactionAmount = performance.getFinalTicketPrice() * numTickets;
-        boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, 
-                                                                studentPhone, epEmail, transactionAmount);
-        if (paymentSuccessful == false) {
-            view.displayError("There was an issue with payment.");
-            b.cancelPaymentFailed();
+            //Process the student's payment, providing an error message if unsuccessful
+            String eventTitle = performance.getEventTitle();
+            String studentEmail = s.getEmail();
+            Integer studentPhone = s.getPhoneNumber();
+            String epEmail = performance.getOrganizerEmail();
+            double transactionAmount = performance.getFinalTicketPrice() * numTickets;
+            boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail, 
+                                                                    studentPhone, epEmail, transactionAmount);
+            if (paymentSuccessful) {
+                int numTicketsSold = performance.getNumTicketsSold();
+                performance.setNumTicketsSold(numTicketsSold + numTickets);
+                view.displaySuccess("Booking successful");
+                String bookingRecord = b.generateBookingRecord();
+                view.displayBookingRecord(bookingRecord);      
+            } else {
+                view.displayError("There was an issue with payment.");
+                b.cancelPaymentFailed();
+            } 
+        } catch (NullPointerException e) {
+            String errStr = e.getMessage();
+            if (errStr.equals(super.getErrMsg())) {
+                view.displayError(notLoggedInMsg);
+            } else {
+                view.displayError(errStr);
+            }
         }
-        else {
-            int numTicketsSold = performance.getNumTicketsSold();
-            performance.setNumTicketsSold(numTicketsSold + numTickets);
-            view.displaySuccess("Booking successful");
-            String bookingRecord = b.generateBookingRecord();
-            view.displayBookingRecord(bookingRecord);
-        } 
     }
 
     /**
      * Adds a student's review and rating to a performance that they have booked in the past
      */
     public void reviewPerformance() {
-        if(!checkCurrentUserIsStudent()){
-            view.displayError("Only students may review a performance");
+        try {
+            if (!super.checkCurrentUserIsStudent()){
+                view.displayError("Only students may review a performance");
+                return;
+            }
+        } catch (NullPointerException e) {
+            view.displayBookingRecord("Must be logged in to review a performance");
             return;
         }
-        else{
-            String performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
-            long performanceID = Long.parseLong(performanceIDinput);
-            Performance performanceToReview = getPerformanceByID(performanceID);
 
-            //Ensure performance with ID exists, reprompting user if not
-            while(performanceToReview == null){
-                view.displayError("A performance with the given ID does not exist. Please enter a new ID.");
-                performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
-                performanceID = Long.parseLong(performanceIDinput);
-                performanceToReview = getPerformanceByID(performanceID);
-            }
+        String performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
+        long performanceID = Long.parseLong(performanceIDinput);
+        Performance performanceToReview = getPerformanceByID(performanceID);
 
-            //Ensure performance has a booking corresponding to the student, reprompting user if not
+        //Ensure performance with ID exists, reprompting user if not
+        while(performanceToReview == null){
+            view.displayError("A performance with the given ID does not exist. Please enter a new ID.");
+            performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
+            performanceID = Long.parseLong(performanceIDinput);
+            performanceToReview = getPerformanceByID(performanceID);
+        }
+
+        //Ensure performance has a booking corresponding to the student, reprompting user if not
+        try {
             String currentEmail = getCurrentUser().getEmail();
-            boolean belongsToStudent = false;
-            for(Booking b : performanceToReview.getBookings()){
-                if(b.checkBookedByStudent(currentEmail))
-                    belongsToStudent = true;
+            if (this.validateStudentBooked(currentEmail, performanceToReview)) {
+                //Ask student for rating, providing an error upon invalid rating
+                this.promptRating(performanceToReview);
+            } // user cancelled review flow 
+        } catch (NullPointerException e) {
+            String errStr = e.getMessage();
+            view.displayError(errStr.equals(super.getErrMsg())? "Must be logged in to review performance." : errStr);
+        } catch (NumberFormatException e) {
+            view.displayError("You must enter an integer rating between 1 and 5 for your review.");
+            String retry = (view.getInput("Would you like to retry? (y/n not case sensitve)")).toLowerCase();
+            if (retry != null && retry.equals("y")) {
+                this.promptRating(performanceToReview);
             }
-            while(!belongsToStudent){
-                view.displayError("You have not created a booking for this performance. Please enter a new performance ID.");
-                performanceIDinput = view.getInput("Enter the ID of the performance you want to cancel: ");
-                performanceID = Long.parseLong(performanceIDinput);
-                performanceToReview = getPerformanceByID(performanceID);
-
-                for(Booking b : performanceToReview.getBookings()){
-                    if(b.checkBookedByStudent(currentEmail))
-                        belongsToStudent = true;
-                }
-            }
-
-            //Ask student for rating, providing an error upon invalid rating
-            boolean valid = false;
-            int rating = -1;
-            while (!valid) {
-                String ratingInput = view.getInput("Please enter a rating 1-5 for the performance: ");
-
-                try {
-                    rating = Integer.parseInt(ratingInput);
-
-                    if (rating < 1 || rating > 5)
-                        view.displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
-                    else
-                        valid = true;
-                } 
-                catch (NumberFormatException e) {
-                    view.displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
-                }
-            }
-
-            String comment = view.getInput("You may enter a comment for the review. Please press enter if you do not want to " +
-                                            "add a comment, otherwise type your comment here: ");
-            performanceToReview.review(rating, comment);
-            view.displaySuccess("You have successfully reviewed the performance. Thank you!");
         }
     }
+    private boolean validateStudentBooked(String currentEmail, Performance performanceToReview) {
+        for (Booking b : performanceToReview.getBookings()) {
+            if (b.checkBookedByStudent(currentEmail)) {
+                return true;
+            }
+        }
+    
+        view.displayError("You have not created a booking for this performance.");
+    
+        String input = view.getInput("Enter a performance ID or 'n' to stop: ");
+        if (input != null && input.equalsIgnoreCase("n")) {
+            return false;
+        }
+    
+        Long performanceID = Long.parseLong(input); // error handling: number format and null pointer 
+        return validateStudentBooked(currentEmail, getPerformanceByID(performanceID));
+    }
 
+    private void promptRating(Performance performanceToReview) {
+        boolean valid = false;
+        int rating = -1;
+        while (!valid) {
+            String ratingInput = view.getInput("Please enter a rating 1-5 for the performance: ");
+            rating = Integer.parseInt(ratingInput);
+            if (rating < 1 || rating > 5) {
+                view.displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
+            } else {
+                valid = true;
+            }
+        }
+
+        String comment = view.getInput("You may enter a comment for the review. Please press enter if you do not want to " +
+                                        "add a comment, otherwise type your comment here: ");
+        performanceToReview.review(rating, comment);
+        view.displaySuccess("You have successfully reviewed the performance. Thank you!");
+    }
     /**
      * Cancels the booking of the current booking number when the student that booked it chooses to cancel
      */
