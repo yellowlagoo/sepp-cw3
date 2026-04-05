@@ -2,6 +2,9 @@ package tests.ExternalSystemsTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import dev.crashteam.payment.PaymentSystem;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import src.ExternalSystems.MockPaymentSystem 
@@ -12,7 +15,7 @@ public class TestMockPaymentSystem {
 
     @BeforeEach
     void setUp() {
-        paymentSystem = new MockPaymentSystem();
+        PaymentSystem = new MockPaymentSystem();
     }
 
     // processPayment() 
