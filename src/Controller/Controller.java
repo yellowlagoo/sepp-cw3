@@ -8,17 +8,20 @@ import java.util.List;
 public abstract class Controller {
     private User currentUser;
     protected TextUserInterface view;
-
-    public Controller(User currentUser, TextUserInterface view) {
-        this.currentUser = currentUser;
+    private String errMsg = "Please set the current user before accessing it's attributes.";
+    public Controller(TextUserInterface view) {
         this.view = view;
+        currentUser = null;
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    protected User getCurrentUser() {
+        if (currentUser == null) {
+            throw new NullPointerException(errMsg);
+        }
+        return this.currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    protected void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -28,6 +31,9 @@ public abstract class Controller {
      * @return - whether or not the current user is a guest
      */
     protected boolean checkCurrentUserIsGuest() {
+        if (currentUser == null) {
+            throw new NullPointerException(errMsg);
+        }
         return currentUser.isLoggedIn() == false;
     }
 
@@ -36,6 +42,9 @@ public abstract class Controller {
      * @return - whether or not the current user is an admin staff
      */
     protected boolean checkCurrentUserIsAdmin() {
+        if (currentUser == null) {
+            throw new NullPointerException(errMsg);
+        }
         return currentUser instanceof AdminStaff;
     }
 
@@ -44,6 +53,9 @@ public abstract class Controller {
      * @return - whether or not the current user is a student
      */
     protected boolean checkCurrentUserIsStudent() {
+        if (currentUser == null) {
+            throw new NullPointerException(errMsg);
+        }
         return currentUser instanceof Student;
     }
 
@@ -52,6 +64,9 @@ public abstract class Controller {
      * @return - whether or not the current user is an entertainment provider
      */
     protected boolean checkCurrentUserIsEntertainmentProvider() {
+        if (currentUser == null) {
+            throw new NullPointerException(errMsg);
+        }
         return currentUser instanceof EntertainmentProvider;
     }
 
@@ -69,7 +84,5 @@ public abstract class Controller {
         return Integer.parseInt(option);
     
     }
-
-    
     
 }

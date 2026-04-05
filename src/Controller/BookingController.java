@@ -22,10 +22,10 @@ public class BookingController extends Controller {
      * @param paymentSystem - the payment system used to process payments for bookings
      * @param view - the view used to interact with the user
      */
-    public BookingController(User currentUser, long nextBookingNumber, Collection<Performance> performances, PaymentSystem paymentSystem, TextUserInterface view) {
-        super(currentUser, view);
-        this.nextBookingNumber = nextBookingNumber;
-        this.performances = performances;
+    public BookingController(PaymentSystem paymentSystem, TextUserInterface view) {
+        super(view);
+        this.nextBookingNumber = 0;
+        this.performances = new ArrayList<Performance>();
         this.paymentSystem = paymentSystem; 
         this.bookings = new ArrayList<Booking>();
     }
@@ -167,9 +167,8 @@ public class BookingController extends Controller {
     public void cancelBooking() {
         if(!checkCurrentUserIsStudent()) {
             view.displayError("Only students may cancel a booking");
-            return;
-        }
-        else{
+            throw new IllegalArgumentException("Only students may cancel a booking");
+        } else {
             String bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
             long bookingID = Long.parseLong(bookingIDinput);
             Booking bookingToCancel = getBookingByNumber(bookingID);
@@ -292,4 +291,29 @@ public class BookingController extends Controller {
         }
         return null;
     }
+
+    public void setCurrentUser(User user) {
+        super.setCurrentUser(user);
+    }
+
+    public User getCurrentUser() {
+        return super.getCurrentUser();
+    }
+
+    public void setNextBookingNumber(long nextBookingNumber) {
+        this.nextBookingNumber = nextBookingNumber;
+    }
+
+    public long getNextBookingNumber() {
+        return this.nextBookingNumber;
+    }
+
+    public Collection<Performance> getPerformances() {
+        return performances;
+    }
+
+    public void setPerformances(Collection<Performance> performances) {
+        this.performances = performances;
+    } 
+
 }

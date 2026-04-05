@@ -2,7 +2,7 @@ package src.Controller;
 
 import src.Model.*;
 import src.View.*;
-import src.ExternalSystems.VerificationSystem;
+import src.ExternalSystems.MockVerificationSystem;
 
 import java.io.*;
 import java.util.*;
@@ -14,39 +14,64 @@ public class UserController extends Controller {
     public static final String PREREGISTERED_USERS_FILE_PATH = "preregistered_students.csv";
     public static final String PREREGISTERED_ADMIN_FILE_PATH = "preregistered_admins.csv";
 
-    private final VerificationSystem verificationSystem;
+    private final MockVerificationSystem verificationSystem;
     private Collection<User> users;
     private TextUserInterface view;
     // we dont have a general model
-    public UserController(User currentUser, TextUserInterface view, VerificationSystem verificationSystem) {
-        super(currentUser, view);
-        super.getCurrentUser().setLoggedIn(false);
+    public UserController(User currentUser, TextUserInterface view, MockVerificationSystem verificationSystem) {
+        super(view);
         this.verificationSystem = verificationSystem;
         this.users = new ArrayList<>();
         this.view = view;
     }
 
     public void login() {
-        if (super.getCurrentUser().isLoggedIn()) return;
-
         String email = view.getInput("Enter email:");
         if (email == null || email.equals("")) {
             view.displayError("Email can't be empty");
-            throw new IllegalArgumentException("Email can't be empty");
+            //throw new IllegalArgumentException("Email can't be empty");
+            return;
         }
 
         String password = view.getInput("Enter password:");
         if (password == null || password.equals("")) {
             view.displayError("Password can't be empty");
-            throw new IllegalArgumentException("Password can't be empty");
+            //throw new NullPointerException("Password can't be empty");
+            return;
         }
-        
-        String fileName = super.checkCurrentUserIsAdmin()? PREREGISTERED_ADMIN_FILE_PATH : PREREGISTERED_USERS_FILE_PATH;
         // check if users credentials is in the file 
         // assumptions for file structure:
         // email, password 
         // password contains no commas 
         // each email only appears once 
+        String readForStudent = this.readFileForUser(PREREGISTERED_USERS_FILE_PATH, email, password);
+        // if current user's email and password match then we have successfully 
+        if (readForStudent.contains("User exists")) {
+            if (readForStudent.contains("successful")) {
+                view.displaySuccess(readForStudent);
+            } else {
+                view.displayError(readForStudent);
+            }
+        } else if (readForStudent.equals("User not found")){
+            String readForAdmin = this.readFileForUser(PREREGISTERED_ADMIN_FILE_PATH, email, password);
+            if (readForAdmin.contains("User exists")) {
+                if (readForAdmin.contains("successful")) {
+                    view.displaySuccess(readForAdmin);
+                } else {
+                    view.displayError(readForAdmin);
+                }
+            } else if (readForAdmin.equals("User not found")){
+                view.displayError("This user is not preregistered.");
+            } else {
+                view.displayError(readForAdmin);
+            }
+        } else {
+            view.displayError(readForStudent);
+        }
+    }
+    // true log in successful
+    // false: password incorrect, user not found, error in parsing files  
+    private String readFileForUser(String fileName, String email, String password) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String line;
@@ -54,34 +79,42 @@ public class UserController extends Controller {
             while ((line = br.readLine()) != null) {
                 elements = Arrays.asList((line.trim()).split(","));
                 this.validate(elements, fileName);
-                // check if email equals first and password equals second 
                 String parsedEmail = elements.get(0);
                 String parsedPassword = elements.get(1);
                 //error handling for empty vals 
                 if (parsedEmail.equals(email)) {
                     if (parsedPassword.equals(password)) {
-                        super.getCurrentUser().setLoggedIn(true);
-                        view.displaySuccess("Login successful.");
+                        if (fileName.equals(PREREGISTERED_USERS_FILE_PATH)) {
+                            this.setCurrentUser(new Student(email, password));
+                        } else {
+                            this.setCurrentUser(new AdminStaff(email, password));
+                        }
+                        this.getCurrentUser().setLoggedIn(true);
+                        return "User exists: login successful";
                     } else {
                         view.displayError("Password is incorrect.");
+                        return "User exists: incorrect password";
                     }
-                    break;
-                    // if the email is found whether or not the password is correct we are done 
                 }
             }
+            br.close();
+            return "User not found";
         } catch (FileNotFoundException e) {
-            System.err.println("The file " + fileName + " could not be found.");
+            return "Error parsing file: the file " + fileName + " was not found.";
         } catch (IOException e) {
-            System.err.println("An error occurred while reading the file " + fileName + ".");
+            return "Error parsing file: problem reading a line in the file "  + fileName + ".";
         } catch (IllegalArgumentException e) {
-            System.err.println("Error parsing the file due to a malformed line. Make sure it follows <email>, <password>");
+            return "Error parsing file: malformed line in the file " + fileName + ", ensure all lines follow the format <email>, <password>.";
         }
-
     }
 
     public void logout() {
-        super.getCurrentUser().setLoggedIn(false);
-        view.displaySuccess("You have been logged out successfully.");
+        try {
+            (super.getCurrentUser()).setLoggedIn(false);
+            view.displaySuccess("You have been logged out successfully.");
+        } catch (NullPointerException e) {
+            view.displayError("No user is logged in, log out failed.");
+        }
     }
 
     public void registerEntertainmentProvider() {
