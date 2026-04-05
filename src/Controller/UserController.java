@@ -46,29 +46,26 @@ public class UserController extends Controller {
         // each email only appears once 
         String readForStudent = this.readFileForUser(PREREGISTERED_USERS_FILE_PATH, email, password);
         // if current user's email and password match then we have successfully 
-        if (readForStudent.contains("User exists")) {
-            if (readForStudent.contains("successful")) {
-                view.displaySuccess(readForStudent);
-            } else {
-                view.displayError(readForStudent);
-            }
-        } else if (readForStudent.equals("User not found")){
+        if (readForStudent.equals("User not found")) {
             String readForAdmin = this.readFileForUser(PREREGISTERED_ADMIN_FILE_PATH, email, password);
-            if (readForAdmin.contains("User exists")) {
-                if (readForAdmin.contains("successful")) {
-                    view.displaySuccess(readForAdmin);
-                } else {
-                    view.displayError(readForAdmin);
-                }
-            } else if (readForAdmin.equals("User not found")){
-                view.displayError("This user is not preregistered.");
-            } else {
-                view.displayError(readForAdmin);
-            }
+            if (readForAdmin.equals("User not found")) {
+                readForAdmin = "This user is not preregistered.";
+            } 
+            displayMessaging(readForAdmin);
         } else {
-            view.displayError(readForStudent);
+            displayMessaging(readForStudent);
         }
     }
+
+    private void displayMessaging(String readResult) {
+        if (readResult.contains("successful")) {
+            view.displaySuccess(readResult);
+        } else {
+            view.displayError(readResult);
+        }
+    }
+
+
     // true log in successful
     // false: password incorrect, user not found, error in parsing files  
     private String readFileForUser(String fileName, String email, String password) {
