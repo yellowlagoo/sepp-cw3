@@ -1,4 +1,4 @@
-package ModelTests;
+package tests.ModelTests;
 
 import Model.*; 
 import java.time.LocalDateTime;

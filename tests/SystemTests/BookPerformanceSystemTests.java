@@ -6,7 +6,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-package SystemTests;
+package tests.SystemTests;
 
 public class BookPerformanceSystemTests {
     
