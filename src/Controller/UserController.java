@@ -2,7 +2,7 @@ package src.Controller;
 
 import src.Model.*;
 import src.View.*;
-import src.ExternalSystems.VerificationSystem;
+import src.ExternalSystems.MockVerificationSystem;
 
 import java.io.*;
 import java.util.*;
@@ -14,11 +14,11 @@ public class UserController extends Controller {
     public static final String PREREGISTERED_USERS_FILE_PATH = "preregistered_students.csv";
     public static final String PREREGISTERED_ADMIN_FILE_PATH = "preregistered_admins.csv";
 
-    private final VerificationSystem verificationSystem;
+    private final MockVerificationSystem verificationSystem;
     private Collection<User> users;
     private TextUserInterface view;
     // we dont have a general model
-    public UserController(User currentUser, TextUserInterface view, VerificationSystem verificationSystem) {
+    public UserController(User currentUser, TextUserInterface view, MockVerificationSystem verificationSystem) {
         super(currentUser, view);
         super.getCurrentUser().setLoggedIn(false);
         this.verificationSystem = verificationSystem;
