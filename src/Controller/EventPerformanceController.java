@@ -37,7 +37,8 @@ public class EventPerformanceController extends Controller {
      */
     public Event createEvent() {
         try {
-            if (!super.checkCurrentUserIsAdmin()) {
+            if (!super.checkCurrentUserIsEntertainmentProvider()) {
+                view.displayError("Must be an entertainment provider to create an event");
                 return null;
             }
         } catch (NullPointerException e) {
