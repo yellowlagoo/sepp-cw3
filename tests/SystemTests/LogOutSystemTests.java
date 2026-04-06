@@ -2,12 +2,185 @@ package tests.SystemTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.DisplayName;
+
+import src.View.*;
+import src.Model.*;
+import src.Controller.*;
+import src.external.MockVerificationService;
 
 public class LogOutSystemTests {
-    
+
+    private TextUserInterface view;
+    private UserController userController;
+    private MockVerificationService mockVerificationSystem;
+
+    @BeforeEach
+    void setup() {
+        view = mock(TextUserInterface.class);
+        mockVerificationSystem = new MockVerificationService();
+        userController = new UserController(view, mockVerificationSystem);
+    }
+
+    // logs in a student so there is an active session  
+
+    private void loginAsStudent() {
+        when(view.getInput("Enter email:")).thenReturn("bob@hindeburgh.ed.ac.uk");
+        when(view.getInput("Enter password:")).thenReturn("monkeys99$");
+        userController.login();
+    }
+
+    private void loginAsAdmin() {
+        when(view.getInput("Enter email:")).thenReturn("AdminStaff@ed.ac.uk");
+        when(view.getInput("Enter password:")).thenReturn("password1");
+        userController.login();
+    }
+
+    private void loginAsEP() {
+        when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
+        when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
+        when(view.getInput("Enter contact person name:")).thenReturn("Michael");
+        when(view.getInput("Create a password:")).thenReturn("password98980");
+        when(view.getInput("Enter a short description of your organisation:"))
+                .thenReturn("This is a test organisation for our testing task");
+        userController.registerEntertainmentProvider();
+
+        when(view.getInput("Enter email:")).thenReturn("EPtest@ed.ac.uk");
+        when(view.getInput("Enter password:")).thenReturn("password98980");
+        userController.login();
+    }
+
+    //  Logout displays success message                                   
+
+    @Test
+    @DisplayName("Testing logout success message for student")
+    void testStudentLogoutDisplaysSuccess() {
+        loginAsStudent();
+
+        userController.logout();
+
+        verify(view).displaySuccess("You have been logged out successfully.");
+    }
+
+    @Test
+    @DisplayName("Testing logout success message for admin")
+    void testAdminLogoutDisplaysSuccess() {
+        loginAsAdmin();
+
+        userController.logout();
+
+        verify(view).displaySuccess("You have been logged out successfully.");
+    }
+
+    @Test
+    @DisplayName("Testing logout success message for EP")
+    void testEPLogoutDisplaysSuccess() {
+        loginAsEP();
+
+        userController.logout();
+
+        verify(view).displaySuccess("You have been logged out successfully.");
+    }
+
+    //  Logout clears the current user 
+
+    @Test
+    @DisplayName("Testing user is no longer logged in after student logout")
+    void testStudentLogoutClearsCurrentUser() {
+        loginAsStudent();
+        User user = userController.getCurrentUser();
+
+        userController.logout();
+
+        assertFalse(user.isLoggedIn(), "Student should no longer be logged in after logout");
+    }
+
+    @Test
+    @DisplayName("Testing user is no longer logged in after admin logout")
+    void testAdminLogoutClearsCurrentUser() {
+        loginAsAdmin();
+        User user = userController.getCurrentUser();
+
+        userController.logout();
+
+        assertFalse(user.isLoggedIn(), "Admin should no longer be logged in after logout");
+    }
+
+    @Test
+    @DisplayName("Testing user is no longer logged in after EP logout")
+    void testEPLogoutClearsCurrentUser() {
+        loginAsEP();
+        User user = userController.getCurrentUser();
+
+        userController.logout();
+
+        assertFalse(user.isLoggedIn(), "EP should no longer be logged in after logout");
+    }
+
+    //  Logout sets user as no longer logged in    
+
+    @Test
+    @DisplayName("Testing user isLoggedIn is false after student logout")
+    void testStudentIsLoggedInFalseAfterLogout() {
+        loginAsStudent();
+        User user = userController.getCurrentUser();
+
+        userController.logout();
+
+        assertFalse(user.isLoggedIn(), "User's isLoggedIn should be false after logout");
+    }
+
+    @Test
+    @DisplayName("Testing user isLoggedIn is false after admin logout")
+    void testAdminIsLoggedInFalseAfterLogout() {
+        loginAsAdmin();
+        User user = userController.getCurrentUser();
+
+        userController.logout();
+
+        assertFalse(user.isLoggedIn(), "Admin's isLoggedIn should be false after logout");
+    }
+
+    //  Login after logout works correctly   
+
+    @Test
+    @DisplayName("Testing student can log back in after logging out")
+    void testStudentCanLoginAfterLogout() {
+        loginAsStudent();
+        userController.logout();
+
+        when(view.getInput("Enter email:")).thenReturn("bob@hindeburgh.ed.ac.uk");
+        when(view.getInput("Enter password:")).thenReturn("monkeys99$");
+        userController.login();
+
+        assertNotNull(userController.getCurrentUser(), "User should be logged in again after re-login");
+    }
+
+    @Test
+    @DisplayName("Testing logged in user is a student after re-login")
+    void testCurrentUserIsStudentAfterReLogin() {
+        loginAsStudent();
+        userController.logout();
+
+        when(view.getInput("Enter email:")).thenReturn("bob@hindeburgh.ed.ac.uk");
+        when(view.getInput("Enter password:")).thenReturn("monkeys99$");
+        userController.login();
+
+        assertTrue(userController.getCurrentUser() instanceof Student,
+            "Re-logged in user should still be a Student");
+    }
+
+    //  Logout when not logged in (guest)    
+
+    @Test
+    @DisplayName("Testing logout when no user is logged in shows error")
+    void testLogoutWhenNotLoggedIn() {
+        // No login — currentUser is null (guest state)
+        userController.logout();
+
+        verify(view).displayError("No user is logged in.");
+    }
 }

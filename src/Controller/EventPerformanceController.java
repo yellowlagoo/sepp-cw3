@@ -19,6 +19,7 @@ public class EventPerformanceController extends Controller {
     private PaymentSystem paymentSystem;
     private Collection<Event> events;
     private Collection<Performance> performances;
+    
 
     /**
      * Constructor for the EventPerformanceController class.
