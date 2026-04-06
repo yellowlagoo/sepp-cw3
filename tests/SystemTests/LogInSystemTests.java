@@ -30,7 +30,7 @@ public class LogInSystemTests {
     @DisplayName("Testing correct value for login student")
     void testStudentLogin() {
 
-        when(view.getInput("Enter email:")).thenReturn("bob@hindeburgh.ed.ac.u");
+        when(view.getInput("Enter email:")).thenReturn("bob@hindeburgh.ed.ac.uk");
         when(view.getInput("Enter password:")).thenReturn("monkeys99$");
 
         userController.login();
@@ -44,7 +44,7 @@ public class LogInSystemTests {
     void testAdminLogin() {
 
         when(view.getInput("Enter email:")).thenReturn("AdminStaff@ed.ac.uk");
-        when(view.getInput("Enter password:")).thenReturn("password1232");
+        when(view.getInput("Enter password:")).thenReturn("password1");
 
         userController.login();
 
