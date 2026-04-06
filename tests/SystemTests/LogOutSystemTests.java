@@ -9,18 +9,18 @@ import org.junit.jupiter.api.DisplayName;
 import src.View.*;
 import src.Model.*;
 import src.Controller.*;
-import src.ExternalSystems.MockVerificationSystem;
+import src.external.MockVerificationService;
 
 public class LogOutSystemTests {
 
     private TextUserInterface view;
     private UserController userController;
-    private MockVerificationSystem mockVerificationSystem;
+    private MockVerificationService mockVerificationSystem;
 
     @BeforeEach
     void setup() {
         view = mock(TextUserInterface.class);
-        mockVerificationSystem = new MockVerificationSystem();
+        mockVerificationSystem = new MockVerificationService();
         userController = new UserController(view, mockVerificationSystem);
     }
 

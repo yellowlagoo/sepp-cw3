@@ -6,29 +6,27 @@ import src.Model.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import src.Controller.*;
-import src.ExternalSystems.MockPaymentSystem;
-import src.ExternalSystems.MockVerificationSystem;
+import src.external.MockPaymentSystem;
+import src.external.MockVerificationService;
 
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Working directory: " + System.getProperty("user.dir"));
-        TextUserInterface view = new TextUserInterface();
-        MockVerificationSystem verificationSystem = new MockVerificationSystem();
-        MockPaymentSystem paymentSystem = new MockPaymentSystem();
+        public static void main(String[] args) {
+                TextUserInterface view = new TextUserInterface();
+                MockVerificationService verificationService = new MockVerificationService();
+                MockPaymentSystem paymentSystem = new MockPaymentSystem();
 
-        UserController userController = new UserController(view, verificationSystem);
-        Collection<Performance> sharedPerformances = new ArrayList<>();
+                UserController userController = new UserController(view, verificationService);
+                Collection<Performance> sharedPerformances = new ArrayList<>();
 
-        EventPerformanceController epController = new EventPerformanceController(
-                1, 1, paymentSystem, view, sharedPerformances);
+                EventPerformanceController epController = new EventPerformanceController(
+                                1, 1, paymentSystem, view, sharedPerformances);
 
-        BookingController bookingController = new BookingController(
-                paymentSystem, view, sharedPerformances);
+                BookingController bookingController = new BookingController(
+                                paymentSystem, view, sharedPerformances);
 
-        MenuController menuController = new MenuController(
-                userController, bookingController, epController, view);
+                MenuController menuController = new MenuController(
+                                userController, bookingController, epController, view);
 
-        menuController.mainMenu();
-    }
+                menuController.mainMenu();
+        }
 }

@@ -9,20 +9,20 @@ import org.junit.jupiter.api.DisplayName;
 import src.View.*;
 import src.Model.*;
 import src.Controller.*;
-import src.ExternalSystems.MockVerificationSystem;
+import src.external.*;
 
 public class LogInSystemTests {
 
     private TextUserInterface view;
     private UserController userController;
-    private MockVerificationSystem mockVerificationSystem;
+    private MockVerificationService mockVerificationService;
 
     @BeforeEach
     void setup() {
 
         view = mock(TextUserInterface.class);
-        mockVerificationSystem = new MockVerificationSystem();
-        userController = new UserController(view, mockVerificationSystem);
+        mockVerificationService = new MockVerificationService();
+        userController = new UserController(view, mockVerificationService);
     }
 
     // Testing Student login
@@ -58,7 +58,7 @@ public class LogInSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))
@@ -186,7 +186,7 @@ public class LogInSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))
@@ -209,7 +209,7 @@ public class LogInSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))
@@ -258,7 +258,7 @@ public class LogInSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))

@@ -6,14 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import org.junit.jupiter.api.DisplayName;
 
 import src.View.*;
 import src.Model.*;
 import src.Controller.*;
-import src.ExternalSystems.*;
+import src.external.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class CancelBookingSystemTests {
     @DisplayName("Testing error shown when refund fails")
     void testRefundFailureShowsError() {
         PaymentSystem failingPayment = mock(PaymentSystem.class);
-        when(failingPayment.processRefund(anyInt(), anyString(), anyString(), anyLong(), anyString(), anyDouble(), anyString()))
+        when(failingPayment.processRefund(anyInt(), anyString(), anyString(), anyInt(), anyString(), anyDouble(), anyString()))
                 .thenReturn(false);
         bookingController = new BookingController(failingPayment, view, allPerformances);
         bookingController.setCurrentUser(student);
@@ -124,7 +123,7 @@ public class CancelBookingSystemTests {
     @DisplayName("Testing booking status is not CANCELLEDBYSTUDENT when refund fails")
     void testBookingStatusNotUpdatedWhenRefundFails() {
         PaymentSystem failingPayment = mock(PaymentSystem.class);
-        when(failingPayment.processRefund(anyInt(), anyString(), anyString(), anyLong(), anyString(), anyDouble(), anyString()))
+        when(failingPayment.processRefund(anyInt(), anyString(), anyString(), anyInt(), anyString(), anyDouble(), anyString()))
                 .thenReturn(false);
         bookingController = new BookingController(failingPayment, view, allPerformances);
         bookingController.setCurrentUser(student);

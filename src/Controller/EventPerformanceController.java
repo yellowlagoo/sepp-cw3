@@ -1,6 +1,6 @@
 package src.Controller;
 
-import src.ExternalSystems.*;
+import src.external.*;
 import src.Model.*;
 import src.View.*;
 
@@ -23,24 +23,27 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Constructor for the EventPerformanceController class.
-     * @param nextEventID - the next ID to be given to an event
+     * 
+     * @param nextEventID       - the next ID to be given to an event
      * @param nextPerformanceID - the next ID to be given to a performance
-     * @param paymentSystem - the payment system to be interfaced with
-     * @param view - the user interface of the system
+     * @param paymentSystem     - the payment system to be interfaced with
+     * @param view              - the user interface of the system
      */
     public EventPerformanceController(long nextEventID, long nextPerformanceID,
-        PaymentSystem paymentSystem, TextUserInterface view, Collection<Performance> performances) {
-    super(view);
-    this.nextEventID = nextEventID;
-    this.nextPerformanceID = nextPerformanceID;
-    this.paymentSystem = paymentSystem;
-    this.events = new ArrayList<>();
-    this.performances = performances;
-}
+            PaymentSystem paymentSystem, TextUserInterface view, Collection<Performance> performances) {
+        super(view);
+        this.nextEventID = nextEventID;
+        this.nextPerformanceID = nextPerformanceID;
+        this.paymentSystem = paymentSystem;
+        this.events = new ArrayList<>();
+        this.performances = performances;
+    }
+
     /**
      * Creates a new event and optionally adds performances to it.
      * Only entertainment providers can create events.
      * Auto-assigns the next available event ID.
+     * 
      * @return the newly created Event, or null if creation failed
      */
     public Event createEvent() {
@@ -106,6 +109,7 @@ public class EventPerformanceController extends Controller {
     /**
      * Creates a new performance and adds it to the given event.
      * Delegates to the Event model's createPerformance method.
+     * 
      * @param event - the event to add the performance to
      * @return the newly created Performance
      */
@@ -151,7 +155,8 @@ public class EventPerformanceController extends Controller {
                 performerNames, venueAddress, venueCapacity, venueIsOutdoors, allowSmoking,
                 numTickets, ticketPrice);
 
-        // Also add to the controller's collection so searchForPerformances/viewPerformance can find it
+        // Also add to the controller's collection so
+        // searchForPerformances/viewPerformance can find it
         this.addPerformance(performance);
 
         return performance;
@@ -200,7 +205,8 @@ public class EventPerformanceController extends Controller {
     /**
      * Cancels a performance. Only the entertainment provider who created the
      * performance can cancel it, and only if it has not yet happened.
-     * If the performance has active bookings, refunds are processed before cancellation.
+     * If the performance has active bookings, refunds are processed before
+     * cancellation.
      */
     public void cancelPerformance() {
         Performance performance = null;
@@ -291,8 +297,9 @@ public class EventPerformanceController extends Controller {
      * Checks whether a performance can be sponsored with the given amount.
      * The performance's event must be ticketed, and the amount must be
      * between 0 and the final ticket price.
+     * 
      * @param performance - the performance to check
-     * @param amount - the proposed sponsorship amount
+     * @param amount      - the proposed sponsorship amount
      * @return true if sponsorship is possible, false otherwise
      */
     private boolean checkIfSponsorshipPossible(Performance performance, double amount) {
@@ -351,6 +358,7 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Adds an event to the collection of events.
+     * 
      * @param e - the event to add
      */
     private void addEvent(Event e) {
@@ -359,6 +367,7 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Adds a performance to the collection of performances.
+     * 
      * @param p - the performance to add
      */
     private void addPerformance(Performance p) {
@@ -367,6 +376,7 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Finds an event by its ID.
+     * 
      * @param eventID - the ID of the event to find
      * @return the Event if found, or null if not found
      */
@@ -381,6 +391,7 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Finds an event by its title.
+     * 
      * @param title - the title of the event to find
      * @return the Event if found, or null if not found
      */
@@ -395,6 +406,7 @@ public class EventPerformanceController extends Controller {
 
     /**
      * Finds a performance by its ID.
+     * 
      * @param performanceID - the ID of the performance to find
      * @return the Performance if found, or null if not found
      */
@@ -410,7 +422,7 @@ public class EventPerformanceController extends Controller {
     public void setCurrentUser(User user) {
         super.setCurrentUser(user);
     }
-    
+
     public User getCurrentUser() {
         return super.getCurrentUser();
     }

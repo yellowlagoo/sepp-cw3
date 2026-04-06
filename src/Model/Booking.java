@@ -133,6 +133,7 @@ public class Booking {
         record += "Name: " + student.getName() + "\n";
         record += "Email: " + student.getEmail() + "\n";
         record += "Phone Number: " + student.getPhoneNumber() + "\n";
+        record += "Booking ID: " + bookingNumber + "\n";
 
         record += "\nEVENT DETAILS\n";
         record += "Name: " + performance.getEventTitle() + "\n";

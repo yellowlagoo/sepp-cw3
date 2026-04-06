@@ -15,7 +15,7 @@ import java.util.Arrays;
 import src.View.*;
 import src.Model.*;
 import src.Controller.*;
-import src.ExternalSystems.*;
+import src.external.*;
 
 public class BookPerformanceSystemTests {
 

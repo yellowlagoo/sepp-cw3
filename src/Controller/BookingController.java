@@ -3,7 +3,7 @@ package src.Controller;
 import java.util.*;
 
 import src.Model.*;
-import src.ExternalSystems.PaymentSystem;
+import src.external.*;
 import java.time.LocalDateTime;
 import src.View.*;
 
@@ -16,13 +16,18 @@ public class BookingController extends Controller {
 
     /**
      * Constructor for the BookingController class
-     * @param currentUser - the user currently interacting with the system
-     * @param nextBookingNumber - the next booking number to be assigned to a booking, which is incremented each time a booking is made
-     * @param performances - the collection of all performances in the system
-     * @param paymentSystem - the payment system used to process payments for bookings
-     * @param view - the view used to interact with the user
+     * 
+     * @param currentUser       - the user currently interacting with the system
+     * @param nextBookingNumber - the next booking number to be assigned to a
+     *                          booking, which is incremented each time a booking is
+     *                          made
+     * @param performances      - the collection of all performances in the system
+     * @param paymentSystem     - the payment system used to process payments for
+     *                          bookings
+     * @param view              - the view used to interact with the user
      */
-    public BookingController(PaymentSystem paymentSystem, TextUserInterface view, Collection<Performance> performances) {
+    public BookingController(PaymentSystem paymentSystem, TextUserInterface view,
+            Collection<Performance> performances) {
         super(view);
         this.nextBookingNumber = 0;
         this.performances = performances;
@@ -31,7 +36,8 @@ public class BookingController extends Controller {
     }
 
     /**
-     * Books a performance for the current user, providing a booking record upon success.
+     * Books a performance for the current user, providing a booking record upon
+     * success.
      * Prompts the user for their name and phone number before creating the booking.
      */
     public void bookPerformance() {
@@ -40,7 +46,7 @@ public class BookingController extends Controller {
         boolean possible = false;
         boolean isTicketed = false;
         String notLoggedInMsg = "Must be logged in to book a performance.";
-        
+
         // Ensures current user is a student, ending booking process if not
         try {
             if (!super.checkCurrentUserIsStudent()) {
@@ -109,7 +115,7 @@ public class BookingController extends Controller {
             // Process the student's payment
             String eventTitle = performance.getEventTitle();
             String studentEmail = s.getEmail();
-            long studentPhone = s.getPhoneNumber();
+            int studentPhone = s.getPhoneNumber();
             String epEmail = performance.getOrganizerEmail();
             double transactionAmount = performance.getFinalTicketPrice() * numTickets;
             boolean paymentSuccessful = paymentSystem.processPayment(numTickets, eventTitle, studentEmail,
@@ -135,11 +141,12 @@ public class BookingController extends Controller {
     }
 
     /**
-     * Adds a student's review and rating to a performance that they have booked in the past
+     * Adds a student's review and rating to a performance that they have booked in
+     * the past
      */
     public void reviewPerformance() {
         try {
-            if (!super.checkCurrentUserIsStudent()){
+            if (!super.checkCurrentUserIsStudent()) {
                 view.displayError("Only students may review a performance");
                 return;
             }
@@ -152,24 +159,25 @@ public class BookingController extends Controller {
         long performanceID = Long.parseLong(performanceIDinput);
         Performance performanceToReview = getPerformanceByID(performanceID);
 
-        //Ensure performance with ID exists, reprompting user if not
-        while(performanceToReview == null){
+        // Ensure performance with ID exists, reprompting user if not
+        while (performanceToReview == null) {
             view.displayError("A performance with the given ID does not exist. Please enter a new ID.");
             performanceIDinput = view.getInput("Enter the ID of the performance you would like to review: ");
             performanceID = Long.parseLong(performanceIDinput);
             performanceToReview = getPerformanceByID(performanceID);
         }
 
-        //Ensure performance has a booking corresponding to the student, reprompting user if not
+        // Ensure performance has a booking corresponding to the student, reprompting
+        // user if not
         try {
             String currentEmail = getCurrentUser().getEmail();
             if (this.validateStudentBooked(currentEmail, performanceToReview)) {
-                //Ask student for rating, providing an error upon invalid rating
+                // Ask student for rating, providing an error upon invalid rating
                 this.promptRating(performanceToReview);
-            } // user cancelled review flow 
+            } // user cancelled review flow
         } catch (NullPointerException e) {
             String errStr = e.getMessage();
-            view.displayError(errStr.equals(super.getErrMsg())? "Must be logged in to review performance." : errStr);
+            view.displayError(errStr.equals(super.getErrMsg()) ? "Must be logged in to review performance." : errStr);
         } catch (NumberFormatException e) {
             view.displayError("You must enter an integer rating between 1 and 5 for your review.");
             String retry = (view.getInput("Would you like to retry? (y/n not case sensitive)")).toLowerCase();
@@ -178,21 +186,22 @@ public class BookingController extends Controller {
             }
         }
     }
+
     private boolean validateStudentBooked(String currentEmail, Performance performanceToReview) {
         for (Booking b : performanceToReview.getBookings()) {
             if (b.checkBookedByStudent(currentEmail)) {
                 return true;
             }
         }
-    
+
         view.displayError("You have not created a booking for this performance.");
-    
+
         String input = view.getInput("Enter a performance ID or 'n' to stop: ");
         if (input != null && input.equalsIgnoreCase("n")) {
             return false;
         }
-    
-        Long performanceID = Long.parseLong(input); // error handling: number format and null pointer 
+
+        Long performanceID = Long.parseLong(input); // error handling: number format and null pointer
         return validateStudentBooked(currentEmail, getPerformanceByID(performanceID));
     }
 
@@ -203,41 +212,45 @@ public class BookingController extends Controller {
             String ratingInput = view.getInput("Please enter a rating 1-5 for the performance: ");
             rating = Integer.parseInt(ratingInput);
             if (rating < 1 || rating > 5) {
-                view.displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
+                view.displayError(
+                        "You must enter an integer rating between 1 and 5 for your review. Please try again.");
             } else {
                 valid = true;
             }
         }
 
-        String comment = view.getInput("You may enter a comment for the review. Please press enter if you do not want to " +
-                                        "add a comment, otherwise type your comment here: ");
+        String comment = view
+                .getInput("You may enter a comment for the review. Please press enter if you do not want to " +
+                        "add a comment, otherwise type your comment here: ");
         performanceToReview.review(rating, comment);
         view.displaySuccess("You have successfully reviewed the performance. Thank you!");
     }
+
     /**
-     * Cancels the booking of the current booking number when the student that booked it chooses to cancel
+     * Cancels the booking of the current booking number when the student that
+     * booked it chooses to cancel
      */
     public void cancelBooking() {
-        if(!checkCurrentUserIsStudent()) {
+        if (!checkCurrentUserIsStudent()) {
             view.displayError("Only students may cancel a booking");
             throw new IllegalArgumentException("Only students may cancel a booking");
         } else {
             String bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
             long bookingID = Long.parseLong(bookingIDinput);
             Booking bookingToCancel = getBookingByNumber(bookingID);
-            
-            //Ensure booking with given number exists, reprompting user if not
-            while(bookingToCancel == null){
+
+            // Ensure booking with given number exists, reprompting user if not
+            while (bookingToCancel == null) {
                 view.displayError("Booking with given number does not exist. Please enter a valid booking number.");
                 bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
                 bookingID = Long.parseLong(bookingIDinput);
                 bookingToCancel = getBookingByNumber(bookingID);
             }
 
-            //Ensure booking belongs to user, reprompting if not
+            // Ensure booking belongs to user, reprompting if not
             String currentEmail = getCurrentUser().getEmail();
             boolean belongsToStudent = bookingToCancel.checkBookedByStudent(currentEmail);
-            while(!belongsToStudent){
+            while (!belongsToStudent) {
                 view.displayError("This booking does not belong to you. Please enter a new booking number.");
                 bookingIDinput = view.getInput("Enter the ID of the booking you want to cancel: ");
                 bookingID = Long.parseLong(bookingIDinput);
@@ -246,7 +259,7 @@ public class BookingController extends Controller {
                 belongsToStudent = bookingToCancel.checkBookedByStudent(currentEmail);
             }
 
-            //Ensure booking is at least 24 hours away, ending cancellation if not
+            // Ensure booking is at least 24 hours away, ending cancellation if not
             LocalDateTime oneDayLater = LocalDateTime.now().plusHours(24);
             LocalDateTime startTime = bookingToCancel.getPerformance().getStartDateTime();
             if (startTime.isBefore(oneDayLater)) {
@@ -254,15 +267,16 @@ public class BookingController extends Controller {
                 return;
             }
 
-            //Refund payment, notifying student if there is an issue with processing refund
-            boolean refunded = paymentSystem.processRefund(bookingToCancel.getNumTickets(), bookingToCancel.getPerformance().getEventTitle(), 
-                                                        bookingToCancel.getStudent().getEmail(), bookingToCancel.getStudent().getPhoneNumber(), 
-                                                        bookingToCancel.getPerformance().getOrganizerEmail(), bookingToCancel.getAmountPaid(), "");
-            if(refunded){
-                view.displaySuccess("The booking for the booking ID " + bookingID + " was successfully cancelled and refunded");
+            // Refund payment, notifying student if there is an issue with processing refund
+            boolean refunded = paymentSystem.processRefund(bookingToCancel.getNumTickets(),
+                    bookingToCancel.getPerformance().getEventTitle(),
+                    bookingToCancel.getStudent().getEmail(), bookingToCancel.getStudent().getPhoneNumber(),
+                    bookingToCancel.getPerformance().getOrganizerEmail(), bookingToCancel.getAmountPaid(), "");
+            if (refunded) {
+                view.displaySuccess(
+                        "The booking for the booking ID " + bookingID + " was successfully cancelled and refunded");
                 bookingToCancel.cancelByStudent();
-            }
-            else{
+            } else {
                 view.displayError("The booking was not successfully cancelled or refunded. Please try again later.");
             }
         }
@@ -270,6 +284,7 @@ public class BookingController extends Controller {
 
     /**
      * Adds a booking to the system
+     * 
      * @param b - the booking to be added
      */
     private void addBooking(Booking b) {
@@ -278,38 +293,39 @@ public class BookingController extends Controller {
 
     /**
      * Returns a performance given its ID
+     * 
      * @param performanceID - the performance ID to search for
      * @return the performance associated with that ID or null for an invalid ID
      */
     private Performance getPerformanceByID(long performanceID) {
-        for (Performance p: performances) {
+        for (Performance p : performances) {
             if (p.getPerformanceID() == performanceID) {
                 return p;
             }
-        }        
+        }
         return null;
     }
 
     /**
-     * Returns whether a booking is possible based on if there are enough tickets available
+     * Returns whether a booking is possible based on if there are enough tickets
+     * available
      * Provides an error message if a user tries to book is nonticketed
+     * 
      * @param performance - the performance trying to be booked
-     * @param numTickets - the number of tickets trying to be booked
-     * @return - whether or not the booking is possible 
+     * @param numTickets  - the number of tickets trying to be booked
+     * @return - whether or not the booking is possible
      */
     private boolean checkIfBookingPossible(Performance performance, int numTickets) {
         boolean isTicketed = performance.checkIfEventIsTicketed();
         if (!isTicketed) {
             view.displayError("The requested performance's event is not ticketed. There is no need to book it.");
             return false;
-        }
-        else {
+        } else {
             boolean enoughTicketsLeft = performance.checkIfTicketsLeft(numTickets);
             if (!enoughTicketsLeft) {
                 view.displayError("Requested performance has no tickets left.");
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         }
@@ -317,13 +333,14 @@ public class BookingController extends Controller {
 
     /**
      * Provides a list of all bookings for a particular event, given its ID
+     * 
      * @param eventID - the event ID to search with
      * @return - all of the bookings associated with a particular event ID
      */
     private Collection<Booking> findBookingsByEvent(long eventID) {
         Collection<Booking> bookingsByEvent = new ArrayList<>();
-        for(Performance p : performances){
-            if(p.getEvent().getEventID() == eventID){
+        for (Performance p : performances) {
+            if (p.getEvent().getEventID() == eventID) {
                 bookings.addAll(p.getBookings());
             }
         }
@@ -331,14 +348,17 @@ public class BookingController extends Controller {
     }
 
     /**
-     * Iterates through all of the performances in the system to find the booking with a particular booking number
+     * Iterates through all of the performances in the system to find the booking
+     * with a particular booking number
+     * 
      * @param bookingNumber - the booking number to search for
-     * @return - the booking corresponding with that number or null for an invalid number
+     * @return - the booking corresponding with that number or null for an invalid
+     *         number
      */
     private Booking getBookingByNumber(long bookingNumber) {
-        for(Performance p : performances){
-            for(Booking b : p.getBookings()){
-                if(b.getBookingNumber() == bookingNumber)
+        for (Performance p : performances) {
+            for (Booking b : p.getBookings()) {
+                if (b.getBookingNumber() == bookingNumber)
                     return b;
             }
         }
@@ -367,6 +387,6 @@ public class BookingController extends Controller {
 
     public void setPerformances(Collection<Performance> performances) {
         this.performances = performances;
-    } 
+    }
 
 }

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import src.View.*;
 import src.Model.*;
 import src.Controller.*;
-import src.ExternalSystems.MockPaymentSystem;
+import src.external.MockPaymentSystem;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
