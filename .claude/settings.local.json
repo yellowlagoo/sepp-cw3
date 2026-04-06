@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(java -cp \"out:lib/*\" org.junit.platform.console.ConsoleLauncher --classpath=out --scan-classpath)"
-    ]
-  }
-}

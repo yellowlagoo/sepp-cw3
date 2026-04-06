@@ -17,22 +17,27 @@ import java.util.*;
 
 public class CreateEventSystemTests {
 
+    // Controller under tset shared across all tests
     private EventPerformanceController epController;
     private TextUserInterface view;
+    // Shared performance list passed into the controller
     private Collection<Performance> sharedPerformances;
     private MockPaymentSystem paymentSystem;
+    // Three user types covering the main access control cases
     private EntertainmentProvider ep;
     private Student student;
     private AdminStaff admin;
 
     @BeforeEach
     void setup() {
+        // Use a mocked view so we can verify what gets displayed
         view = mock(TextUserInterface.class);
         sharedPerformances = new ArrayList<>();
         paymentSystem = new MockPaymentSystem();
 
         epController = new EventPerformanceController(1, 1, paymentSystem, view, sharedPerformances);
 
+        // Default user is an EPm most tests run as this user
         ep = new EntertainmentProvider("ep@test.com", "password", "Test Org", "B1236285749", "Contact", "description");
         ep.setLoggedIn(true);
         epController.setCurrentUser(ep);
