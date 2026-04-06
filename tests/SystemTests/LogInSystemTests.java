@@ -1,5 +1,8 @@
 package tests.SystemTests;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +19,22 @@ public class LogInSystemTests {
     private TextUserInterface view;
     private UserController userController;
     private MockVerificationService mockVerificationService;
+
+    @BeforeAll
+    static void initAll() {
+        System.out.println("Testing for LogIn use case started");
+        System.out.println("--------------------------------");
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("Testing for LogIn use case completed");
+    }
 
     @BeforeEach
     void setup() {

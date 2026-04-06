@@ -1,5 +1,8 @@
 package tests.SystemTests;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +30,22 @@ public class ReviewPerformanceSystemTests {
         private EntertainmentProvider ep;
         private Event event;
         private Student student;
+
+        @BeforeAll
+        static void initAll() {
+                System.out.println("Testing for ReviewPerformance use case started");
+                System.out.println("--------------------------------");
+        }
+
+         @AfterEach
+        void betweenTests() {
+                System.out.println("--------------------------------");
+        }
+
+        @AfterAll
+        static void tearDownAll() {
+                System.out.println("Testing for ReviewPerformance use case completed");
+        }
 
         @BeforeEach
         void setup() {

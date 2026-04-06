@@ -6,6 +6,9 @@ import src.View.*;
 import src.external.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import static org.mockito.Mockito.*;
@@ -17,6 +20,22 @@ public class RegisterEntertainmentProviderSystemTests {
     private UserController userController;
     private TextUserInterface view;
     private MockVerificationService verificationService;
+
+    @BeforeAll
+    static void initAll() {
+        System.out.println("Testing for RegisterEntertainmentProvider use case started");
+        System.out.println("--------------------------------");
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("Testing for EntertainmentProvider use case completed");
+    }
 
     @BeforeEach
     void setup() {

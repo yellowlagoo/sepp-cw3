@@ -1,5 +1,8 @@
 package tests.SystemTests;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +31,22 @@ public class SearchForPerformancesSystemTests {
         private Performance performanceThree;
         private EntertainmentProvider ep;
         private Event event;
+
+        @BeforeAll
+        static void initAll() {
+                System.out.println("Testing for SearchForPerformances use case started");
+                System.out.println("--------------------------------");
+        }
+
+         @AfterEach
+        void betweenTests() {
+                System.out.println("--------------------------------");
+        }
+
+        @AfterAll
+        static void tearDownAll() {
+                System.out.println("Testing for SearchForPerformances use case completed");
+        }
 
         @BeforeEach
         void setup() {
