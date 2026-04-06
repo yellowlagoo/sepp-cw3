@@ -21,8 +21,10 @@ public class UserController extends Controller {
 
     /**
      * Constructor for the UserController class.
-     * @param view - the text-based user interface
-     * @param verificationSystem - the external system used to verify entertainment providers
+     * 
+     * @param view               - the text-based user interface
+     * @param verificationSystem - the external system used to verify entertainment
+     *                           providers
      */
     public UserController(TextUserInterface view, MockVerificationSystem verificationSystem) {
         super(view);
@@ -52,13 +54,18 @@ public class UserController extends Controller {
         if (readForStudent.equals(notFound)) {
             String readForAdmin = this.readFileForUser(PREREGISTERED_ADMIN_FILE_PATH, email, password);
             if (readForAdmin.equals(notFound)) {
-                //check if ep 
+                // check if ep
                 for (User user : this.getUsers()) {
                     this.setCurrentUser(user);
                     if (super.checkCurrentUserIsEntertainmentProvider() && user.getEmail().equals(email)) {
-                        this.getCurrentUser().setLoggedIn(true);
-                        displayMessaging("User exists: login successful");
-                        return;
+                        if (user.getPassword().equals(password)) {
+                            this.getCurrentUser().setLoggedIn(true);
+                            displayMessaging("User exists: login successful");
+                            return;
+                        } else {
+                            displayMessaging("User exists: incorrect password");
+                            return;
+                        }
                     }
                 }
             }
@@ -70,6 +77,7 @@ public class UserController extends Controller {
 
     /**
      * Displays the result of a login attempt as either a success or error message.
+     * 
      * @param readResult - the result string from the file reading process
      */
     private void displayMessaging(String readResult) {
@@ -83,8 +91,9 @@ public class UserController extends Controller {
     /**
      * Reads a file to find a user with the given email and password.
      * On success, sets the current user and marks them as logged in.
+     * 
      * @param fileName - the path to the file to read
-     * @param email - the email to search for
+     * @param email    - the email to search for
      * @param password - the password to verify
      * @return a result string indicating success or the type of failure
      */
@@ -121,7 +130,8 @@ public class UserController extends Controller {
         } catch (IOException e) {
             return "Error parsing file: problem reading a line in the file " + fileName + ".";
         } catch (IllegalArgumentException e) {
-            return "Error parsing file: malformed line in the file " + fileName + ", ensure all lines follow the format <email>, <password>.";
+            return "Error parsing file: malformed line in the file " + fileName
+                    + ", ensure all lines follow the format <email>, <password>.";
         } catch (NullPointerException e) {
             return "Error parsing file: there is an empty line in the file " + fileName + ".";
         }
@@ -159,7 +169,8 @@ public class UserController extends Controller {
                 return;
             }
         } catch (IllegalArgumentException e) {
-            view.displayError("One of the fields is empty: email, organisation name, and business registration number. Please try again.");
+            view.displayError(
+                    "One of the fields is empty: email, organisation name, and business registration number. Please try again.");
             return;
         }
 
@@ -209,7 +220,8 @@ public class UserController extends Controller {
      * files into the users collection.
      */
     private void addPreregisteredUsers() {
-        boolean loadSuccess = this.load(PREREGISTERED_USERS_FILE_PATH, 0) && this.load(PREREGISTERED_ADMIN_FILE_PATH, 1);
+        boolean loadSuccess = this.load(PREREGISTERED_USERS_FILE_PATH, 0)
+                && this.load(PREREGISTERED_ADMIN_FILE_PATH, 1);
         if (!loadSuccess) {
             view.displayError("There was an error parsing the preregistered user files, check the error logs");
         }
@@ -217,8 +229,9 @@ public class UserController extends Controller {
 
     /**
      * Reads a file and creates User objects for each line.
+     * 
      * @param fileName - the path to the file
-     * @param type - 0 for students, 1 or above for admin staff
+     * @param type     - 0 for students, 1 or above for admin staff
      * @return true if the file was loaded successfully, false otherwise
      */
     private boolean load(String fileName, int type) {
@@ -231,8 +244,10 @@ public class UserController extends Controller {
                 this.validate(elements, fileName);
 
                 User parsed;
-                if (type > 0) parsed = new AdminStaff(elements.get(0).trim(), elements.get(1).trim());
-                else parsed = new Student(elements.get(0).trim(), elements.get(1).trim());
+                if (type > 0)
+                    parsed = new AdminStaff(elements.get(0).trim(), elements.get(1).trim());
+                else
+                    parsed = new Student(elements.get(0).trim(), elements.get(1).trim());
                 this.addUser(parsed);
             }
             br.close();
@@ -245,25 +260,30 @@ public class UserController extends Controller {
 
     /**
      * Validates that a parsed line has exactly two elements.
+     * 
      * @param elements - the parsed elements from the line
      * @param fileName - the file being parsed, used in error messages
-     * @throws NullPointerException if elements is null or empty
-     * @throws IllegalArgumentException if the line does not have exactly two elements
+     * @throws NullPointerException     if elements is null or empty
+     * @throws IllegalArgumentException if the line does not have exactly two
+     *                                  elements
      */
     private void validate(List<String> elements, String fileName) {
         if (elements == null || elements.isEmpty()) {
             throw new NullPointerException("This line is empty in the file + " + fileName + ".");
         }
         if (elements.size() != 2) {
-            throw new IllegalArgumentException("The line is malformed. Ensure the line follows the structure : <email>, <password>. File: " + fileName);
+            throw new IllegalArgumentException(
+                    "The line is malformed. Ensure the line follows the structure : <email>, <password>. File: "
+                            + fileName);
         }
     }
 
     /**
      * Checks whether an entertainment provider account already exists
      * with the given email, organisation name, and business number.
-     * @param email - the email to check
-     * @param orgName - the organisation name to check
+     * 
+     * @param email          - the email to check
+     * @param orgName        - the organisation name to check
      * @param businessNumber - the business registration number to check
      * @return true if a matching account exists, false otherwise
      * @throws IllegalArgumentException if any parameter is null
@@ -287,6 +307,7 @@ public class UserController extends Controller {
 
     /**
      * Adds a user to the collection of users.
+     * 
      * @param user - the user to add
      */
     private void addUser(User user) {
@@ -294,7 +315,9 @@ public class UserController extends Controller {
     }
 
     /**
-     * Finds the entertainment provider who owns the event with the given event number.
+     * Finds the entertainment provider who owns the event with the given event
+     * number.
+     * 
      * @param eventNumber - the ID of the event to search for
      * @return the EntertainmentProvider who owns the event, or null if not found
      */
@@ -314,6 +337,7 @@ public class UserController extends Controller {
 
     /**
      * Returns the collection of all users in the system.
+     * 
      * @return the collection of users
      */
     public Collection<User> getUsers() {
@@ -323,7 +347,7 @@ public class UserController extends Controller {
     public void setCurrentUser(User user) {
         super.setCurrentUser(user);
     }
-    
+
     public User getCurrentUser() {
         return super.getCurrentUser();
     }
