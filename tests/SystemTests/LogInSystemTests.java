@@ -1,5 +1,8 @@
 package tests.SystemTests;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +20,22 @@ public class LogInSystemTests {
     private UserController userController;
     private MockVerificationService mockVerificationService;
 
+    @BeforeAll
+    static void initAll() {
+        System.out.println("Testing for LogIn use case started");
+        System.out.println("--------------------------------");
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("Testing for LogIn use case completed");
+    }
+
     @BeforeEach
     void setup() {
 
@@ -25,7 +44,7 @@ public class LogInSystemTests {
         userController = new UserController(view, mockVerificationService);
     }
 
-    // Testing Student login
+    // Testing Student login works
     @Test
     @DisplayName("Testing correct value for login student")
     void testStudentLogin() {
@@ -38,7 +57,7 @@ public class LogInSystemTests {
         verify(view).displaySuccess("User exists: login successful");
     }
 
-    // Testing Admin login
+    // Testing Admin login works
     @Test
     @DisplayName("Testing correct value for login student")
     void testAdminLogin() {
@@ -56,6 +75,7 @@ public class LogInSystemTests {
     @DisplayName("Testing if registered EP's can login")
     void testEPLogin() {
 
+        // First registering the EP
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
         when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
@@ -66,6 +86,7 @@ public class LogInSystemTests {
 
         userController.registerEntertainmentProvider();
 
+        // Now loggin them in
         when(view.getInput("Enter email:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter password:")).thenReturn("password98980");
 
@@ -75,9 +96,9 @@ public class LogInSystemTests {
 
     }
 
-    // Testing for null Email
+    // Testing null Email entry handling
     @Test
-    @DisplayName("Testing correct value for login student")
+    @DisplayName("Testing correct value for null email entry")
     void testNullEmail() {
 
         when(view.getInput("Enter email:")).thenReturn(null);
@@ -90,7 +111,7 @@ public class LogInSystemTests {
 
     // Testing for empty email
     @Test
-    @DisplayName("Testing correct value for login student")
+    @DisplayName("Testing correct value for empty email entry")
     void testEmptyEmail() {
 
         when(view.getInput("Enter email:")).thenReturn("");
@@ -103,7 +124,7 @@ public class LogInSystemTests {
 
     // Testing for null Password
     @Test
-    @DisplayName("Testing correct value for login student")
+    @DisplayName("Testing correct value for null password entry")
     void testNullPassword() {
 
         when(view.getInput("Enter email:")).thenReturn("bob@hidenburgh.ed.ac.uk");
@@ -114,9 +135,9 @@ public class LogInSystemTests {
         verify(view).displayError("Password can't be empty");
     }
 
-    // Testing for null Password
+    // Testing for empty Password
     @Test
-    @DisplayName("Testing correct value for login student")
+    @DisplayName("Testing correct value for empty password entry")
     void testEmptyPassword() {
 
         when(view.getInput("Enter email:")).thenReturn("bob@hidenburgh.ed.ac.uk");
@@ -127,9 +148,9 @@ public class LogInSystemTests {
         verify(view).displayError("Password can't be empty");
     }
 
-    // Testing student wrong email
+    // Testing student login with non-pre-registered email
     @Test
-    @DisplayName("Testing correct value for login student with wrong email")
+    @DisplayName("Testing correct value for login student with non-registered email")
     void testWrongStudentEmail() {
 
         when(view.getInput("Enter email:")).thenReturn("DoesntExist@hindeburgh.ed.ac.uk");
@@ -140,9 +161,9 @@ public class LogInSystemTests {
         verify(view).displayError("User not found");
     }
 
-    // Testing student wrong password
+    // Testing student incorrect password
     @Test
-    @DisplayName("Testing correct value for login student with wrong password")
+    @DisplayName("Testing correct value for login student with incorrect password")
     void testWrongStudentPassword() {
 
         when(view.getInput("Enter email:")).thenReturn("bob@hindeburgh.ed.ac.uk");
@@ -153,9 +174,9 @@ public class LogInSystemTests {
         verify(view).displayError("User exists: incorrect password");
     }
 
-    // Testing Admin wrong email
+    // Testing Admin non-pre-registered email
     @Test
-    @DisplayName("Testing correct value for login Admin with wrong email")
+    @DisplayName("Testing correct value for login Admin with non-pre-registered email")
     void testWrongAdminEmail() {
 
         when(view.getInput("Enter email:")).thenReturn("DoesntExist@hindeburgh.ed.ac.uk");
@@ -166,9 +187,9 @@ public class LogInSystemTests {
         verify(view).displayError("User not found");
     }
 
-    // Test Admin wrong password
+    // Test Admin incorrect password
     @Test
-    @DisplayName("Testing correct value for login student with wrong password")
+    @DisplayName("Testing correct value for login student with incorrect password")
     void testWrongAdminPassword() {
 
         when(view.getInput("Enter email:")).thenReturn("bobby@hindeburgh.ed.ac.uk");
@@ -181,7 +202,7 @@ public class LogInSystemTests {
 
     // Testing registered EP wrong email
     @Test
-    @DisplayName("Testing for wrong registered EP email")
+    @DisplayName("Testing for non-registered registered EP email")
     void testWrongEPEmail() {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
@@ -202,9 +223,9 @@ public class LogInSystemTests {
         verify(view).displayError("User not found");
     }
 
-    // Testing registered EP wrong password
+    // Testing registered EP incorrect password
     @Test
-    @DisplayName("Testing for wrong registered EP email")
+    @DisplayName("Testing for incorrect registered EP email")
     void testWrongEPPassword() {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
@@ -286,5 +307,7 @@ public class LogInSystemTests {
 
         assertTrue(userController.getCurrentUser().isLoggedIn(), "User should be logged in");
     }
+
+
 
 }

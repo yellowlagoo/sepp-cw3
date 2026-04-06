@@ -173,12 +173,19 @@ public class EventPerformanceController extends Controller {
         }
 
         Collection<String> performanceInfoList = new ArrayList<>();
+
+        if (performanceInfoList.isEmpty()) {
+            view.displayError("There are no performances in the system.");
+        }
+
         for (Performance p : performances) {
+            if (p.getStatus() != PerformanceStatus.CANCELLED) {
             performanceInfoList.add("ID: " + p.getPerformanceID()
                     + " | " + p.getEventTitle()
                     + " | " + p.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                     + " | " + p.getVenueAddress()
                     + " | Status: " + p.getStatus());
+            }
         }
 
         view.displayListofPerformances(performanceInfoList);
@@ -213,6 +220,18 @@ public class EventPerformanceController extends Controller {
         boolean sameEP = false;
         boolean hasNotHappenedYet = false;
 
+         // Ensures current user is a student, ending booking process if not
+        try {
+            if (!super.checkCurrentUserIsEntertainmentProvider()) {
+                view.displayError("Only an entertainment provider can cancel a performance");
+                return;
+            }
+        } catch (NullPointerException e) {
+            view.displayError("Must be a logged in to cancel a performance");
+            return;
+        }
+
+        
         while (performance == null || sameEP == false || hasNotHappenedYet == false) {
             String performanceIDInput = view.getInput("Enter ID of performance to cancel");
             try {

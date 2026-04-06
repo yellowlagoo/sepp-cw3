@@ -6,18 +6,36 @@ import src.View.*;
 import src.external.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+
 
 public class RegisterEntertainmentProviderSystemTests {
 
     private UserController userController;
     private TextUserInterface view;
     private MockVerificationService verificationService;
+
+    @BeforeAll
+    static void initAll() {
+        System.out.println("Testing for RegisterEntertainmentProvider use case started");
+        System.out.println("--------------------------------");
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("Testing for EntertainmentProvider use case completed");
+    }
 
     @BeforeEach
     void setup() {
@@ -111,5 +129,46 @@ public class RegisterEntertainmentProviderSystemTests {
         verify(view).displayError(
                 "An account with this email, organisation name, or business number already exists.");
     }
+
+    // testing business number which is too long
+    @Test
+    @DisplayName("Checking values are correct for business number being too long in registration")
+    void testBusinessNumberTooLong() {
+
+        when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
+        when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A12345576934567934752420942314");
+        when(view.getInput("Enter contact person name:")).thenReturn("Michael");
+        when(view.getInput("Create a password:")).thenReturn("password98980");
+        when(view.getInput("Enter a short description of your organisation:"))
+                .thenReturn("This is a test organisation for our testing task");
+
+        userController.registerEntertainmentProvider();
+
+
+        verify(view).displayError(
+                "Your business registration number could not be verified.");
+    }
+
+    // testing business number which is too short
+    @Test
+    @DisplayName("Checking values are correct for business number too short in registration")
+    void testBusinessNumberTooShort() {
+
+        when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
+        when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123");
+        when(view.getInput("Enter contact person name:")).thenReturn("Michael");
+        when(view.getInput("Create a password:")).thenReturn("password98980");
+        when(view.getInput("Enter a short description of your organisation:"))
+                .thenReturn("This is a test organisation for our testing task");
+
+        userController.registerEntertainmentProvider();
+
+
+        verify(view).displayError(
+                "Your business registration number could not be verified.");
+    }
+
 
 }

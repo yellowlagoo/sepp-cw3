@@ -69,7 +69,14 @@ public class BookingController extends Controller {
                 continue;
             }
 
-            String numTicketsRequested = view.getInput("Enter the number of tickets you want to book:");
+            String numTicketsRequested = null;
+            while(numTicketsRequested == null || numTicketsRequested.trim().isEmpty()){
+                numTicketsRequested = view.getInput("Enter the number of tickets you want to book:");
+                if (numTicketsRequested == null || numTicketsRequested.trim().isEmpty()){
+                    view.displayError("Number of tickets cannot be empty. Please enter another number:");
+            }
+        }
+
             numTickets = Integer.parseInt(numTicketsRequested);
 
             isTicketed = performance.checkIfEventIsTicketed();

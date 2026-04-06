@@ -1,10 +1,12 @@
 package tests.SystemTests;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.DisplayName;
 import java.util.Collection;
@@ -28,6 +30,22 @@ public class ReviewPerformanceSystemTests {
         private EntertainmentProvider ep;
         private Event event;
         private Student student;
+
+        @BeforeAll
+        static void initAll() {
+                System.out.println("Testing for ReviewPerformance use case started");
+                System.out.println("--------------------------------");
+        }
+
+         @AfterEach
+        void betweenTests() {
+                System.out.println("--------------------------------");
+        }
+
+        @AfterAll
+        static void tearDownAll() {
+                System.out.println("Testing for ReviewPerformance use case completed");
+        }
 
         @BeforeEach
         void setup() {
@@ -66,7 +84,7 @@ public class ReviewPerformanceSystemTests {
 
         // tsting for successful review
         @Test
-        @DisplayName("checking values for when a review is sucessfully left")
+        @DisplayName("checking values for when a review is sucessfully posted")
         void testReview() {
 
                 when(view.getInput("Enter the ID of the performance you would like to review: ")).thenReturn("1");
@@ -80,9 +98,9 @@ public class ReviewPerformanceSystemTests {
                 verify(view).displaySuccess("You have successfully reviewed the performance. Thank you!");
         }
 
-        // testing for an invalid ID
+        // testing for an invalid performance ID
         @Test
-        @DisplayName("checking values for when invalid ID is provided")
+        @DisplayName("checking values for when invalid performance ID is provided")
         void testInvalidIdReviewRequest() {
 
                 when(view.getInput("Enter the ID of the performance you would like to review: ")).thenReturn("91231")
@@ -97,7 +115,7 @@ public class ReviewPerformanceSystemTests {
                 verify(view).displayError("A performance with the given ID does not exist. Please enter a new ID.");
         }
 
-        // testing for review on performance the student has not booked
+        // testing for student requesting to leave a review on a performance they have not booked
         @Test
         @DisplayName("checking value when student attempts to review a performance they have not booked")
         void testReviewPerformanceNotBookedByStudent() {
@@ -150,7 +168,7 @@ public class ReviewPerformanceSystemTests {
                                 .displayError("You must enter an integer rating between 1 and 5 for your review. Please try again.");
         }
 
-        // checking valid rating but with no comment works
+        // testing valid rating but with no comment works
         @Test
         @DisplayName("checking values for when a review is sucessfully left")
         void testReviewWithNoComment() {
@@ -166,7 +184,7 @@ public class ReviewPerformanceSystemTests {
                 verify(view).displaySuccess("You have successfully reviewed the performance. Thank you!");
         }
 
-        // checking review Comment is being added to the performance
+        // testing review Comment is being added to the performance
         @Test
         @DisplayName("checking values for when a review is sucessfully left")
         void testReviewCommentPresent() {
@@ -183,7 +201,7 @@ public class ReviewPerformanceSystemTests {
                                 "should contain the added review comment");
         }
 
-        // checking review rating is being added to the performance
+        // testing review rating is being added to the performance
         @Test
         @DisplayName("checking values for when a review is sucessfully left")
         void testReviewRatingPresent() {
@@ -200,7 +218,7 @@ public class ReviewPerformanceSystemTests {
                                 "should contain the added review comment");
         }
 
-        // checking non students cannot review a performance
+        // testing non students cannot review a performance
         @Test
         @DisplayName("checking correct value for when a non student attempts to review a performance")
         void testOnlyStudentsCanReview() {
@@ -215,4 +233,42 @@ public class ReviewPerformanceSystemTests {
 
         }
 
+        //Testing when student provides non-integer rating
+        @Test
+        @DisplayName("checking values for when a student does not leave an integer rating")
+        void testReviewWithNonIntegerRating() {
+
+                when(view.getInput("Enter the ID of the performance you would like to review: ")).thenReturn("1");
+                when(view.getInput("Please enter a rating 1-5 for the performance: ")).thenReturn("this is not an integer rating");
+                when(view.getInput(
+                                "You may enter a comment for the review. Please press enter if you do not want to add a comment, otherwise type your comment here: "))
+                                .thenReturn("this is a comment");
+                when(view.getInput("Would you like to retry? (y/n not case sensitive)")).thenReturn("n");
+
+                bookingController.reviewPerformance();
+
+                verify(view).displayError("You must enter an integer rating between 1 and 5 for your review.");
+        }
+
+        // test that review ratings count is increased after a successful rating
+        @Test
+        @DisplayName("checking rating count increases after successful rating")
+        void testReviewRatingCount() {
+
+                when(view.getInput("Enter the ID of the performance you would like to review: ")).thenReturn("1");
+                when(view.getInput("Please enter a rating 1-5 for the performance: ")).thenReturn("5");
+                when(view.getInput(
+                                "You may enter a comment for the review. Please press enter if you do not want to add a comment, otherwise type your comment here: "))
+                                .thenReturn("test comment");
+
+                bookingController.reviewPerformance();
+                bookingController.reviewPerformance();
+                bookingController.reviewPerformance();
+                bookingController.reviewPerformance();
+
+                assertEquals(4, performanceOne.getReviewRating().size(), "should contain 4 ratings ");
+        }
+
+
+        
 }
