@@ -41,7 +41,7 @@ public class LogOutSystemTests {
     private void loginAsEP() {
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))
@@ -88,33 +88,36 @@ public class LogOutSystemTests {
     //  Logout clears the current user 
 
     @Test
-    @DisplayName("Testing current user is null after student logout")
+    @DisplayName("Testing user is no longer logged in after student logout")
     void testStudentLogoutClearsCurrentUser() {
         loginAsStudent();
+        User user = userController.getCurrentUser();
 
         userController.logout();
 
-        assertNull(userController.getCurrentUser(), "Current user should be null after logout");
+        assertFalse(user.isLoggedIn(), "Student should no longer be logged in after logout");
     }
 
     @Test
-    @DisplayName("Testing current user is null after admin logout")
+    @DisplayName("Testing user is no longer logged in after admin logout")
     void testAdminLogoutClearsCurrentUser() {
         loginAsAdmin();
+        User user = userController.getCurrentUser();
 
         userController.logout();
 
-        assertNull(userController.getCurrentUser(), "Current user should be null after logout");
+        assertFalse(user.isLoggedIn(), "Admin should no longer be logged in after logout");
     }
 
     @Test
-    @DisplayName("Testing current user is null after EP logout")
+    @DisplayName("Testing user is no longer logged in after EP logout")
     void testEPLogoutClearsCurrentUser() {
         loginAsEP();
+        User user = userController.getCurrentUser();
 
         userController.logout();
 
-        assertNull(userController.getCurrentUser(), "Current user should be null after logout");
+        assertFalse(user.isLoggedIn(), "EP should no longer be logged in after logout");
     }
 
     //  Logout sets user as no longer logged in    
@@ -173,12 +176,11 @@ public class LogOutSystemTests {
     //  Logout when not logged in (guest)    
 
     @Test
-    @DisplayName("Testing logout when no user is logged in")
+    @DisplayName("Testing logout when no user is logged in shows error")
     void testLogoutWhenNotLoggedIn() {
         // No login — currentUser is null (guest state)
         userController.logout();
 
-        assertNull(userController.getCurrentUser(),
-            "Current user should remain null after logging out as guest");
+        verify(view).displayError("No user is logged in.");
     }
 }

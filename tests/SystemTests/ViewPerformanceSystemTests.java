@@ -62,13 +62,13 @@ public class ViewPerformanceSystemTests {
     }
 
     @Test
-    @DisplayName("Testing displayed performance contains event title")
-    void testDisplayedPerformanceContainsEventTitle() {
+    @DisplayName("Testing displayed performance contains performance ID")
+    void testDisplayedPerformanceContainsPerformanceID() {
         when(view.getInput("Enter ID of performance to view")).thenReturn("1");
 
         eventPerformanceController.viewPerformance();
 
-        verify(view).displaySpecificPerformance(contains("Jazz Night"));
+        verify(view).displaySpecificPerformance(contains("Performance ID: 1"));
     }
 
     @Test

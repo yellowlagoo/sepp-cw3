@@ -40,7 +40,7 @@ public class EditPreferencesSystemTests {
     private void loginAsEP() {
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))
