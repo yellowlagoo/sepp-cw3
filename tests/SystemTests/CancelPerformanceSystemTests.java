@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.DisplayName;
 import java.util.Collection;
@@ -70,7 +69,7 @@ public class CancelPerformanceSystemTests {
                 eventPerformanceController.setCurrentUser(ep);
         }
 
-        // checking if ep can sucesfully cancel their event
+        // testing if ep can sucesfully cancel their event
         @Test
         @DisplayName("check values for ep cancelling a performance successfully")
         void testEPCancellingTheirPerformance() {
@@ -85,9 +84,9 @@ public class CancelPerformanceSystemTests {
 
         }
 
-        // checking invalid ID is handled
+        // testing invalid ID is handled
         @Test
-        @DisplayName("check values for ep cancelling a performance successfully")
+        @DisplayName("check values for ep providing an invalid ID")
         void testEPCancellingNonExistenPerformance() {
 
                 when(view.getInput("Enter ID of performance to cancel")).thenReturn("100001312").thenReturn("123");
@@ -99,7 +98,7 @@ public class CancelPerformanceSystemTests {
                 verify(view).displayError("Performance with given number does not exist");
         }
 
-        // checking non number id is handled
+        // checking non-numbered ID is inputted
         @Test
         @DisplayName("check values for ep cancelling a performance with a non integer id")
         void testEPCancellingNonIntID() {
@@ -113,8 +112,7 @@ public class CancelPerformanceSystemTests {
                 verify(view).displayError("Performance ID must be a number");
         }
 
-        // checking value returned when a ep attempts to cancel a performance which does
-        // not belong to them
+        // tesing an ep cannot cancel a performance which does not belong to them
         @Test
         @DisplayName("checking value for EP cancelling a performance which does not belong to them")
         void testCancellingPerformanceWhichEPDoesNotOwn() {
@@ -186,7 +184,7 @@ public class CancelPerformanceSystemTests {
 
         }
 
-        // checking if status is updated after cancellation
+        // testing if status is updated after cancellation
         @Test
         @DisplayName("check values for status is updated after cancelling")
         void testPerformanceStatusAfterCancelled() {
@@ -201,7 +199,7 @@ public class CancelPerformanceSystemTests {
                                 "status should be updated to cancelled");
         }
 
-        // checking booking status is updated
+        // testing booking status is updated
         @Test
         @DisplayName("checking booking status after performance cancelled")
         void testBookingStatusUpdated() {
@@ -222,4 +220,29 @@ public class CancelPerformanceSystemTests {
                 assertEquals(BookingStatus.CANCELLEDBYPROVIDER, booking.getStatus(),
                                 "status should be updated to cancelled");
         }
+
+        // testing that only an EP can cancel a performance
+        @Test
+        @DisplayName("checking booking status after performance cancelled")
+        void testNonEPCannotCancelPerformances() {
+
+                Student student = new Student("student@hidenburgh.ed.ac.uk", "secretpassword123");
+                student.setName("Michael");
+                student.setPhoneNumber(131443131);
+
+                eventPerformanceController.setCurrentUser(student);
+                student.setLoggedIn(true);
+
+                
+                when(view.getInput("Enter ID of performance to cancel")).thenReturn("123");
+                when(view.getInput("Provide a cancellation message for affected students:"))
+                                .thenReturn("This is a test cancellation message");
+
+                eventPerformanceController.cancelPerformance();
+
+                verify(view).displayError("Only an entertainment provider can cancel a performance");
+
+              
+        }
+
 }

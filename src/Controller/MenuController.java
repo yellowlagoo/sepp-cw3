@@ -2,7 +2,6 @@ package src.Controller;
 
 import src.Model.User;
 import src.View.TextUserInterface;
-import src.View.View;
 import java.util.ArrayList;
 import java.util.Arrays;
 

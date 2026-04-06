@@ -61,7 +61,7 @@ public class BookPerformanceSystemTests {
 
     }
 
-    // studetn can book the performance test
+    // test that students can book a performance successfully
     @Test
     @DisplayName("checking if values returned for book performance are correct")
     void testBookPerformanceCorrectValues() {
@@ -76,9 +76,9 @@ public class BookPerformanceSystemTests {
         verify(view).displaySuccess("Booking successful");
     }
 
-    // checking booking record is also returned
+    // checking booking record is returned
     @Test
-    @DisplayName("checking if values returned for book performance are correct")
+    @DisplayName("checking if values for booking record are retured")
     void testBookPerformanceCorrectBookingRecord() {
 
         when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
@@ -91,7 +91,7 @@ public class BookPerformanceSystemTests {
         verify(view).displayBookingRecord(any());
     }
 
-    // student provides invalid id
+    // test for when student provides an invalid performance ID
     @Test
     @DisplayName("checking correct value for student providing invalid performance ID")
     void testStudentProvidesInvalidID() {
@@ -106,7 +106,7 @@ public class BookPerformanceSystemTests {
         verify(view).displayError("Performance with given number does not exist.");
     }
 
-    // Student provides invalid number of tickets
+    // Student requests too many tickets which exceeds tickets left
     @Test
     @DisplayName("checking correct value for student providing invalid number of tickets")
     void testStudentProvidesInvalidNumberOfTickets() {
@@ -121,7 +121,37 @@ public class BookPerformanceSystemTests {
         verify(view).displayError("Requested performance has no tickets left.");
     }
 
-    // Student attempts to book non-ticketed performance
+    // Student requests null tickets
+    @Test
+    @DisplayName("checking correct value for student providing invalid number of tickets")
+    void testStudentProvidesNullTickets() {
+
+        when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("1");
+        when(view.getInput("Enter the number of tickets you want to book:")).thenReturn(null).thenReturn("1");
+        when(view.getInput("Enter your name:")).thenReturn("Michael");
+        when(view.getInput("Enter your phone number:")).thenReturn("123");
+
+        bookingController.bookPerformance();
+
+        verify(view).displayError("Number of tickets cannot be empty. Please enter another number:");
+    }
+
+    // Student requests empty tickets
+    @Test
+    @DisplayName("checking correct value for student providing invalid number of tickets")
+    void testStudentProvidesEmptyTickets() {
+
+        when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("1");
+        when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("").thenReturn("1");
+        when(view.getInput("Enter your name:")).thenReturn("Michael");
+        when(view.getInput("Enter your phone number:")).thenReturn("123");
+
+        bookingController.bookPerformance();
+
+        verify(view).displayError("Number of tickets cannot be empty. Please enter another number:");
+    }
+
+    // test for when a Student attempts to book non-ticketed performance
     @Test
     @DisplayName("checking value for student booking a non-ticketed performance")
     void testStudentBooksNonTicketedPerformance() {
@@ -146,10 +176,25 @@ public class BookPerformanceSystemTests {
         verify(view).displayError("The requested performance's event is not ticketed. There is no need to book it.");
     }
 
-    // testing that empty name/ null name is handled
+    // testing that empty name is handled
     @Test
     @DisplayName("checking value for an empty name input")
     void testEmptyName() {
+
+        when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
+        when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("1");
+        when(view.getInput("Enter your name:")).thenReturn("").thenReturn("Michael");
+        when(view.getInput("Enter your phone number:")).thenReturn("123");
+
+        bookingController.bookPerformance();
+
+        verify(view).displayError("Name cannot be empty. Please enter your name.");
+    }
+
+    // testing that null name is handled
+    @Test
+    @DisplayName("checking value for an null name input")
+    void testNullName() {
 
         when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
         when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("1");
@@ -161,10 +206,25 @@ public class BookPerformanceSystemTests {
         verify(view).displayError("Name cannot be empty. Please enter your name.");
     }
 
-    // testing that empty name/ null name is handled
+    // testing that empty phone number is handled
     @Test
     @DisplayName("checking value for an empty phoneNumber")
     void testEmptyPhoneNumber() {
+
+        when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
+        when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("1");
+        when(view.getInput("Enter your name:")).thenReturn("Michael");
+        when(view.getInput("Enter your phone number:")).thenReturn("").thenReturn("01313131");
+
+        bookingController.bookPerformance();
+
+        verify(view).displayError("Phone number cannot be empty. Please enter your phone number.");
+    }
+
+    // testing that null phone number is handled
+    @Test
+    @DisplayName("checking value for a null phoneNumber")
+    void testNullPhoneNumber() {
 
         when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
         when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("1");
@@ -176,7 +236,7 @@ public class BookPerformanceSystemTests {
         verify(view).displayError("Phone number cannot be empty. Please enter your phone number.");
     }
 
-    // check tickets have been registered as sold
+    // test tickets have been registered as sold
     @Test
     @DisplayName("checking if values returned for book performance are correct")
     void testNumTicketsSold() {
@@ -190,5 +250,44 @@ public class BookPerformanceSystemTests {
 
         assertEquals(5, performanceTwo.getNumTicketsSold(), "5 tickets should have been sold");
     }
+
+    // test non-students cannot book performances
+    @Test
+    @DisplayName("checking value for when a non-studetn attempts to book a performance")
+    void testNonStudentBooksPerformance(){
+
+        ep = new EntertainmentProvider("ep@test.com", "secretPassword123", "OrganistionforTesting", "A123456789", "Businesscorp", "testing ep");
+        bookingController.setCurrentUser(ep);
+        ep.setLoggedIn(true);
+
+        when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
+        when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("5");
+        when(view.getInput("Enter your name:")).thenReturn("definitelyNotAnEP");
+        when(view.getInput("Enter your phone number:")).thenReturn("123");
+
+        bookingController.bookPerformance();
+
+        verify(view).displayError("Only students may book a performance");
+
+    }
+
+    // testing booking number increases after booking 
+    @Test
+    @DisplayName("checking value for booking number increases after a booking")
+    void testBookingNumberIncrements(){
+
+        when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
+        when(view.getInput("Enter the number of tickets you want to book:")).thenReturn("5");
+        when(view.getInput("Enter your name:")).thenReturn("definitelyNotAnEP");
+        when(view.getInput("Enter your phone number:")).thenReturn("123");
+
+        bookingController.bookPerformance();
+        bookingController.bookPerformance();
+        bookingController.bookPerformance();
+
+        assertEquals(3, bookingController.getNextBookingNumber(), "Booking number should be incremented each time a booking is made");
+
+    }
+    
 
 }
