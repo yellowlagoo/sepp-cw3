@@ -11,7 +11,6 @@ import src.external.MockVerificationService;
 
 public class Main {
         public static void main(String[] args) {
-                System.out.println("Working directory: " + System.getProperty("user.dir"));
                 TextUserInterface view = new TextUserInterface();
                 MockVerificationService verificationService = new MockVerificationService();
                 MockPaymentSystem paymentSystem = new MockPaymentSystem();
