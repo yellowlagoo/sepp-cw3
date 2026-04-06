@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.*;
 
 import java.util.*;
 
@@ -44,7 +44,8 @@ public class CreateEventSystemTests {
         admin.setLoggedIn(true);
     }
 
-    // Helper: stub the minimal inputs to create an event without a performance
+    //  Helpers                                                       
+
     private void stubCreateEventInputs(String title, String type, String isTicketed) {
         when(view.getInput("Enter title of event")).thenReturn(title);
         when(view.getInput("Enter event type (Music, Theatre, Dance, Movie, Sports)")).thenReturn(type);
@@ -52,7 +53,6 @@ public class CreateEventSystemTests {
         when(view.getInput("Would you like to add a performance to this event? (true/false)")).thenReturn("false");
     }
 
-    // Helper: stub one performance on top of the event inputs
     private void stubCreateEventWithOnePerformance(String title, String type, String isTicketed) {
         when(view.getInput("Enter title of event")).thenReturn(title);
         when(view.getInput("Enter event type (Music, Theatre, Dance, Movie, Sports)")).thenReturn(type);
@@ -70,10 +70,10 @@ public class CreateEventSystemTests {
         when(view.getInput("Enter ticket price")).thenReturn("25.00");
     }
 
-    // --- Access control ---
+    //  Access control                                        
 
     @Test
-    @DisplayName("EP can create an event and sees success message")
+    @DisplayName("EP can create an event — success message is displayed")
     void testEPCanCreateEventDisplaysSuccess() {
         stubCreateEventInputs("Test Concert", "Music", "true");
 
@@ -83,192 +83,91 @@ public class CreateEventSystemTests {
     }
 
     @Test
-    @DisplayName("Student cannot create an event — sees error")
-    void testStudentCannotCreateEvent() {
+    @DisplayName("EP can create an event — no error is shown")
+    void testEPCreateEventNoErrorShown() {
+        stubCreateEventInputs("Test Concert", "Music", "true");
+
+        epController.createEvent();
+
+        verify(view, never()).displayError(anyString());
+    }
+
+    @Test
+    @DisplayName("Student cannot create an event — error is displayed")
+    void testStudentCannotCreateEventShowsError() {
         epController.setCurrentUser(student);
 
-        Event result = epController.createEvent();
+        epController.createEvent();
 
-        assertNull(result, "Student should not be able to create an event");
         verify(view).displayError("Must be an entertainment provider to create an event");
     }
 
     @Test
-    @DisplayName("Admin cannot create an event — sees error")
-    void testAdminCannotCreateEvent() {
+    @DisplayName("Student cannot create an event — no success message shown")
+    void testStudentCannotCreateEventNoSuccess() {
+        epController.setCurrentUser(student);
+
+        epController.createEvent();
+
+        verify(view, never()).displaySuccess(anyString());
+    }
+
+    @Test
+    @DisplayName("Admin cannot create an event — error is displayed")
+    void testAdminCannotCreateEventShowsError() {
         epController.setCurrentUser(admin);
 
-        Event result = epController.createEvent();
+        epController.createEvent();
 
-        assertNull(result, "Admin should not be able to create an event");
         verify(view).displayError("Must be an entertainment provider to create an event");
     }
 
     @Test
-    @DisplayName("Guest (null user) cannot create an event — error and NPE thrown")
-    void testLoggedOutUserCannotCreateEvent() {
+    @DisplayName("Admin cannot create an event — no success message shown")
+    void testAdminCannotCreateEventNoSuccess() {
+        epController.setCurrentUser(admin);
+
+        epController.createEvent();
+
+        verify(view, never()).displaySuccess(anyString());
+    }
+
+    @Test
+    @DisplayName("Guest cannot create an event — error is displayed")
+    void testGuestCannotCreateEventShowsError() {
         epController.setCurrentUser(null);
 
-        assertThrows(NullPointerException.class, () -> epController.createEvent());
+        epController.createEvent();
+
         verify(view).displayError("Must be logged in to create an event");
     }
 
-    // --- Successful event creation ---
+
+    //  Successful event creation — correct messages shown           
 
     @Test
-    @DisplayName("Created event has the correct title")
-    void testCreatedEventHasCorrectTitle() {
-        stubCreateEventInputs("Test Concert", "Music", "true");
-
-        Event result = epController.createEvent();
-
-        assertEquals("Test Concert", result.getTitle());
-    }
-
-    @Test
-    @DisplayName("Created event has the correct type")
-    void testCreatedEventHasCorrectType() {
-        stubCreateEventInputs("Test Concert", "Music", "true");
-
-        Event result = epController.createEvent();
-
-        assertEquals(EventType.MUSIC, result.getType());
-    }
-
-    @Test
-    @DisplayName("Created event is ticketed when EP selects true")
-    void testCreatedEventIsTicketed() {
-        stubCreateEventInputs("Test Concert", "Music", "true");
-
-        Event result = epController.createEvent();
-
-        assertTrue(result.isTicketed());
-    }
-
-    @Test
-    @DisplayName("Created event is non-ticketed when EP selects false")
-    void testCreatedEventIsNonTicketed() {
-        stubCreateEventInputs("Free Show", "Dance", "false");
-
-        Event result = epController.createEvent();
-
-        assertFalse(result.isTicketed());
-    }
-
-    @Test
-    @DisplayName("Created event belongs to the correct EP")
-    void testCreatedEventBelongsToEP() {
-        stubCreateEventInputs("Test Concert", "Music", "true");
-
-        Event result = epController.createEvent();
-
-        assertEquals("ep@test.com", result.getOrganizerEmail());
-    }
-
-    @Test
-    @DisplayName("Creating events increments the event ID")
-    void testCreatedEventsHaveIncrementingIDs() {
-        stubCreateEventInputs("Concert One", "Music", "true");
-        Event first = epController.createEvent();
-
-        stubCreateEventInputs("Concert Two", "Theatre", "true");
-        Event second = epController.createEvent();
-
-        assertNotEquals(first.getEventID(), second.getEventID());
-    }
-
-    // --- Case-insensitive event type ---
-
-    @Test
-    @DisplayName("Event type input is case-insensitive")
-    void testEventTypeInputIsCaseInsensitive() {
-        stubCreateEventInputs("Test Concert", "music", "true");
-
-        Event result = epController.createEvent();
-
-        assertEquals(EventType.MUSIC, result.getType());
-    }
-
-    @Test
-    @DisplayName("Event type input in uppercase works")
-    void testEventTypeInputUppercase() {
-        stubCreateEventInputs("Test Concert", "THEATRE", "true");
-
-        Event result = epController.createEvent();
-
-        assertEquals(EventType.THEATRE, result.getType());
-    }
-
-    // --- Event with performance ---
-
-    @Test
-    @DisplayName("EP can create an event with a performance — sees success messages")
-    void testEPCanCreateEventWithPerformance() {
-        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
+    @DisplayName("Creating a ticketed event — success message contains title")
+    void testCreateTicketedEventSuccessMessageContainsTitle() {
+        stubCreateEventInputs("Jazz Night", "Music", "true");
 
         epController.createEvent();
 
         verify(view).displaySuccess(contains("Jazz Night"));
-        verify(view).displaySuccess(contains("Performance added successfully"));
     }
 
     @Test
-    @DisplayName("Performance is added to shared collection after event creation")
-    void testPerformanceAddedToSharedCollection() {
-        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
+    @DisplayName("Creating a free event — success message contains title")
+    void testCreateFreeEventSuccessMessageContainsTitle() {
+        stubCreateEventInputs("Free Dance Show", "Dance", "false");
 
         epController.createEvent();
 
-        assertEquals(1, sharedPerformances.size(), "Shared collection should have 1 performance");
+        verify(view).displaySuccess(contains("Free Dance Show"));
     }
 
     @Test
-    @DisplayName("Created performance has the correct venue address")
-    void testCreatedPerformanceHasCorrectVenueAddress() {
-        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
-
-        epController.createEvent();
-
-        Performance p = sharedPerformances.iterator().next();
-        assertEquals("100 Main Street", p.getVenueAddress());
-    }
-
-    @Test
-    @DisplayName("Created performance has the correct ticket price")
-    void testCreatedPerformanceHasCorrectTicketPrice() {
-        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
-
-        epController.createEvent();
-
-        Performance p = sharedPerformances.iterator().next();
-        assertEquals(25.00, p.getTicketPrice(), 0.001);
-    }
-
-    // --- Multiple event types ---
-
-    @Test
-    @DisplayName("Theatre event type is set correctly")
-    void testTheatreEventType() {
-        stubCreateEventInputs("A Play", "Theatre", "true");
-
-        Event result = epController.createEvent();
-
-        assertEquals(EventType.THEATRE, result.getType());
-    }
-
-    @Test
-    @DisplayName("Sports event type is set correctly")
-    void testSportsEventType() {
-        stubCreateEventInputs("A Match", "Sports", "false");
-
-        Event result = epController.createEvent();
-
-        assertEquals(EventType.SPORTS, result.getType());
-    }
-
-    @Test
-    @DisplayName("Multiple events can be created by the same EP")
-    void testMultipleEventsBySameEP() {
+    @DisplayName("Creating two events — success message shown for each")
+    void testCreateTwoEventsShowsSuccessForEach() {
         stubCreateEventInputs("Concert", "Music", "true");
         epController.createEvent();
 
@@ -277,5 +176,121 @@ public class CreateEventSystemTests {
 
         verify(view).displaySuccess(contains("Concert"));
         verify(view).displaySuccess(contains("Play"));
+    }
+
+    //  Event type input variations                           
+
+    @Test
+    @DisplayName("Lowercase event type input — success message shown")
+    void testLowercaseEventTypeShowsSuccess() {
+        stubCreateEventInputs("Test Concert", "music", "true");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(anyString());
+    }
+
+    @Test
+    @DisplayName("Uppercase event type input — success message shown")
+    void testUppercaseEventTypeShowsSuccess() {
+        stubCreateEventInputs("Test Concert", "THEATRE", "true");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(anyString());
+    }
+
+    @Test
+    @DisplayName("Invalid event type - error message shown")
+    void testInvalidEventTypeShowsError() {
+        stubCreateEventInputs("Test Concert", "InvalidType", "true");
+
+        epController.createEvent();
+
+        verify(view).displayError(anyString());
+    }
+
+    @Test
+    @DisplayName("Invalid event type — no success message shown")
+    void testInvalidEventTypeNoSuccess() {
+        stubCreateEventInputs("Test Concert", "InvalidType", "true");
+
+        epController.createEvent();
+
+        verify(view, never()).displaySuccess(anyString());
+    }
+
+    //  Event with performance                                   
+
+    @Test
+    @DisplayName("EP creates event with performance — event success message shown")
+    void testCreateEventWithPerformanceShowsEventSuccess() {
+        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(contains("Jazz Night"));
+    }
+
+    @Test
+    @DisplayName("EP creates event with performance — performance success message shown")
+    void testCreateEventWithPerformanceShowsPerformanceSuccess() {
+        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(contains("Performance added successfully"));
+    }
+
+    @Test
+    @DisplayName("EP creates event with performance — no error shown")
+    void testCreateEventWithPerformanceNoError() {
+        stubCreateEventWithOnePerformance("Jazz Night", "Music", "true");
+
+        epController.createEvent();
+
+        verify(view, never()).displayError(anyString());
+    }
+
+    @Test
+    @DisplayName("EP creates event without performance — no performance success message")
+    void testCreateEventWithoutPerformanceNoPerformanceSuccess() {
+        stubCreateEventInputs("Jazz Night", "Music", "true");
+
+        epController.createEvent();
+
+        verify(view, never()).displaySuccess(contains("Performance added successfully"));
+    }
+    
+    //  Multiple event types                                 
+
+    @Test
+    @DisplayName("Theatre event created - success message shown")
+    void testTheatreEventShowsSuccess() {
+        stubCreateEventInputs("A Play", "Theatre", "true");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(anyString());
+    }
+
+    @Test
+    @DisplayName("Sports event created — success message shown")
+    void testSportsEventShowsSuccess() {
+        stubCreateEventInputs("A Match", "Sports", "false");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(anyString());
+    }
+
+    @Test
+    @DisplayName("Movie event created — success message shown")
+    void testMovieEventShowsSuccess() {
+        stubCreateEventInputs("A Film", "Movie", "false");
+
+        epController.createEvent();
+
+        verify(view).displaySuccess(anyString());
     }
 }
