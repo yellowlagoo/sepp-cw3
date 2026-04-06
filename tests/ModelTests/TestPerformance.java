@@ -1,4 +1,5 @@
 package tests.ModelTests;
+
 import src.Model.*;
 
 import org.junit.jupiter.api.Test;
@@ -15,12 +16,14 @@ public class TestPerformance {
     private EntertainmentProvider ep;
     private Performance performance;
     private Event ticketedEvent;
-    
+
     @BeforeEach
-    void setup(){
-        ep = new EntertainmentProvider("ep@test.com", "password", "Test Entertainment Provider", "A123", "Test", "description");
+    void setup() {
+        ep = new EntertainmentProvider("ep@test.com", "password", "Test Entertainment Provider", "A123", "Test",
+                "description");
         ticketedEvent = new Event(ep, 1234, "Test Title", EventType.MUSIC, true);
-        performance = new Performance(123, LocalDateTime.of(2026, 4, 20, 16, 30), LocalDateTime.of(2026, 4, 20, 20, 30), Arrays.asList("performer Names"), "12 adress", 100, false, false, 100, 50.00, ticketedEvent);
+        performance = new Performance(123, LocalDateTime.of(2030, 4, 20, 16, 30), LocalDateTime.of(2030, 4, 20, 20, 30),
+                Arrays.asList("performer Names"), "12 adress", 100, false, false, 100, 50.00, ticketedEvent);
     }
 
     @Test
@@ -48,7 +51,9 @@ public class TestPerformance {
     @DisplayName("Testing correct value for checkIfEventIsTicketed when event is not ticketed")
     void testCheckIfEventIsTicketedFalse() {
         Event nonTicketedEvent = new Event(ep, 5678, "Non-Ticketed Event", EventType.MUSIC, false);
-        Performance nonTicketedPerformance = new Performance(456, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), Arrays.asList("performer Names"), "12 address", 100, false, false, 100, 50.00, nonTicketedEvent);
+        Performance nonTicketedPerformance = new Performance(456, LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2), Arrays.asList("performer Names"), "12 address", 100, false, false, 100,
+                50.00, nonTicketedEvent);
         assertFalse(nonTicketedPerformance.checkIfEventIsTicketed(), "Event should not be ticketed");
     }
 
@@ -97,7 +102,9 @@ public class TestPerformance {
     @Test
     @DisplayName("Testing correct value for checkHasNotHappenedYet when performance is in the past")
     void testCheckHasNotHappenedYetFalse() {
-        Performance pastPerformance = new Performance(789, LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1), Arrays.asList("performer Names"), "12 address", 100, false, false, 100, 50.00, ticketedEvent);
+        Performance pastPerformance = new Performance(789, LocalDateTime.now().minusDays(2),
+                LocalDateTime.now().minusDays(1), Arrays.asList("performer Names"), "12 address", 100, false, false,
+                100, 50.00, ticketedEvent);
         assertFalse(pastPerformance.checkHasNotHappenedYet(), "Performance should have happened already");
     }
 
@@ -110,7 +117,8 @@ public class TestPerformance {
     @Test
     @DisplayName("Testing correct value for checkCreatedByEP when performance is not created by the given EP")
     void testCheckCreatedByEPFalse() {
-        assertFalse(performance.checkCreatedByEP("ep123@test.com"), "Performance should not be created by the given EP");
+        assertFalse(performance.checkCreatedByEP("ep123@test.com"),
+                "Performance should not be created by the given EP");
     }
 
     @Test
@@ -149,7 +157,7 @@ public class TestPerformance {
         Booking b = new Booking(1, 1, 50.00, LocalDateTime.now(), s, performance);
         b.cancelPaymentFailed();
         performance.addBooking(b);
-        assertFalse(performance.hasActiveBookings(), "Performance should have no active bookings"); 
+        assertFalse(performance.hasActiveBookings(), "Performance should have no active bookings");
     }
 
     @Test
@@ -159,7 +167,8 @@ public class TestPerformance {
         Booking b = new Booking(1, 1, 50.00, LocalDateTime.now(), s, performance);
         performance.addBooking(b);
         String details = performance.getBookingDetailsForRefund();
-        assertTrue(details.contains("student@email.com"), "should contain the email of the student that made the booking");
+        assertTrue(details.contains("student@email.com"),
+                "should contain the email of the student that made the booking");
     }
 
     @Test
@@ -224,35 +233,35 @@ public class TestPerformance {
 
     @Test
     @DisplayName("Testing correct value for sponsorAmount when there are sponsors")
-    void testSponsorAmount(){
+    void testSponsorAmount() {
         performance.sponsor(10.0);
         assertEquals(10.0, performance.getSponsoredAmount(), "Sponsored amount should be equal to 10");
     }
 
     @Test
     @DisplayName("Testing correct value for final ticket price")
-    void testFinalTicketPrice(){
+    void testFinalTicketPrice() {
         performance.sponsor(10.0);
         assertEquals(40.0, performance.getFinalTicketPrice(), "Ticket price should be reduced to 40.0");
     }
 
     @Test
     @DisplayName("Testing correct value for rating")
-    void testCorrectRating(){
+    void testCorrectRating() {
         performance.review(3, "test comment");
         assertTrue(performance.getReviewRating().contains(3), "Rating should be a 3");
     }
 
     @Test
     @DisplayName("Testing correct value for review")
-    void testCorrectReview(){
+    void testCorrectReview() {
         performance.review(3, "test comment");
         assertTrue(performance.getReviewComments().contains("test comment"), "Review comment should be present");
     }
 
     @Test
     @DisplayName("Testing correct value for adding the booking")
-    void testBookingadded(){
+    void testBookingadded() {
         Student s = new Student("student@email.com", "Password");
         Booking b = new Booking(1, 1, 50.00, LocalDateTime.now(), s, performance);
         b.cancelPaymentFailed();
@@ -262,112 +271,112 @@ public class TestPerformance {
 
     @Test
     @DisplayName("Testing correct ID value for toString")
-    void testCorrectID(){
+    void testCorrectID() {
         String result = performance.toString();
         assertTrue(result.contains("123"), "should contain performance ID");
     }
 
     @Test
     @DisplayName("Testing correct year value for toString")
-    void testCorrectStartYear(){
+    void testCorrectStartYear() {
         String result = performance.toString();
-        assertTrue(result.contains("26"), "should contain correct start year");
+        assertTrue(result.contains("2030"), "should contain correct start year");
     }
 
     @Test
     @DisplayName("Testing correct Month value for toString")
-    void testCorrectStartMonth(){
+    void testCorrectStartMonth() {
         String result = performance.toString();
         assertTrue(result.contains("4"), "should contain correct start month");
     }
 
     @Test
     @DisplayName("Testing correct hour value for toString")
-    void testCorrectStartHour(){
+    void testCorrectStartHour() {
         String result = performance.toString();
         assertTrue(result.contains("4"), "should contain correct start hour");
     }
 
     @Test
     @DisplayName("Testing correct minute value for toString")
-    void testCorrectStartMinute(){
+    void testCorrectStartMinute() {
         String result = performance.toString();
         assertTrue(result.contains("30"), "should contain correct start minute");
     }
 
     @Test
     @DisplayName("Testing correct year value for toString")
-    void testCorrectEndYear(){
+    void testCorrectEndYear() {
         String result = performance.toString();
-        assertTrue(result.contains("26"), "should contain correct end year");
+        assertTrue(result.contains("2030"), "should contain correct end year");
     }
 
     @Test
     @DisplayName("Testing correct month value for toString")
-    void testCorrectEndMonth(){
+    void testCorrectEndMonth() {
         String result = performance.toString();
         assertTrue(result.contains("4"), "should contain correct end month");
     }
 
     @Test
     @DisplayName("Testing correct hour value for toString")
-    void testCorrectEndHour(){
+    void testCorrectEndHour() {
         String result = performance.toString();
         assertTrue(result.contains("20"), "should contain correct end hour");
     }
 
     @Test
     @DisplayName("Testing correct minute value for toString")
-    void testCorrectEndMinute(){
+    void testCorrectEndMinute() {
         String result = performance.toString();
         assertTrue(result.contains("30"), "should contain correct end minute");
     }
 
     @Test
     @DisplayName("Testing correct performer names value for toString")
-    void testCorrectPerformerNames(){
+    void testCorrectPerformerNames() {
         String result = performance.toString();
         assertTrue(result.contains("performer Names"), "should contain correct performer names");
     }
 
     @Test
     @DisplayName("Testing correct venue adress value for toString")
-    void testCorrectAdress(){
+    void testCorrectAdress() {
         String result = performance.toString();
         assertTrue(result.contains("12 adress"), "should contain correct adress");
     }
 
     @Test
     @DisplayName("Testing correct capacity value for toString")
-    void testCorrectCapacity(){
+    void testCorrectCapacity() {
         String result = performance.toString();
         assertTrue(result.contains("100"), "should contain correct capacity");
     }
 
     @Test
     @DisplayName("Testing correct is outdoors value for toString")
-    void testCorrectIsOutdoors(){
+    void testCorrectIsOutdoors() {
         String result = performance.toString();
         assertTrue(result.contains("false"), "should contain false for is outdoors");
     }
 
     @Test
     @DisplayName("Testing correct smoking rules value for toString")
-    void testCorrectSmokingRules(){
+    void testCorrectSmokingRules() {
         String result = performance.toString();
         assertTrue(result.contains("false"), "should contain correct smoking rules");
     }
 
     @Test
     @DisplayName("Testing correct total tickets value for toString")
-    void testCorrectTotalTickets(){
+    void testCorrectTotalTickets() {
         String result = performance.toString();
         assertTrue(result.contains("100"), "should contain correct total tickets");
     }
 
     @Test
     @DisplayName("Testing correct ticket price value for toString")
-    void testCorrectTicketPrice(){
+    void testCorrectTicketPrice() {
         String result = performance.toString();
         assertTrue(result.contains("50"), "should contain correct ticket price");
     }
