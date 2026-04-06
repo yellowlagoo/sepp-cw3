@@ -1,5 +1,0 @@
-package Systems;
-
-interface VerificationSystem{
-
-}
