@@ -3,7 +3,7 @@ package tests.SystemTests;
 import src.Controller.*;
 import src.Model.*;
 import src.View.*;
-import src.ExternalSystems.*;
+import src.external.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,13 +17,13 @@ public class RegisterEntertainmentProviderSystemTests {
 
     private UserController userController;
     private TextUserInterface view;
-    private MockVerificationSystem verificationSystem;
+    private MockVerificationService verificationService;
 
     @BeforeEach
     void setup() {
         view = mock(TextUserInterface.class);
-        verificationSystem = new MockVerificationSystem();
-        userController = new UserController(view, verificationSystem);
+        verificationService = new MockVerificationService();
+        userController = new UserController(view, verificationService);
     }
 
     // testing registration works
@@ -33,7 +33,7 @@ public class RegisterEntertainmentProviderSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))
@@ -51,7 +51,7 @@ public class RegisterEntertainmentProviderSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn(null);
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
 
         userController.registerEntertainmentProvider();
 
@@ -67,7 +67,7 @@ public class RegisterEntertainmentProviderSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn(null);
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
 
         userController.registerEntertainmentProvider();
 
@@ -98,7 +98,7 @@ public class RegisterEntertainmentProviderSystemTests {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
         when(view.getInput("Enter your organisation name:")).thenReturn("testOrganisationName");
-        when(view.getInput("Enter your business registration number:")).thenReturn("A12345");
+        when(view.getInput("Enter your business registration number:")).thenReturn("A123455769");
         when(view.getInput("Enter contact person name:")).thenReturn("Michael");
         when(view.getInput("Create a password:")).thenReturn("password98980");
         when(view.getInput("Enter a short description of your organisation:"))

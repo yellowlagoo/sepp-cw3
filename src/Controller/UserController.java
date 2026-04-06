@@ -2,7 +2,7 @@ package src.Controller;
 
 import src.Model.*;
 import src.View.*;
-import src.ExternalSystems.MockVerificationSystem;
+import src.external.MockVerificationService;
 
 import java.io.*;
 import java.util.*;
@@ -16,7 +16,7 @@ public class UserController extends Controller {
     public static final String PREREGISTERED_USERS_FILE_PATH = "src/Controller/ValidStudents.txt";
     public static final String PREREGISTERED_ADMIN_FILE_PATH = "src/Controller/ValidAdmin.txt";
 
-    private final MockVerificationSystem verificationSystem;
+    private final MockVerificationService verificationService;
     private Collection<User> users;
 
     /**
@@ -26,9 +26,9 @@ public class UserController extends Controller {
      * @param verificationSystem - the external system used to verify entertainment
      *                           providers
      */
-    public UserController(TextUserInterface view, MockVerificationSystem verificationSystem) {
+    public UserController(TextUserInterface view, MockVerificationService verificationService) {
         super(view);
-        this.verificationSystem = verificationSystem;
+        this.verificationService = verificationService;
         this.users = new ArrayList<>();
     }
 
@@ -174,7 +174,7 @@ public class UserController extends Controller {
             return;
         }
 
-        if (!verificationSystem.verifyEntertainmentProvider(businessNumber)) {
+        if (!verificationService.verifyEntertainmentProvider(businessNumber)) {
             view.displayError("Your business registration number could not be verified.");
             return;
         }

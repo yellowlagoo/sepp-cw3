@@ -3,7 +3,7 @@ package tests.SystemTests;
 import src.Controller.*;
 import src.Model.*;
 import src.View.*;
-import src.ExternalSystems.*;
+import src.external.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ public class CreateEventSystemTests {
     private TextUserInterface view;
     private Collection<Performance> sharedPerformances;
     private MockPaymentSystem paymentSystem;
-    private MockVerificationSystem verificationSystem;
+    private MockVerificationService verificationService;
     private EntertainmentProvider ep;
     private Student student;
     private AdminStaff admin;
@@ -31,13 +31,13 @@ public class CreateEventSystemTests {
         view = new TextUserInterface();
         sharedPerformances = new ArrayList<>();
         paymentSystem = new MockPaymentSystem();
-        verificationSystem = new MockVerificationSystem();
+        verificationService = new MockVerificationService();
 
         epController = new EventPerformanceController(1, 1, paymentSystem, view, sharedPerformances);
-        userController = new UserController(view, verificationSystem);
+        userController = new UserController(view, verificationService);
 
         // Hard-code an EP account
-        ep = new EntertainmentProvider("ep@test.com", "password", "Test Org", "B123", "Contact", "description");
+        ep = new EntertainmentProvider("ep@test.com", "password", "Test Org", "B1236285749", "Contact", "description");
         ep.setLoggedIn(true);
         epController.setCurrentUser(ep);
 
