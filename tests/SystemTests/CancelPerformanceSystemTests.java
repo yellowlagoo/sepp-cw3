@@ -41,15 +41,6 @@ public class CancelPerformanceSystemTests {
                 System.out.println("--------------------------------");
         }
 
-        @AfterEach
-        void betweenTests() {
-                System.out.println("--------------------------------");
-        }
-
-        @AfterAll
-        static void tearDownAll() {
-                System.out.println("Testing for CancelPerformance use case completed");
-        }
 
         @BeforeEach
         void setup() {
@@ -87,6 +78,16 @@ public class CancelPerformanceSystemTests {
                 allPerformances.add(performanceFour);
 
                 eventPerformanceController.setCurrentUser(ep);
+        }
+
+        @AfterEach
+        void betweenTests() {
+                System.out.println("--------------------------------");
+        }
+
+        @AfterAll
+        static void tearDownAll() {
+                System.out.println("Testing for CancelPerformance use case completed");
         }
 
         // testing if ep can sucesfully cancel their event

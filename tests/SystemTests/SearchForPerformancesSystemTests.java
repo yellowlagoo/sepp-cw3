@@ -38,16 +38,6 @@ public class SearchForPerformancesSystemTests {
                 System.out.println("--------------------------------");
         }
 
-         @AfterEach
-        void betweenTests() {
-                System.out.println("--------------------------------");
-        }
-
-        @AfterAll
-        static void tearDownAll() {
-                System.out.println("Testing for SearchForPerformances use case completed");
-        }
-
         @BeforeEach
         void setup() {
 
@@ -57,6 +47,16 @@ public class SearchForPerformancesSystemTests {
                 eventPerformanceController = new EventPerformanceController(1, 1234, paymentSystem, view,
                                 allPerformances);
 
+        }
+
+        @AfterEach
+        void betweenTests() {
+                System.out.println("--------------------------------");
+        }
+
+        @AfterAll
+        static void tearDownAll() {
+                System.out.println("Testing for SearchForPerformances use case completed");
         }
 
         // testing when no performance exists in the system

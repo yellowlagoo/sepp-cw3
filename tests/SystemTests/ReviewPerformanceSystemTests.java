@@ -37,16 +37,6 @@ public class ReviewPerformanceSystemTests {
                 System.out.println("--------------------------------");
         }
 
-         @AfterEach
-        void betweenTests() {
-                System.out.println("--------------------------------");
-        }
-
-        @AfterAll
-        static void tearDownAll() {
-                System.out.println("Testing for ReviewPerformance use case completed");
-        }
-
         @BeforeEach
         void setup() {
                 view = mock(TextUserInterface.class);
@@ -80,6 +70,16 @@ public class ReviewPerformanceSystemTests {
 
                 bookingController.setCurrentUser(student);
 
+        }
+
+        @AfterEach
+        void betweenTests() {
+                System.out.println("--------------------------------");
+        }
+
+        @AfterAll
+        static void tearDownAll() {
+                System.out.println("Testing for ReviewPerformance use case completed");
         }
 
         // tsting for successful review

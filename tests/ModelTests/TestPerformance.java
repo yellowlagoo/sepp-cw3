@@ -3,6 +3,9 @@ package tests.ModelTests;
 import src.Model.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 
@@ -17,6 +20,12 @@ public class TestPerformance {
     private Performance performance;
     private Event ticketedEvent;
 
+    @BeforeAll
+    static void initAll() {
+        System.out.println("Testing for Performance class started");
+        System.out.println("--------------------------------");
+    }
+
     @BeforeEach
     void setup() {
         ep = new EntertainmentProvider("ep@test.com", "password", "Test Entertainment Provider", "A123", "Test",
@@ -24,6 +33,16 @@ public class TestPerformance {
         ticketedEvent = new Event(ep, 1234, "Test Title", EventType.MUSIC, true);
         performance = new Performance(123, LocalDateTime.of(2030, 4, 20, 16, 30), LocalDateTime.of(2030, 4, 20, 20, 30),
                 Arrays.asList("performer Names"), "12 adress", 100, false, false, 100, 50.00, ticketedEvent);
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("Testing for Performance class completed");
     }
 
     @Test

@@ -26,6 +26,14 @@ public class LogInSystemTests {
         System.out.println("--------------------------------");
     }
 
+    @BeforeEach
+    void setup() {
+
+        view = mock(TextUserInterface.class);
+        mockVerificationService = new MockVerificationService();
+        userController = new UserController(view, mockVerificationService);
+    }
+
     @AfterEach
     void betweenTests() {
         System.out.println("--------------------------------");
@@ -34,14 +42,6 @@ public class LogInSystemTests {
     @AfterAll
     static void tearDownAll() {
         System.out.println("Testing for LogIn use case completed");
-    }
-
-    @BeforeEach
-    void setup() {
-
-        view = mock(TextUserInterface.class);
-        mockVerificationService = new MockVerificationService();
-        userController = new UserController(view, mockVerificationService);
     }
 
     // Testing Student login works

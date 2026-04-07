@@ -39,15 +39,6 @@ public class BookPerformanceSystemTests {
         System.out.println("--------------------------------");
     }
 
-    @AfterEach
-    void betweenTests() {
-        System.out.println("--------------------------------");
-    }
-
-    @AfterAll
-    static void tearDownAll() {
-        System.out.println("Testing for BookPerformance use case completed");
-    }
 
     @BeforeEach
     void setup() {
@@ -78,6 +69,16 @@ public class BookPerformanceSystemTests {
         student.setLoggedIn(true);
         bookingController.setCurrentUser(student);
 
+    }
+
+    @AfterEach
+    void betweenTests() {
+        System.out.println("--------------------------------");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("Testing for BookPerformance use case completed");
     }
 
     // test that students can book a performance successfully

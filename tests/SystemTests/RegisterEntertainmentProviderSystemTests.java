@@ -27,6 +27,13 @@ public class RegisterEntertainmentProviderSystemTests {
         System.out.println("--------------------------------");
     }
 
+    @BeforeEach
+    void setup() {
+        view = mock(TextUserInterface.class);
+        verificationService = new MockVerificationService();
+        userController = new UserController(view, verificationService);
+    }
+
     @AfterEach
     void betweenTests() {
         System.out.println("--------------------------------");
@@ -35,13 +42,6 @@ public class RegisterEntertainmentProviderSystemTests {
     @AfterAll
     static void tearDownAll() {
         System.out.println("Testing for EntertainmentProvider use case completed");
-    }
-
-    @BeforeEach
-    void setup() {
-        view = mock(TextUserInterface.class);
-        verificationService = new MockVerificationService();
-        userController = new UserController(view, verificationService);
     }
 
     // testing registration works
