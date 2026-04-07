@@ -67,6 +67,10 @@ public class EventPerformanceController extends Controller {
         EventType type = null;
         try {
             type = EventType.findByName(typeInput);
+            if (type == null) {
+                view.displayError("This is an invalid event type");
+                return null;
+            }
         } catch (NullPointerException e) {
             view.displayError("This is an invalid event type");
             throw new IllegalArgumentException("This is an invalid event type");

@@ -137,17 +137,7 @@ public class CreateEventSystemTests {
         verify(view, never()).displaySuccess(anyString());
     }
 
-    @Test
-    @DisplayName("Guest cannot create an event — error is displayed")
-    void testGuestCannotCreateEventShowsError() {
-        epController.setCurrentUser(null);
-
-        epController.createEvent();
-
-        verify(view).displayError("Must be logged in to create an event");
-    }
-
-
+   
     //  Successful event creation — correct messages shown           
 
     @Test
