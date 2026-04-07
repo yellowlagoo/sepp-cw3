@@ -101,7 +101,7 @@ public class SearchForPerformancesSystemTests {
 
         // testing that all performances are added
         @Test
-        @DisplayName("checking correct values for when performances exist")
+        @DisplayName("checking correct values that all performances are shown")
         void testPerformancesContainsAllPerformances() {
 
                 ep = new EntertainmentProvider("ep@test.com", "password123", "Organisation Name", "A123678596",

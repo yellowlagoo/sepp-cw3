@@ -90,7 +90,7 @@ public class CancelPerformanceSystemTests {
                 System.out.println("Testing for CancelPerformance use case completed");
         }
 
-        // testing if ep can sucesfully cancel their event
+        // testing if ep can sucessfully cancel their event
         @Test
         @DisplayName("check values for ep cancelling a performance successfully")
         void testEPCancellingTheirPerformance() {
@@ -121,7 +121,7 @@ public class CancelPerformanceSystemTests {
 
         // checking non-numbered ID is inputted
         @Test
-        @DisplayName("check values for ep cancelling a performance with a non integer id")
+        @DisplayName("check values for ep cancelling a performance with an invalid id type")
         void testEPCancellingNonIntID() {
 
                 when(view.getInput("Enter ID of performance to cancel")).thenReturn("not a number").thenReturn("123");
@@ -244,7 +244,7 @@ public class CancelPerformanceSystemTests {
 
         // testing that only an EP can cancel a performance
         @Test
-        @DisplayName("checking booking status after performance cancelled")
+        @DisplayName("checking only an EP can cancel a performance")
         void testNonEPCannotCancelPerformances() {
 
                 Student student = new Student("student@hidenburgh.ed.ac.uk", "secretpassword123");

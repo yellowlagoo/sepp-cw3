@@ -143,7 +143,7 @@ public class BookPerformanceSystemTests {
 
     // Student requests null tickets
     @Test
-    @DisplayName("checking correct value for student providing invalid number of tickets")
+    @DisplayName("checking correct value for student providing null number of tickets")
     void testStudentProvidesNullTickets() {
 
         when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("1");
@@ -158,7 +158,7 @@ public class BookPerformanceSystemTests {
 
     // Student requests empty tickets
     @Test
-    @DisplayName("checking correct value for student providing invalid number of tickets")
+    @DisplayName("checking correct value for student providing empty number of tickets")
     void testStudentProvidesEmptyTickets() {
 
         when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("1");
@@ -170,6 +170,8 @@ public class BookPerformanceSystemTests {
 
         verify(view).displayError("Number of tickets cannot be empty. Please enter another number:");
     }
+
+    
 
     // test for when a Student attempts to book non-ticketed performance
     @Test
@@ -258,7 +260,7 @@ public class BookPerformanceSystemTests {
 
     // test tickets have been registered as sold
     @Test
-    @DisplayName("checking if values returned for book performance are correct")
+    @DisplayName("checking if tickets sold values returned for book performance are correct")
     void testNumTicketsSold() {
 
         when(view.getInput("Enter the ID of the performance you want to book:")).thenReturn("2");
@@ -273,7 +275,7 @@ public class BookPerformanceSystemTests {
 
     // test non-students cannot book performances
     @Test
-    @DisplayName("checking value for when a non-studetn attempts to book a performance")
+    @DisplayName("checking value for when a non-student attempts to book a performance")
     void testNonStudentBooksPerformance(){
 
         ep = new EntertainmentProvider("ep@test.com", "secretPassword123", "OrganistionforTesting", "A123456789", "Businesscorp", "testing ep");

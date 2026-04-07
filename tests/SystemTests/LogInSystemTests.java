@@ -59,7 +59,7 @@ public class LogInSystemTests {
 
     // Testing Admin login works
     @Test
-    @DisplayName("Testing correct value for login student")
+    @DisplayName("Testing correct value for login admin")
     void testAdminLogin() {
 
         when(view.getInput("Enter email:")).thenReturn("AdminStaff@ed.ac.uk");
@@ -202,7 +202,7 @@ public class LogInSystemTests {
 
     // Testing registered EP wrong email
     @Test
-    @DisplayName("Testing for non-registered registered EP email")
+    @DisplayName("Testing for login with non-registered registered EP email")
     void testWrongEPEmail() {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
@@ -225,7 +225,7 @@ public class LogInSystemTests {
 
     // Testing registered EP incorrect password
     @Test
-    @DisplayName("Testing for incorrect registered EP email")
+    @DisplayName("Testing for incorrect registered EP password")
     void testWrongEPPassword() {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
@@ -274,7 +274,7 @@ public class LogInSystemTests {
 
     // testing logged in user is an ep
     @Test
-    @DisplayName("Testing for wrong registered EP email")
+    @DisplayName("Testing logged in user is an EP")
     void testLoggedInUserEP() {
 
         when(view.getInput("Enter your email address:")).thenReturn("EPtest@ed.ac.uk");
@@ -297,7 +297,7 @@ public class LogInSystemTests {
 
     // testing logged in user is logged in
     @Test
-    @DisplayName("Testing logged in user is an Admin")
+    @DisplayName("Testing logged in user is logged in")
     void testLoggedIsLoggedIn() {
 
         when(view.getInput("Enter email:")).thenReturn("tom@edin@ed.ac.uk");

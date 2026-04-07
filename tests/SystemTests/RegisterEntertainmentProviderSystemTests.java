@@ -64,7 +64,7 @@ public class RegisterEntertainmentProviderSystemTests {
 
     // testing null email is handled
     @Test
-    @DisplayName("Checking null email error works")
+    @DisplayName("Checking null email handling error works")
     void testNullEmailError() {
 
         when(view.getInput("Enter your email address:")).thenReturn(null);
